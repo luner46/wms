@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wdms">
+<select id="selectFileList" resultType="map" parameterType="String">
+SELECT
+	cd.server_id, cd.type_id, cd.repo_id, cd.file_id, cd.file_dt, cd.file_count, cd.error_flag, cd.std_count, wsi.server_nm, wti.type_nm, wri.repo_nm, wfi.file_nm, wfi.file_desc, wfi.file_attr, wfi.file_path
+FROM (
+	SELECT id.server_id, id.type_id, id.repo_id, id.file_id, wfd.error_flag, COALESCE(wfd.file_dt, '-') as file_dt, COALESCE(wfd.file_count, '-') as file_count, wfd.std_count
+	FROM (
+			SELECT wfd.server_id as server_id, wfd.type_id, wfd.repo_id, wfd.file_id, DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i') AS issueDate
+			FROM wms.wdms_file_data wfd
+			WHERE wfd.server_id = 2
+			AND wfd.repo_id = 2
+		) id
+	LEFT JOIN wms.wdms_file_data wfd on id.server_id = wfd.server_id
+	AND id.server_id = wfd.server_id
+	AND id.type_id = wfd.type_id
+	AND id.repo_id = wfd.repo_id
+	AND id.file_id = wfd.file_id
+	AND id.issueDate = wfd.file_dt
+	) cd
+JOIN wms.wdms_server_info wsi ON cd.server_id = wsi.server_id
+JOIN wms.wdms_type_info wti ON cd.type_id = wti.type_id
+JOIN wms.wdms_repo_info wri ON cd.repo_id = wri.repo_id
+JOIN wms.wdms_file_info wfi ON cd.file_id = wfi.file_id
+GROUP BY cd.file_id, cd.server_id, cd.repo_id
+ORDER BY cd.file_id, cd.server_id
+</select>
+
+<insert id="insertFileCount" parameterType="map">
+insert into wms.wdms_file_data (server_id, type_id, repo_id, file_id, file_dt, file_count, error_flag, std_count) values (#{server_id}, 1, #{repo_id}, #{file_id}, #{boardTime}, #{file_count}, #{error_flag}, #{std_count}) ON DUPLICATE KEY UPDATE server_id = #{server_id}, type_id = 1, repo_id = #{repo_id}, file_id = #{file_id}, file_dt = #{boardTime}, file_count = #{file_count}, error_flag = case WHEN error_flag = 'y' AND #{error_flag} IN ('y', 'c', 'n') THEN #{error_flag} WHEN error_flag = 'n' AND #{error_flag} IN ('y', 'n') THEN #{error_flag} WHEN error_flag = 'c' AND #{error_flag} IN ('y', 'c') THEN #{error_flag} ELSE error_flag END, std_count = #{std_count}
+</insert>
+
+<select id="selectMeRnStnInfo" resultType="map" parameterType="map">
+SELECT 
+    stn_data.init_dt, stn_data.rfobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.flag, stn_data.flag_nm, sub.total_count
+FROM (
+    SELECT 
+        mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
+    FROM wms.me_rn_stn_info mrsi
+    JOIN wms.me_stn_flag_info msfi
+    ON mrsi.flag = msfi.flag
+    WHERE init_dt = #{init_dt}
+    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+        AND agcnm = #{agcType} 
+    </if>
+    <if test="endObsCheck == true">
+        UNION ALL
+        SELECT 
+            mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
+        FROM wms.me_rn_stn_info mrsi
+	    JOIN wms.me_stn_flag_info msfi
+	    ON mrsi.flag = msfi.flag
+        WHERE mrsi.flag = 2
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+    </if>
+) AS stn_data
+JOIN (
+    SELECT COUNT(*) AS total_count FROM (
+        SELECT 
+            init_dt
+        FROM wms.me_rn_stn_info
+        WHERE init_dt = #{init_dt}
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+        <if test="endObsCheck == true">
+            UNION ALL
+            SELECT 
+                init_dt
+            FROM wms.me_rn_stn_info
+            WHERE flag = 2
+            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+                AND agcnm = #{agcType} 
+            </if>
+        </if>
+    ) AS count_query
+) AS sub
+ON 1=1
+ORDER BY flag ${stateOrder}, rfobscd ASC
+</select>
+
+<select id="selectMeWlStnInfo" resultType="map" parameterType="map">
+SELECT 
+    stn_data.init_dt, stn_data.wlobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.gdt, stn_data.attwl, stn_data.wrnwl, stn_data.almwl, stn_data.srswl, stn_data.pfh, stn_data.fstnyn, stn_data.flag, stn_data.flag_nm, sub.total_count
+FROM (
+    SELECT 
+        mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
+    FROM wms.me_wl_stn_info mwsi
+    JOIN wms.me_stn_flag_info msfi
+    ON mwsi.flag = msfi.flag
+    WHERE init_dt = #{init_dt}
+    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+        AND agcnm = #{agcType} 
+    </if>
+    <if test="endObsCheck == true">
+        UNION ALL
+        SELECT 
+            mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
+        FROM wms.me_wl_stn_info mwsi
+	    JOIN wms.me_stn_flag_info msfi
+	    ON mwsi.flag = msfi.flag
+        WHERE mwsi.flag = 2
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+    </if>
+) AS stn_data
+JOIN (
+    SELECT COUNT(*) AS total_count FROM (
+        SELECT 
+            init_dt
+        FROM wms.me_wl_stn_info
+        WHERE init_dt = #{init_dt}
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+        <if test="endObsCheck == true">
+            UNION ALL
+            SELECT 
+                init_dt
+            FROM wms.me_wl_stn_info
+            WHERE flag = 2
+            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+                AND agcnm = #{agcType} 
+            </if>
+        </if>
+    ) AS count_query
+) AS sub
+ON 1=1
+ORDER BY flag ${stateOrder}, wlobscd ASC
+</select>
+
+<select id="selectMeDamStnInfo" resultType="map" parameterType="map">
+SELECT 
+   stn_data.init_dt, stn_data.dmobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.fldlmtwl, stn_data.pfh, stn_data.flag, stn_data.flag_nm, sub.total_count
+FROM (
+    SELECT 
+        mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
+    FROM wms.me_dam_stn_info mdsi
+    JOIN wms.me_stn_flag_info msfi
+    ON mdsi.flag = msfi.flag
+    WHERE init_dt = #{init_dt}
+    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+        AND agcnm = #{agcType} 
+    </if>
+    <if test="endObsCheck == true">
+        UNION ALL
+        SELECT 
+            mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
+        FROM wms.me_dam_stn_info mdsi
+	    JOIN wms.me_stn_flag_info msfi
+	    ON mdsi.flag = msfi.flag
+        WHERE mdsi.flag = 2
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+    </if>
+) AS stn_data
+JOIN (
+    SELECT COUNT(*) AS total_count FROM (
+        SELECT 
+            init_dt
+        FROM wms.me_dam_stn_info
+        WHERE init_dt = #{init_dt}
+        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+            AND agcnm = #{agcType} 
+        </if>
+        <if test="endObsCheck == true">
+            UNION ALL
+            SELECT 
+                init_dt
+            FROM wms.me_dam_stn_info
+            WHERE flag = 2
+            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
+                AND agcnm = #{agcType} 
+            </if>
+        </if>
+    ) AS count_query
+) AS sub
+ON 1=1
+ORDER BY flag ${stateOrder}, dmobscd ASC
+</select>
+
+<select id="selectMeRnAgcnmInfo" resultType="map">
+select agcnm from wms.me_rn_stn_info mrsi group by agcnm
+</select>
+
+<select id="selectMeWlAgcnmInfo" resultType="map">
+select agcnm from wms.me_wl_stn_info mwsi group by agcnm
+</select>
+
+<select id="selectMeDamAgcnmInfo" resultType="map">
+select agcnm from wms.me_dam_stn_info mdsi group by agcnm
+</select>
+
+<update id="updateCorrectionData">
+    <foreach collection="correctionData" item="item" separator=";">
+        UPDATE wms.wdms_file_data
+        SET file_count = #{item.updateValue},
+        	error_flag = 'c' 
+        WHERE file_id = #{item.fileId}
+        AND file_dt = #{item.issuedate}
+        AND repo_id = #{item.repoId}
+    </foreach>
+</update>
+</mapper>
+  

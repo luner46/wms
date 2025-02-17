@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wsms">
+
+<insert id="inputSystemInfo" parameterType="map">
+INSERT INTO wms.wsms_system_info
+(system_id, system_nm, system_ord, system_url, req_time, res_time, server_status, server_place, order_agency, useyn, reg_date, current_status, issue_dt)
+VALUES
+(null, #{system_nm}, #{system_ord}, #{system_url}, #{req_time}, #{res_time}, '0', #{server_place}, #{order_agency}, '1', now(), '0', now())
+</insert>
+
+<select id="systemMaxOrd" resultType="int">
+select max(system_ord) +1 from wms.wsms_system_info
+</select>
+
+<update id="updateSystemInfo" parameterType="map">
+UPDATE wms.wsms_system_info
+SET system_nm = #{system_nm},
+	system_ord  = #{system_ord},
+	system_url = #{system_url},
+	req_time = #{req_time},
+	res_time = #{res_time},
+	server_place = #{server_place},
+	order_agency = #{order_agency}
+WHERE system_id = #{system_id}
+</update>
+
+<update id="deleteSystemInfo" parameterType="map">
+UPDATE wms.wsms_system_info
+SET useyn = '0'
+WHERE system_id = #{system_id}
+</update>
+
+<select id="allSystemInfo" resultType="map">
+WITH system_info AS (
+    SELECT * 
+    FROM wms.wsms_system_info
+),
+aggregated_data AS (
+    SELECT 
+        system_id, 
+        MAX(init_tm) AS latest_init_tm
+    FROM wms.wsms_system_data
+    GROUP BY system_id
+)
+SELECT 
+    si.system_id as system_id,
+    si.system_nm as system_nm,
+    si.system_ord as system_ord,
+    si.system_url as system_url,
+    si.req_time as req_time,
+    si.res_time as res_time,
+    si.server_place as server_place,
+    si.order_agency as order_agency,
+    COALESCE(si.current_status, '0') as current_status,
+    COALESCE(sd.init_tm, '-') as init_tm,
+    COALESCE(sd.res_time, '-') as return_res_time,
+    COALESCE(sd.val, '0') as val
+FROM system_info si
+LEFT JOIN wms.wsms_system_data sd
+ON si.system_id = sd.system_id 
+AND sd.init_tm = (
+    SELECT ad.latest_init_tm 
+    FROM aggregated_data ad 
+    WHERE ad.system_id = si.system_id
+) order by si.system_ord
+</select>
+
+<select id="selectSystemInfo" resultType="map">
+WITH system_info AS (
+    SELECT * 
+    FROM wms.wsms_system_info
+),
+aggregated_data AS (
+    SELECT 
+        system_id, 
+        MAX(init_tm) AS latest_init_tm
+    FROM wms.wsms_system_data
+    GROUP BY system_id
+)
+SELECT 
+    si.system_id as system_id,
+    si.system_nm as system_nm,
+    si.system_ord as system_ord,
+    si.system_url as system_url,
+    si.req_time as req_time,
+    si.res_time as res_time,
+    si.server_place as server_place,
+    si.order_agency as order_agency,
+    COALESCE(si.current_status, '0') as current_status,
+    COALESCE(sd.init_tm, '-') as init_tm,
+    COALESCE(sd.res_time, '-') as return_res_time,
+    COALESCE(sd.val, '0') as val
+FROM system_info si
+LEFT JOIN wms.wsms_system_data sd
+ON si.system_id = sd.system_id 
+AND sd.init_tm = (
+    SELECT ad.latest_init_tm 
+    FROM aggregated_data ad 
+    WHERE ad.system_id = si.system_id
+) order by si.current_status desc, si.system_ord asc limit 0,10
+</select>
+
+<select id="getLatestData" resultType="map" parameterType="map">
+select wsd.system_id as system_id,
+	   wsd.init_tm as init_tm,
+	   wsd.res_time as return_res_time,
+	   wsd.val as val,
+	   wsi.req_time as req_time,
+	   wsi.res_time as res_time,
+	   wsi.system_nm as system_nm
+from
+	wms.wsms_system_data wsd
+JOIN
+	wms.wsms_system_info wsi ON wsd.system_id = wsi.system_id 
+where 
+	wsd.system_id = #{system_id} order by init_tm desc limit 1
+</select>
+
+</mapper>
+  

@@ -1,0 +1,170 @@
+[
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "asos_ssb_pet_10min",
+        "file_id" : 1,
+        "file_path" : "/home/outer/data/asos_ssb_pet_10min/yyyy/mm/dd",
+        "std_count" : "144"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "asos_ssb_pet_1day",
+        "file_id" : 2,
+        "file_path" : "/home/outer/data/asos_ssb_pet_1day/yyyy/mm",
+        "std_count" : "dd - 1"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis/03",
+        "file_id" : 14,
+        "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/03",
+        "std_count" : "29"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis/09",
+        "file_id" : 15,
+        "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/09",
+        "std_count" : "29"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis/15",
+        "file_id" : 16,
+        "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/15",
+        "std_count" : "29"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis/21",
+        "file_id" : 17,
+        "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/21",
+        "std_count" : "29"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/03",
+        "file_id" : 21,
+        "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/03",
+        "std_count" : "1044"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/09",
+        "file_id" : 22,
+        "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/09",
+        "std_count" : "1044"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/15",
+        "file_id" : 23,
+        "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/15",
+        "std_count" : "1044"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/21",
+        "file_id" : 24,
+        "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/21",
+        "std_count" : "1044"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "kma_asos_1day",
+        "file_id" : 25,
+        "file_path" : "/home/outer/data/kma_asos_1day/yyyy/mm",
+        "std_count" : "dd"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "kma_asos_1hr",
+        "file_id" : 28,
+        "file_path" : "/home/outer/data/kma_asos_1hr/yyyy/mm/dd",
+        "std_count" : "24"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "kma_aws_10min_qc",
+        "file_id" : 31,
+        "file_path" : "/home/outer/data/kma_aws_10min_qc/yyyy/mm/dd",
+        "std_count" : "144"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis/03",
+        "file_id" : 38,
+        "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/03",
+        "std_count" : "48"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis/09",
+        "file_id" : 39,
+        "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/09",
+        "std_count" : "48"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis/15",
+        "file_id" : 40,
+        "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/15",
+        "std_count" : "48"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis/21",
+        "file_id" : 41,
+        "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/21",
+        "std_count" : "48"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/03",
+        "file_id" : 42,
+        "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/03",
+        "std_count" : "576"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/09",
+        "file_id" : 43,
+        "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/09",
+        "std_count" : "576"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/15",
+        "file_id" : 44,
+        "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/15",
+        "std_count" : "576"
+    },
+    {
+        "server_nm" : "khnp",
+        "repo_nm" : "/home/outer/data",
+        "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/21",
+        "file_id" : 45,
+        "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/21",
+        "std_count" : "576"
+    }
+]

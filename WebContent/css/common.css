@@ -1,0 +1,259 @@
+@charset "utf-8";
+/* font */
+@font-face {
+    font-family: 'pretendard';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/Pretendard-Light.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'pretendard';
+    font-style: normal;  
+    font-weight: 400;
+    src: url('../fonts/Pretendard-Regular.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'pretendard';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/Pretendard-Bold.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'pretendard';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/Pretendard-Black.woff') format('woff');
+  }
+
+/* reset */
+*{margin:0;padding:0;font:inherit;color:inherit; font-family: 'pretendard';}
+*, :after, :before {box-sizing:border-box;flex-shrink:0;}
+:root {-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;cursor:default;line-height:1.5;overflow-wrap:break-word;-moz-tab-size:4;tab-size:4}
+html, body {height:100%; min-height: 860px; width: 100%; min-width: 1920px; font-size: 16px; background-color: #222222; color: #fff; }
+img, picture, video, canvas, svg {display: block;max-width:100%;}
+button {background:none;border:0;cursor:pointer;}
+a {text-decoration:none}
+table {border-collapse:collapse;border-spacing:0}
+ul { list-style: none;}
+img {display: block;}
+input, select {-webkit-appearance: none; -moz-appearance: none; appearance: none;}
+ :root {
+  --color-pink : #F41A64;
+  --color-dkgray: #333333;
+  --color-gray: #636363;
+  --color-blue: #004BFC;
+  --color-green: #13E08E;
+  --color-yellow: #F98C11;
+  --color-white : #ffffff;
+}
+
+/* text align */
+.t_left {text-align: left !important;}
+.t_right {text-align: right !important;}
+.t_center {text-align: center !important;}
+
+/* form */
+select {background:#fff; font-size: .9em; -webkit-appearance: none; -moz-appearance: none; appearance: none; color: #5e6d7d;}
+select option:disabled {display: none;}
+input[type=text] {display: inline-block; border-radius: 4px; line-height: 1.4; padding: 5px 10px; box-sizing: border-box; transition: all .3s ease-in-out; border: 2px solid transparent; color: #fff; background-color: #505050; height: 32px; text-align: center;font-size: 1em;}
+input[type=placeholder] {color: rgba(255,255,255, .5); font-size: .8em;}
+
+input[type=radio], input[type=checkbox] {height: 18px; width: 18px; border: 0; padding: 0; background-color: #6b7995;border-radius: 4px; vertical-align: middle;}
+input[type=checkbox] {border-radius: 4px; background-image: url(../images/img_check.png); background-position: 50% 50%; background-size: 8px 8px; background-repeat: no-repeat;}
+input[type=radio]:checked, input[type=checkbox]:checked {background-color: #246beb;}
+input[type=checkbox]:checked {}
+input[type=radio]:disabled, input[type=checkbox]:disabled {background-color: #888; border-color: #888;}
+
+/* button */
+button:disabled { cursor: default}
+button:disabled:hover {color: rgba(255,255,255,.5);}
+button[type=button],button[type=summit] {cursor: pointer; border: 0; padding: 0; display: inline-block;}
+.btn {display: inline-block; flex: 1; text-align: center; height: 36px; line-height: 36px; width: auto; border-radius: 4px; transition: all .3s ease-in-out;}
+.btn_modify {background-color: #ff8000;}
+.btn_modify:hover {background-color: #f66522;}
+.btn_confirm {background-color: #004BFC;}
+.btn_confirm:hover {background-color: #0d27ef;}
+
+/* color */
+.c_pink {color: var(--color-pink) !important;}
+.c_blue {color: var(--color-blue) !important;}
+.c_green {color: var(--color-green) !important;}
+.c_white {color: var(--color-white) !important;}
+
+/* border */
+.border_wrap {border: 1px solid rgba(255,255,255, .2);}
+#wrap {width: 100%; height: 100%; position: relative; padding: 0 24px;}
+
+/*********************** HEADER FOOTER ***********************/
+header {width: 100%; height: 100px; position:relative}
+header h1 {display: inline-block; padding-top: 30px;}
+header h1 {display: block;}
+header h1 a > img {display: inline-block; vertical-align: middle; margin-right: 8px; width: 34px;}
+header h1 a > div {display: inline-block; vertical-align: middle;}
+header h1 a > div p {display: block; font-size: 1.5rem; font-weight: 600; line-height: 1; letter-spacing: 0;}
+header h1 a > div small {display: block; font-size: .5em; line-height: 1;}
+header .alarm {text-align: center; border: 3px solid transparent; background: #313131; height: 40px; padding:0 16px; border-radius: 20px; box-sizing: border-box; position: absolute; left: 50%; top: 20px; transform: translate(-50%, 10px); min-width: 600px;}
+header .alarm > p {font-size: 1.25rem;  line-height: 34px; color: #fff; font-weight: 400;}v 
+header .alarm > p > span {font-weight: 600; color: var(--color-pink)}
+.header_top {height: 30px; background-color: rgba(255,255,255, .02); width: calc(100% + 48px); margin-left: -24px; box-shadow: 5px 5px 5px rgba(0,0,0,.2);}
+.header_top ul {text-align:right;}
+.header_top ul li {display: inline-block; font-size: .8em; font-weight: 400; color: #666666; line-height: 30px; transition: all .2s ease; position: relative; padding-right: 20px;}
+.header_top ul li:last-child {padding-right: 24px;}
+.header_top ul li a.active {font-weight: 600;}
+.header_top ul li:hover {cursor: pointer;}
+.header_top ul li a.active, .header_top ul li:hover {color: #999999; }
+.header_top ul li::before{position: absolute;right: 9px; top: 10px; width: 1px; height: 10px; background-color:#666666; content:'';}
+.header_top ul li:last-child::before {display: none;}
+.nav_wrap {position: absolute; right: 0; top: 30px; height: 38px; padding: 0; margin: 0;}
+.nav_wrap ul {display: flex; flex-flow: row wrap; gap: 8px;}
+.nav_wrap ul li {display:block; height: 38px; line-height: 38px; padding: 0; flex: 1; box-sizing: border-box; text-align: center;}
+.nav_wrap ul li a {display: block; color: var(--color-white); transition: all .3s ease; border-radius: 4px; box-shadow: 0 0 0 1px inset rgba(255,255,255, .2); padding: 0 16px;  font-size: .9em;}
+.nav_wrap ul li a:hover, .nav_wrap ul li a.active {background-color: var(--color-blue); box-shadow: none;}
+footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-weight: 200; text-align: center; color: rgba(255,255,255, .3);}
+
+/*********************** CONTENT ***********************/
+#contents {width: 100%; height: calc(100% - 160px); position: relative;}
+#contents::after {content:''; display: block; clear: both;}
+/* left */
+.calendar_wrap {float: left; width: calc(100% - 620px); height: 100%; background-color: #313131; color:#ffff; border-radius: 16px; overflow: hidden;}
+.calendar_wrap .date_tt {font-size: 1.625em; font-weight: 600; display: block; text-align: center; height: 70px; line-height: 70px; }
+.calendar_wrap .date_tt span {display: inline-block; margin: 0 24px; vertical-align: middle;}
+.btn_month_next, .btn_month_prev {width: 24px; height: 24px; background: url(../images/img_prevnext.png) 50% 50% no-repeat; background-size: 10px 14px; vertical-align: middle; transition: all .2s ease-in-out;}
+.btn_month_next {}
+.btn_month_prev {transform: rotate(180deg);}
+.btn_month_next:hover, .btn_month_prev:hover {opacity: .6}
+.calendar_wrap .calendar_list  {height: calc(100% - 70px);}
+.calendar_list {display: flex; flex-flow: column; gap: 0;}
+.calendar_list  table {width: 100%; height: 100%; border-collapse: collapse;}
+.calendar_list .calendar.head {height: 50px; display: flex; flex-flow: row wrap;}
+.calendar_list .calendar.head li {flex:1; height: 50px; line-height: 50px; font-size: 1.4em;  font-weight: 600; border-bottom: 1px solid rgba(255,255,255, .05); text-align: center; cursor: default;}
+.calendar_list .calendar.head li.sun {color: #D73737;}
+.calendar_list .calendar.head li.sat {color: #337AFF;}
+.calendar_list .calendar.cnt {display: flex; flex-flow: row wrap; flex: 1; height: calc(16.6% - 10px);}
+.calendar_list .calendar.cnt > li {flex: 1; border-bottom: 1px solid rgba(255,255,255, .05); border-right: 1px solid rgba(255,255,255, .05); position: relative; padding: 14px; height: 100%;}
+.calendar_list .calendar.cnt > li:last-child {border-right: 0;}
+.calendar_list .calendar.cnt > li .date {position: absolute; right: 11px; top: 8px; color: #fff; text-align: center; width: 20px; height: 20px; line-height: 20px; border-radius: 50%; background: #747474; font-weight: 500; font-size: .7em;}
+.calendar_list .calendar.cnt > li .list {margin: 24px 0 0; min-height: 55px;}
+.calendar_list .calendar.cnt > li .list li {font-size: .865em; font-weight: 300; line-height: 1em; margin-bottom: 6px; position: relative; padding-left: 16px;}
+.calendar_list .calendar.cnt > li .list li::before {position: absolute; left: 0; top: 3px; width: 6px; height: 6px; border-radius: 50%; content:''; background: #747474;}
+.calendar_list .calendar.cnt > li .list li.error {position: relative; color: #F41A64; font-weight: 600;}
+.calendar_list .calendar.cnt > li .list li.error::before {background: #F41A64;}
+.calendar_list .calendar.cnt > li .list li.error::after {position: absolute; right: 0; top: 0; width: 14px; height: 14px; background: url(../images/img_error.png) 0 0 no-repeat; background-size: 100% auto; content:'';}
+.calendar_list .calendar.cnt > li.sat .date {background: #2552a5;}
+.calendar_list .calendar.cnt > li.sun .date {background: #831D1D;}
+.calendar_list .calendar.cnt > li.today {cursor: pointer;}
+.calendar_list .calendar.cnt > li.today::before {position: absolute; right: 38px; top: 8px;content:'Today'; color: #ffffff; font-size:12px; font-weight: 600;}
+.calendar_list .calendar.cnt > li.today .date {background: linear-gradient(180deg, rgba(0,192,115,1) 0%, rgba(0,107,205,1) 100%);}
+.calendar_list .calendar.cnt > li.today:hover {cursor: pointer; background-color: rgba(255,255,255, .1);}
+.calendar_list .calendar.cnt > li.past {opacity: .5 !important; cursor: pointer;}
+.calendar_list .calendar.cnt > li.past:hover {opacity: 1 !important; cursor: pointer; background-color: rgba(255,255,255, .1);}
+.calendar_list .calendar.cnt > li.active {box-shadow: 0 0 0 2px inset #F41A64; border-radius: 10px; opacity: 1 !important;}
+/* right */
+.cnt_wrap {float: right; width: 600px; height: 100%; background-color: #313131; border-radius: 16px; padding: 16px;}
+.cnt_wrap.active {box-shadow: 0 0 0 2px #F41A64;}
+.cnt_wrap .tt {position: relative; height: 40px; padding: 0; margin: 0 0 16px 0;}
+.cnt_wrap .tt > h3 { font-size: 1.4em;  font-weight: 600; line-height: 40px; padding-left: 20px; position: relative;}
+.cnt_wrap .tt > h3::before {width:8px; height: 8px; border-radius: 50%; background-color: #ffffff; left: 0; top: calc(50% - 6px); content:''; position: absolute;}   
+.cnt_wrap .tt > p {font-size: .8em; position: absolute; right: 0; top: 6px; padding: 4px 12px; border: 1px solid rgba(255,255,255, .3); border-radius: 6px;}
+.cnt_wrap .cnt_con {display: flex; flex-flow: column wrap; height: calc(100% - 60px);}
+.cnt_wrap .cnt {flex: 1; padding: 0; margin: 0 auto; position: relative; width: 100%; height: 30%;}
+/*.cnt_wrap .cnt.br_b {border-bottom: 1px solid #666666; margin-bottom: 24px;} */
+.cnt_wrap .cnt h3 {font-weight: 600; display: block; margin-bottom: 12px;}
+.cnt_wrap .cnt h3.khnp { color: #FFC21F;}
+.cnt_wrap .cnt h3.rnd { color: #00f1ff;}
+.cnt_wrap .cnt h3 span {display: inline-block; vertical-align: middle;margin: -4px 0 0 8px; font-size: 14px; padding: 0 10px; height: 22px; line-height: 22px; border-radius: 12px; font-weight: 400;}
+.cnt_wrap .cnt h3 span.error {background-color: #F41A64; color: #ffffff;}
+.cnt_wrap .cnt h3 span.normal {background-color: #555555; color: #ffffff;}
+.cnt_wrap .cnt .etc {position: absolute; right: 0; top: 0; display: flex; flex-flow: row wrap; gap: 4px;}
+.cnt_wrap .cnt .etc button {font-size: 12px; font-weight: 300; border: 1px solid #13E08E; color: #13E08E;  border-radius: 2px; padding: 0 6px; transition: all .2s ease-in-out;}
+.cnt_wrap .cnt .etc button:hover {opacity: .7;}
+.cnt_wrap .cnt .etc button.disabled  {font-size: 12px; font-weight: 300; border: 1px solid #636363; color: rgba(255,255,255, .6);  border-radius: 2px; padding: 0 6px; transition: all .2s ease-in-out; cursor: default}
+.cnt_wrap .tbl-wrap {overflow: auto; height: calc(100% - 60px); border-bottom: 1px solid #464646;}
+.cnt_wrap .tbl-wrap table {width: 100%; border-collapse: collapse; text-align: center; font-size: .9em;}
+.cnt_wrap .tbl-wrap table thead th {background: #565656; border-right: 1px solid #464646; padding: 6px 6px; position: sticky; top: 0; z-index: 1}
+.cnt_wrap .tbl-wrap table tbody td {border-right: 1px solid #464646; border-bottom: 1px solid #464646;padding: 6px 6px; color: rgba(255,255,255, .6); font-size: .9em;}
+.cnt_wrap .tbl-wrap table thead th:last-child, .cnt_wrap .tbl-wrap table tbody td:last-child {border-right: none;}
+.cnt_wrap .tbl-wrap table tbody tr:last-child td {border-bottom: 0;}
+.cnt_wrap .tbl-wrap table tbody td a {transition: all .2s ease-in-out;}
+.cnt_wrap .tbl-wrap table tbody td a:hover{color: #fff;}
+.cnt_wrap .tbl-wrap table tbody td strong {color: #fff; font-weight: 600;}
+.calendar_list .calendar.cnt > li .list li.reprod {color: #13E08E; font-weight: 500;}
+.calendar_list .calendar.cnt > li .list li.reprod::before {background: #13E08E;}
+.calendar_list .calendar.cnt > li .list li.reprod::after {position: absolute; right: 0; top: 0; width: 14px; height: 14px; background: url(../images/img_re.png) 0 0 no-repeat; background-size: 100% auto; content:'';}
+.copy-link {cursor: pointer;}
+.copy-link p {font-size: 1.2em;}
+
+/* table */
+.tbl_search_wrap {height: 80px; background-color: #313131; position: relative; margin-bottom: 24px; border-radius: 16px; padding: 24px;}
+.search_wrap {}
+.search_wrap ul {display: flex; flex-flow: row wrap; gap: 12px; height: 32px;}
+.search_wrap ul li {flex: 0 auto; padding: 0 16px; height: 100%; background-color: #505050; border-radius: 4px;}
+.search_wrap ul li label {display: inline-block; line-height: 32px; padding-right: 16px;color: #d3d3d3; font-weight: 300;  position: relative;}
+.search_wrap ul li label:before {position: absolute; right: 0; top: calc(50% - 6px); width: 1px; height: 10px; background: #8d8d8d; content: '';}
+.search_wrap ul li.listcheck label {padding-right: 6px;}
+.search_wrap ul li.listcheck label::before {display: none;}
+.search_wrap ul li.listcheck input {margin: -2px 0 0 0;}
+.search_wrap ul li input[type=text], .search_wrap ul li select {border: 0; min-width: 90px;}
+.search_wrap ul li select {background: url(../images/img_select.png) calc(100% - 6px) 50% no-repeat #505050; background-size: 10px 10px; color: #fff; font-weight: 600; padding: 0 20px 0 10px;}
+.download_btn {position: absolute; right: 24px; top: 24px; background-color: #1F9A69; height: 32px; padding: 0 16px; border-radius: 4px; transition: all .2s ease-in-out;}
+.download_btn:hover {background-color: #127f53;}
+.btn_state {width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin: 0 0 0 6px; position: absolute; right: 16px; top: calc(50% - 9px);transition: all .2s ease-in-out;}
+.btn_state:hover {background-color: var(--color-gray);}
+.btn_state img {display: block; margin: 4px auto 0;}
+.btn_state.active {transform: rotate(180deg);}
+.btn_state.active img { margin: 5px auto 0}
+
+.tbl_con_wrap {width: 100%; height: calc(100% - 106px);background-color: #313131; border-radius: 16px; padding: 24px;}
+.tbl_wrap2 {width: 100%; height: 100%; overflow: hidden; overflow-y: auto; margin: 0 auto;}
+.tbl_state {width: 100%; margin: 0; padding: 0; border-collapse: collapse; font-size: 1em;}
+.tbl_state caption {display: none;}
+.tbl_state thead th {background-color: #1d1d1d; font-size: 1em; line-height: 1; padding: 16px 6px; font-weight: 600; box-sizing: border-box; text-align: center; position: sticky; top: 0; z-index: 1; color: #fff;}
+.tbl_state thead th small {display: block; font-weight: 300; color: #ddd; font-size: .8em; margin-top: 4px;}
+.tbl_state tbody td {font-size: 1em; line-height: 1.2; font-weight: 300; padding:16px 6px; word-break: keep-all; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255, .2); text-align: center; color: #ccc;}
+.tbl_state tbody tr:first-child td, .tbl_state tbody tr:last-child td {border-top: 0;}
+.tbl_state tbody tr.form_input td {border: 0;}
+.tbl_state tbody tr.form_input td input {background-color: #434b5f;}
+.tbl_state tbody tr.form_input td input[type=text]:focus {background-color: rgba(0,0,0, .5);}
+.tbl_state tbody tr.form_input td input::placeholder {color: rgba(255,255,255,.4);}
+
+.tbl_state .end {color: var(--color-pink);}
+.tbl_state .modify {color: var(--color-yellow);}
+.tbl_state .new {color: #3787FF;}
+.tbl_search_wrap .date {cursor: pointer; max-width: 100px; padding: 5px 10px; border-radius: 3px; text-align: center; appearance: none; font-size: .9rem !important; font-weight: 600; text-align: left !important;}
+
+.date:focus {outline: none; border-color: #5D9CF5;}
+.ui-datepicker {width: 200px; padding: 5px; background: #222222; border-radius: 4px; box-shadow: 0 4px 40px -8px rgba(0, 0, 0, 1); opacity: 0;}
+@media screen and (max-width: 580px) {
+.ui-datepicker {top: auto !important; right: 0 !important; bottom: 0 !important; left: 0 !important; width: 100%; border-radius: 0px;}
+}
+.ui-datepicker.active {opacity: 1;}
+.ui-datepicker-header {height: 32px; padding: 3px;}
+.ui-datepicker-header .ui-datepicker-title {text-align: center; line-height: 1.2;}
+.ui-datepicker-month, .ui-datepicker-year {-webkit-appearance: none; border: 0; background: none; outline: none; font-size: 14px; font-weight: 600; color: white; margin: 0 1px;}
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {top: 0;}
+.ui-datepicker-prev, .ui-datepicker-next {position: relative; display: inline-block; width: 34px; height: 34px; cursor: pointer; text-indent: 9999px; overflow: hidden; border-radius: 3px;}
+.ui-datepicker-prev:hover, .ui-datepicker-next:hover {background: #444B56;}
+.ui-datepicker-prev {float: left;}
+.ui-datepicker-prev:after {transform: rotate(45deg);margin-left: 15px;}
+.ui-datepicker-next {float: right;}
+.ui-datepicker-next:after {transform: rotate(-135deg); margin-left: 13px;}
+.ui-datepicker-prev:after, .ui-datepicker-next:after {content: ""; position: absolute; display: block; margin-top: 12px; width: 6px; height: 6px; border-left: 2px solid #C2C7D1; border-bottom: 2px solid #C2C7D1; pointer-events: none;}
+.ui-datepicker-calendar {width: 100%; text-align: center;}
+.ui-datepicker-calendar thead tr th {width: 40px; padding-bottom: 6px;}
+.ui-datepicker-calendar thead tr th span {display: block; width: 100%; padding: 0; color: #8D9298; font-size: 10px; font-weight: 700; text-transform: uppercase; text-align: center;}
+.ui-datepicker-calendar tbody tr td {padding-right: 3px; padding-bottom: 3px;}
+.ui-datepicker-calendar tbody tr td:first-child {padding-left: 3px;}
+.ui-state-default {display: block; text-decoration: none; color: white !important; border-radius: 3px; font-size: .8em;}
+.ui-state-default:hover {background: #444B54 !important; text-decoration: none; color: white !important;}
+.ui-state-highlight {color: var(--color-blue);}
+.ui-state-active:not(.ui-state-highlight) {color: white; background: var(--color-blue);}
+.ui-datepicker-unselectable .ui-state-default {color: rgba(255, 255, 255, 0.2); pointer-events: none;}
+.ui-widget-header {border: 0; border-radius: 0; background: transparent;}
+.ui-datepicker .ui-datepicker-title select {font-size: .8em;}
+.ui-widget.ui-widget-content {border: 1px solid rgba(0, 0, 0, .5);}
+.ui-state-default {background-color: transparent; font-weight: normal; color: inherit; line-height: 1.2; color: #888; }
+.ui-datepicker-unselectable .ui-state-default {background: transparent; color: rgba(255, 255, 255, 0.5); font-weight: normal; }
+.ui-datepicker td span, .ui-datepicker td a {text-align: center; padding: .3em;} 
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, .ui-button.ui-state-disabled:hover, .ui-button.ui-state-disabled:active {border: 0 !important; background-color: #666; font-weight: normal;}
+.ui-state-active {border: 0 !important; background-color: var(--color-blue) !important;}
+.ui-datepicker-prev:hover, .ui-datepicker-next:hover{background: none;}

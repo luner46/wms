@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+	<entry key="jdbc.mysql.dbDriverClass">com.mysql.jdbc.Driver</entry>
+	<entry key="jdbc.mysql.dbUrl">jdbc:mysql://211.209.185.143:3306/wms?useUnicode=true&amp;characterEncoding=utf-8</entry>
+	<entry key="jdbc.mysql.dbUser">wise_dev</entry>
+	<entry key="jdbc.mysql.dbPwd">fD@Vn2Fhf7</entry>
+</properties>
+

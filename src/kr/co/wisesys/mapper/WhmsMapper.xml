@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="whms">
+<select id="selectCurrentServer" resultType="map">
+	SELECT
+		cd.server_id as server_id,
+		cd.init_tm as init_tm,
+		cd.cpu_per as cpu_per,
+		cd.mem_per as mem_per,
+		cd.disk_per as disk_per,
+		cd.temp_val as temp_val,
+		cd.net_per as net_per,
+		cd.risk_check as risk_check,
+		cd.risk_result as risk_result,
+		wsb.boot as boot,
+	    wsi.server_nm as server_nm,
+	    wsi.server_ord as server_ord,
+	    wsi.st_cpu_per as st_cpu_per,
+	    wsi.st_mem_per as st_mem_per,
+	    wsi.st_disk_per as st_disk_per,
+	    wsi.st_temp_val as st_temp_val,
+	    wsi.st_net_per as st_net_per
+	FROM
+		(
+			SELECT
+			id.server_id as server_id,
+			COALESCE(wsd.init_tm, 'not_connection') as init_tm,
+			COALESCE(wsd.cpu_per, 'not_connection') as cpu_per,
+			COALESCE(wsd.mem_per, 'not_connection') as mem_per,
+			COALESCE(wsd.disk_per, 'not_connection') as disk_per,
+			COALESCE(wsd.temp_val, 'not_connection') as temp_val,
+			COALESCE(wsd.net_per, 'not_connection') as net_per,
+			COALESCE(wsd.risk_check, 'not_connection') as risk_check,
+			COALESCE(wsd.risk_result, 'not_connection') as risk_result
+		FROM
+			(
+				SELECT
+					wsd.server_id as server_id,
+					DATE_FORMAT(DATE_SUB(#{currentDateFormat}, INTERVAL 1 MINUTE), '%Y%m%d%H%i') AS issueDate
+					<!-- DATE_FORMAT(#{currentDateFormat}, '%Y%m%d%H%i') AS issueDate -->
+				FROM
+					whms_server_data wsd
+			) id
+		LEFT JOIN
+			whms_server_data wsd on id.server_id = wsd.server_id
+		AND
+			id.issueDate = wsd.init_tm
+		) cd
+	JOIN
+	    whms_server_info wsi on cd.server_id = wsi.server_id
+	LEFT JOIN
+	    whms_server_boot wsb on cd.server_id = wsb.server_id
+	AND
+		LEFT(cd.init_tm, 8) = wsb.init_tm
+	GROUP BY
+		cd.server_id
+</select>
+
+<select id="selectNetworkState" resultType="map" parameterType="String">
+	SELECT
+	    sub.server_id,
+	    sub.net_per,
+	    sub.server_nm,
+	    sub.server_ord,
+	    sub.init_tm,
+	    sub.st_net_per,
+	    sub.date
+	FROM
+	    (
+	        SELECT
+	            wsd.server_id as server_id,
+	            wsd.net_per as net_per,
+	            wsi.server_nm as server_nm,
+	            wsi.server_ord as server_ord,
+	            wsd.init_tm as init_tm,
+	            wsi.st_net_per as st_net_per,
+	            DATE(CAST(CONCAT(
+			        SUBSTRING(wsd.init_tm, 1, 4), '-',
+			        SUBSTRING(wsd.init_tm, 5, 2), '-',
+			        SUBSTRING(wsd.init_tm, 7, 2)
+			    ) AS DATE)) AS date
+	        FROM
+	            whms_server_data wsd
+	        JOIN
+	            whms_server_info wsi on wsd.server_id = wsi.server_id
+	        WHERE
+	            wsd.server_id = #{server_id}
+	        ORDER BY
+	            wsd.init_tm DESC
+	        LIMIT
+	            60
+	    ) sub
+	ORDER BY
+	    sub.init_tm asc
+</select>
+
+<select id="selectRankData" resultType="map" parameterType="map">
+	SELECT 
+	    z.server_id as server_id,
+	    z.server_nm as server_nm,
+	    z.dt as date,
+	    wsr.init_tm as init_tm,
+	    COALESCE(wsr.cpu_per, null) as cpu_per,
+	    COALESCE(wsr.mem_per, null) as mem_per,
+	    COALESCE(wsr.disk_per, null) as disk_per,
+	    COALESCE(wsr.temp_val, null) as temp_val,
+	    COALESCE(wsr.net_per, null) as net_per
+	FROM
+	    (SELECT
+	        x.server_id,
+	        x.server_nm,
+	        y.dt
+	    FROM
+	        whms_server_info x
+		CROSS JOIN
+			(SELECT
+				DATE_FORMAT(DATE_SUB(LEFT(#{currentDateFormat},10), INTERVAL 1 DAY), '%Y%m%d') AS dt
+			)y
+	    )z
+	LEFT JOIN
+		whms_server_rank wsr
+	ON
+		z.server_id = wsr.server_id
+	AND
+		z.dt = wsr.init_tm
+	GROUP BY
+		z.server_id
+	ORDER BY
+	    CASE WHEN #{chartType} = 'temp_val' THEN CAST(wsr.temp_val AS FLOAT)
+	         WHEN #{chartType} = 'cpu_per' THEN CAST(wsr.cpu_per AS FLOAT)
+	         WHEN #{chartType} = 'mem_per' THEN CAST(wsr.mem_per AS FLOAT)
+	         WHEN #{chartType} = 'disk_per' THEN CAST(wsr.disk_per AS FLOAT)
+	         ELSE 0
+	    END DESC
+	LIMIT
+		3
+</select>
+
+<select id="selectRiskCheck" resultType="map" parameterType="map">
+	SELECT 
+	    z.server_id as server_id, 
+	    z.server_nm as server_nm, 
+	    LEFT(z.dt, 8) as date,
+	    COALESCE(SUM(CASE WHEN wsd.risk_check = 1 THEN 1 WHEN wsd.risk_check = 0 THEN 0 END), null) AS risk_checkCount
+	FROM 
+	    (SELECT 
+	        x.server_id, 
+	        x.server_nm, 
+	        y.dt 
+	    FROM 
+	        whms_server_info x
+	    CROSS JOIN 
+	        (SELECT 
+	            DATE_FORMAT(DATE_ADD(DATE_SUB(#{currentDateFormat}, INTERVAL #{riskCheckDay} DAY), INTERVAL (a + (b * 10) + (c * 100) + (d * 1000) + (e * 10000)) MINUTE), '%Y%m%d%H%i') AS dt
+	        FROM 
+	            (SELECT 0 a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+	             UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t1,
+	            (SELECT 0 b UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+	             UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t2,
+	            (SELECT 0 c UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+	             UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t3,
+	            (SELECT 0 d UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+	             UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t4,
+	            (SELECT 0 e UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
+	             UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t5
+	        WHERE 
+	            DATE_FORMAT(DATE_ADD(DATE_SUB(#{currentDateFormat}, INTERVAL #{riskCheckDay} DAY), INTERVAL (a + (b * 10) + (c * 100) + (d * 1000) + (e * 10000)) MINUTE), '%Y%m%d%H%i') <![CDATA[ <= #{endDateFormat} ]]>
+	        ORDER BY 
+	            dt) y
+	    ) z
+	LEFT JOIN 
+	    whms_server_data wsd 
+	ON 
+	    z.server_id = wsd.server_id 
+	    AND z.dt = wsd.init_tm
+	GROUP BY 
+	    server_id, date
+</select>
+
+<select id="selectRiskState" resultType="map" parameterType="String">
+	SELECT
+		wsd.server_id as server_id,
+		wsd.init_tm as init_tm,
+		wsd.cpu_per as cpu_per,
+		wsd.mem_per as mem_per,
+		wsd.disk_per as disk_per,
+		wsd.temp_val as temp_val,
+		wsd.net_per as net_per,
+		wsd.risk_check as risk_check,
+		wsd.risk_result as risk_result,
+		wsd.msg as msg,
+		wsi.server_nm as server_nm,
+		wsi.server_ord as server_ord,
+		CAST(CONCAT(
+	        SUBSTRING(wsd.init_tm, 1, 4), '-',
+	        SUBSTRING(wsd.init_tm, 5, 2), '-',
+	        SUBSTRING(wsd.init_tm, 7, 2), ' ',
+		    SUBSTRING(wsd.init_tm, 9, 2), ':',
+		    SUBSTRING(wsd.init_tm, 11, 2)
+	    ) AS DATETIME) AS date,
+	    (select count(*) from whms_server_data wsd where wsd.risk_check = 1) as risk_check_count,
+	    (select count(*) from whms_server_data wsd where wsd.risk_result = 1) as risk_result_count,
+	    wsi.server_nm as server_nm,
+		wsi.server_ord as server_ord,
+		wsi.st_cpu_per as st_cpu_per,
+	    wsi.st_mem_per as st_mem_per,
+	    wsi.st_disk_per as st_disk_per,
+	    wsi.st_temp_val as st_temp_val,
+	    wsi.st_net_per as st_net_per
+	FROM
+		whms_server_data wsd
+	JOIN
+		whms_server_info wsi on wsd.server_id = wsi.server_id
+	WHERE
+		risk_check =1
+	AND
+		STR_TO_DATE(wsd.init_tm, '%Y%m%d%H%i') &lt;= DATE_SUB(STR_TO_DATE(#{currentDateFormat}, '%Y%m%d%H%i'), INTERVAL 1 MINUTE)
+	ORDER BY
+		init_tm ${riskStateOrder}, server_id asc
+</select>
+
+<update id="updateRiskState" parameterType="map">
+	UPDATE
+		whms_server_data
+	SET
+		risk_result = '0'
+	WHERE
+		server_id = #{server_id}
+		and
+		init_tm = #{init_tm}
+		and
+		risk_result = '1'
+</update>
+
+<!-- 게시판 초기화 update
+<update id="resetRiskResult" parameterType="">
+	UPDATE 
+		whms_server_data
+	SET
+		risk_result = null 
+	WHERE
+		 risk_result is not null;
+</update> -->
+</mapper>

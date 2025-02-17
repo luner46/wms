@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+						   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+						   http://www.springframework.org/schema/util
+						   http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	 
+	
+	<util:properties id="config" location="/WEB-INF/config/jdbc.xml" />
+	<context:property-placeholder properties-ref="config" />
+	
+	
+	
+	<bean id="dataSourceMysql" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="#{config['jdbc.mysql.dbDriverClass']}" />
+    <property name="url" value="#{config['jdbc.mysql.dbUrl']}" />
+    <property name="username" value="#{config['jdbc.mysql.dbUser']}" />
+    <property name="password" value="#{config['jdbc.mysql.dbPwd']}" />
+    
+    <property name="validationQuery" value="select 1"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="timeBetweenEvictionRunsMillis" value="7200000"/>
+  </bean>
+  
+  <bean id="transactionManagerMysql" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourceMysql" />
+  </bean>
+  
+	<bean id="sqlSessionFactoryMysql" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceMysql" />
+        <property name="configLocation" value="/WEB-INF/config/mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath*:kr/co/wisesys/mapper/*.xml" />
+    </bean>
+  
+  <bean id="sqlSessionMysql" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlSessionFactoryMysql" />
+    <constructor-arg index="1" value="SIMPLE" />
+  </bean> 
+  
+  <!-- 
+  <bean id="dataSourceOracle" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+       <property name="driverClassName" value="#{config['jdbc.oracle.dbDriverClass']}" />
+    <property name="url" value="#{config['jdbc.oracle.dbUrl']}" />
+    <property name="username" value="#{config['jdbc.oracle.dbUser']}" />
+    <property name="password" value="#{config['jdbc.oracle.dbPwd']}" />
+    
+    <property name="validationQuery" value="select 1 from dual"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="timeBetweenEvictionRunsMillis" value="7200000"/>
+    </bean>
+  
+  <bean id="transactionManagerOracle" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourceOracle" />
+  </bean>
+    
+    <bean id="sqlSessionFactoryOracle" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceOracle" />
+        <property name="configLocation" value="/WEB-INF/config/mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath*:kr/co/wisesys/resource/mapper/*.xml" />
+    </bean>
+    
+    <bean id="sqlSessionOracle" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlSessionFactoryOracle" />
+    <constructor-arg index="1" value="SIMPLE" />
+  </bean> -->
+  
+  
+  <!-- 
+  <bean id="dataSourcePostgre" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="#{config['jdbc.postgre.dbDriverClass']}" />
+    <property name="url" value="#{config['jdbc.postgre.dbUrl']}" />
+    <property name="username" value="#{config['jdbc.postgre.dbUser']}" />
+    <property name="password" value="#{config['jdbc.postgre.dbPwd']}" />
+                      
+    <property name="validationQuery" value="select 1"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="timeBetweenEvictionRunsMillis" value="7200000"/>
+  </bean>
+  
+  <bean id="transactionManagerPostgre" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourcePostgre" />
+  </bean>
+  
+  <bean id="sqlSessionFactoryPostgre" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSourcePostgre" />
+         <property name="configLocation" value="/WEB-INF/config/mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath*:kr/co/wisesys/resource/mapper/*.xml" />
+    </bean>
+    
+     <bean id="sqlSessionPostgre" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlSessionFactoryPostgre" />
+    <constructor-arg index="1" value="SIMPLE" />
+  </bean>
+   -->
+	
+</beans>

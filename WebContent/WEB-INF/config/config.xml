@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+	<!--  
+	<entry key="sftp_host">223.130.152.144</entry>
+	<entry key="sftp_port">7021</entry>
+	<entry key="sftp_id">wisesys</entry>
+	<entry key="sftp_pwd">6wpW%5HY!^</entry>
+	<entry key="directory_path">/home/outer/data/</entry>-->
+	
+	<entry key="host">192.168.0.164</entry>
+	<entry key="port">6021</entry>
+	<entry key="user">wisesys</entry>
+	<entry key="password">#sRJj!wy77YQhg</entry>
+	
+	<entry key="sftp_host">211.209.185.141</entry>
+	<entry key="sftp_port">7021</entry>
+	<entry key="sftp_id">kms</entry>
+	<entry key="sftp_pwd">4can#Uwt</entry>
+	<entry key="directory_path">/home/kms/data/</entry>
+</properties>
