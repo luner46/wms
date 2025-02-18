@@ -376,13 +376,9 @@ function clipBoard() {
     });
 }
 
-function scheduleHourlyInsert() {
+function scheduleHourlyReload() {
     var now = new Date();
     var targetTime = new Date();
-    
-    var yDayTime = new Date();
-    yDayTime.setDate(yDayTime.getDate() - 1);
-    var todayTime = new Date();
     
     targetTime.setHours(now.getHours() + (now.getMinutes() >= 1 ? 1 : 0));
     targetTime.setMinutes(1);
@@ -392,22 +388,11 @@ function scheduleHourlyInsert() {
     var nextTimeTarget = (targetTime - now);
     
     setTimeout(function() {
-    	var now = new Date();
-    	var yDayTime = new Date();
-        yDayTime.setDate(yDayTime.getDate() - 1);
-        var todayTime = new Date();
-        
-    	insertFileCount(yDayTime.getTime());
-    	insertFileCount(todayTime.getTime());
-    	
+    	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+    	createCalendarIcon(1, new Date().getDate(), new Date().getFullYear(), new Date().getMonth() + 1);
         setInterval(function() {
-        	var now = new Date();
-        	var yDayTime = new Date();
-            yDayTime.setDate(yDayTime.getDate() - 1);
-            var todayTime = new Date();
-            
-        	insertFileCount(yDayTime.getTime());
-        	insertFileCount(todayTime.getTime());
+        	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+        	createCalendarIcon(1, new Date().getDate(), new Date().getFullYear(), new Date().getMonth() + 1);
         }, 60 * 60 * 1000);
     }, nextTimeTarget);
 }

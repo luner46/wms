@@ -68,6 +68,14 @@ function createTdayErrorMsg(boardTime, khnp_error_count, error_flag_std){
     $('header .alarm.active').html('<p>' + alarmMsg + '</p>');
 }
 
+function replaceNull(value){
+	if (value == '' || value == ' ' || value == '	' || value == null) {
+		return '-';
+	} else {
+		return value;
+	}
+}
+
 function meStnInfoList() {
     var fileType = $('.fileType').val();
     var agcType = $('.agcType').val() || 'all';
@@ -83,6 +91,10 @@ function meStnInfoList() {
             var tableRows = '';
             var tableType = '';
             for (var i = 0; i < data.length; i++) {
+            	var row = data[i];
+            		for (var key in row) {
+            			row[key] = replaceNull(row[key]);
+            		}
                 var rownum = data[i]['rownum_desc'];
                 var rfobscd = data[i]['rfobscd'];
                 var wlobscd = data[i]['wlobscd'];
@@ -209,22 +221,6 @@ function downloadCSV(){
     	if (fileType == 'rnStn'){stn_info = 'me_rn_stn_info'} else if (fileType == 'wlStn') {stn_info = 'me_wl_stn_info'} else if (fileType == 'dam') {stn_info = 'me_dam_stn_info'}
 
     window.location.href = "/wdmsCont/downloadCSV.do?fileType=" + fileType + "&agcType=" + agcType + "&init_dt=" + init_dt + "&endObsCheck=" + endObsCheck + "&stateOrder=" + stateOrder + "&stn_info=" + stn_info;
-}
-
-function updateStnInfoFlag() {
-	var init_dt_hidden = $('.init_dt').val();
-	var init_dt = new Date(init_dt_hidden.substring(0, 4), init_dt_hidden.substring(4, 6) - 1, init_dt_hidden.substring(6, 8));
-	var yday_dt = new Date();
-		yday_dt.setDate(init_dt.getDate() - 1);
-	
-	var formattedDt = init_dt.getFullYear().toString() + '' + (init_dt.getMonth() + 1).toString().padStart(2, '0') + '' + init_dt.getDate().toString().padStart(2, '0');
-	var formattedYDt = yday_dt.getFullYear().toString() + '' + (yday_dt.getMonth() + 1).toString().padStart(2, '0') + '' + yday_dt.getDate().toString().padStart(2, '0');
-	$.ajax({
-		url: '/wdmsCont/updateStnInfoFlag.do',
-		data: {init_dt: formattedDt, yday_dt: formattedYDt},
-		success: function(data){
-		}
-	});
 }
 
 $(function () {

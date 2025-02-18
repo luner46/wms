@@ -56,6 +56,9 @@ public class WdmsContController {
 	private SFTPFileService sftpFileService;
     
     @Autowired
+    private ServletContext servletContext;
+    
+    @Autowired
     private SqlSessionTemplate sqlSessionMysql;
 
     @RequestMapping(value = "/fileListData.do")
@@ -79,7 +82,7 @@ public class WdmsContController {
 
     @RequestMapping(value = "/insertFileCount.do")
     @ResponseBody
-    public String insertFileCount(HttpServletRequest req, @RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam) {
+    public String insertFileCount(@RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam) {
     	int insertResult = 0;
 
     	CommonFileUtil commonFileUtil = new CommonFileUtil();
@@ -87,9 +90,9 @@ public class WdmsContController {
     	
     	try {
 	        // JSON에 저장된 기준 데이터를 순환
-        	for (int j = 0; j < jsonPath(req, dayParam).size(); j++) {
-                Map<String, Object> stdObject = jsonPath(req, dayParam).get(j);
-                
+        	for (int j = 0; j < jsonPath(dayParam).size(); j++) {
+                Map<String, Object> stdObject = jsonPath(dayParam).get(j);
+
                 String server_nm = stdObject.get("server_nm").toString();
                 String repo_nm = stdObject.get("repo_nm").toString();
                 int file_id = (int) stdObject.get("file_id");
@@ -228,21 +231,18 @@ public class WdmsContController {
         return outputFormat.format(date);
     }
     
-    private String selectJson(HttpServletRequest req, String dayParam) {
+    private String selectJson(String dayParam) {
     	String filePath = "";
     	
-    	ServletContext context = req.getSession().getServletContext();
-    	
     	if (dayParam.equals("p")) {
-            filePath = context.getRealPath("/json/wdms_file_count_past.json");
+            filePath = servletContext.getRealPath("/json/wdms_file_count_past.json");
         } else if (dayParam.equals("y")) {
-            filePath = context.getRealPath("/json/wdms_file_count_yday.json");
+            filePath = servletContext.getRealPath("/json/wdms_file_count_yday.json");
         } else if (dayParam.equals("t")) {
-            filePath = context.getRealPath("/json/wdms_file_count_tday.json");
+            filePath = servletContext.getRealPath("/json/wdms_file_count_tday.json");
         } else {
             log.error("No Suitable JSON");
         }
-    	
     	return filePath;
     }
     
@@ -352,9 +352,9 @@ public class WdmsContController {
     	if (repo_nm.equals("/nas/met")) {return 1;} else if (repo_nm.equals("/home/outer/data")) {return 2;} else if (repo_nm.equals("/nas_khnp_met")) {return 3;} else {log.error("No Valid repo_id"); return -1;}
     }
     
-    private List<Map<String, Object>> jsonPath(HttpServletRequest req, String dayParam) {
+    private List<Map<String, Object>> jsonPath(String dayParam) {
     	try {
-	    	String filePath = selectJson(req, dayParam);
+	    	String filePath = selectJson(dayParam);
 			ObjectMapper objectMapper = new ObjectMapper();
 	        List<Map<String, Object>> stdJson = objectMapper.readValue(new File(filePath), new TypeReference<List<Map<String, Object>>>(){});
 	        return stdJson;
