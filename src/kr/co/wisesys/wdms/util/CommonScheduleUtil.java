@@ -35,13 +35,19 @@ public class CommonScheduleUtil {
     // insertFileCount_매 시간 1분에 실행
     @Scheduled(cron = "0 1 * * * *")
     public void scheduledInsertFileCount() {
+    	// 당일 데이터 INSERT
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String boardTime = format.format(calendar.getTime());
+        String todayboardTime = format.format(calendar.getTime());
+        // 전일 데이터 INSERT
+        calendar.add(Calendar.DATE, -1);
+        String ydayBoardTime = format.format(calendar.getTime());
 
-        contController.insertFileCount(boardTime, "t");
+        contController.insertFileCount(todayboardTime, "t");
+        contController.insertFileCount(ydayBoardTime, "y");
+        
         log.info("Scheduled Insert");
     }
     
