@@ -54,9 +54,6 @@ public class WdmsContController {
     
     @Autowired
 	private SFTPFileService sftpFileService;
-
-    @Autowired
-    private ServletContext servletContext;
     
     @Autowired
     private SqlSessionTemplate sqlSessionMysql;
@@ -82,7 +79,7 @@ public class WdmsContController {
 
     @RequestMapping(value = "/insertFileCount.do")
     @ResponseBody
-    public String insertFileCount(@RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam) {
+    public String insertFileCount(HttpServletRequest req, @RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam) {
     	int insertResult = 0;
 
     	CommonFileUtil commonFileUtil = new CommonFileUtil();
@@ -90,8 +87,8 @@ public class WdmsContController {
     	
     	try {
 	        // JSON에 저장된 기준 데이터를 순환
-        	for (int j = 0; j < jsonPath(dayParam).size(); j++) {
-                Map<String, Object> stdObject = jsonPath(dayParam).get(j);
+        	for (int j = 0; j < jsonPath(req, dayParam).size(); j++) {
+                Map<String, Object> stdObject = jsonPath(req, dayParam).get(j);
                 
                 String server_nm = stdObject.get("server_nm").toString();
                 String repo_nm = stdObject.get("repo_nm").toString();
@@ -190,7 +187,6 @@ public class WdmsContController {
         } else if (fileType.equals("wlStn")) {
             selectList = service.meWlStnInfoData(param);
         } else {log.info("No Valid FileType");}
-        replaceNull(selectList);
         model.addAttribute("selectList", selectList);
         return selectList;
     }
@@ -210,6 +206,19 @@ public class WdmsContController {
         return selectAgcnmList;
     }
     
+    @RequestMapping(value = "/updateStnInfoFlag.do")
+    @ResponseBody
+    public String updateStnInfoFlag(Model model, @RequestParam String init_dt, @RequestParam String yday_dt){
+        String updateResult = "";
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("init_dt", init_dt);
+        param.put("yday_dt", yday_dt);
+        
+        updateResult += sqlSessionMysql.update("wdms.updateMeStnInfoFlag", param);
+        updateResult += sqlSessionMysql.update("wdms.updateMeStnInfoDelFlag", param);
+        return updateResult;
+    }
+    
     private String formatBoardTime(String boardTime) throws Exception {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyyMMddHHmm");
@@ -219,18 +228,21 @@ public class WdmsContController {
         return outputFormat.format(date);
     }
     
-    private String selectJson(String dayParam) {
+    private String selectJson(HttpServletRequest req, String dayParam) {
     	String filePath = "";
     	
+    	ServletContext context = req.getSession().getServletContext();
+    	
     	if (dayParam.equals("p")) {
-            filePath = servletContext.getRealPath("/json/wdms_file_count_past.json");
+            filePath = context.getRealPath("/json/wdms_file_count_past.json");
         } else if (dayParam.equals("y")) {
-            filePath = servletContext.getRealPath("/json/wdms_file_count_yday.json");
+            filePath = context.getRealPath("/json/wdms_file_count_yday.json");
         } else if (dayParam.equals("t")) {
-            filePath = servletContext.getRealPath("/json/wdms_file_count_tday.json");
+            filePath = context.getRealPath("/json/wdms_file_count_tday.json");
         } else {
             log.error("No Suitable JSON");
         }
+    	
     	return filePath;
     }
     
@@ -266,20 +278,27 @@ public class WdmsContController {
         param.put("stateOrder", stateOrder);
         if (fileType.equals("rnStn")) {
           selectList = service.meRnStnInfoData(param);
-          data += "rfobscd, obsnm, agcnm, addr, etcaddr, lat, lon" + "\n";
+          data += "init_dt, rfobscd, obsnm, agcnm, addr, etcaddr, lat, lon, status" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
+              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("rfobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
               data += selectList.get(i).get("addr") + ",";
               data += selectList.get(i).get("etcaddr") + ",";
               data += selectList.get(i).get("lat") + ",";
-              data += selectList.get(i).get("lon") + "\n";
+              data += selectList.get(i).get("lon") + ",";
+              if (selectList.get(i).get("flag_nm").equals("기본")) {
+                data += "-" + "\n";
+              } else {
+                data += selectList.get(i).get("flag_nm") + "\n";
+              }
             }
         } else if (fileType.equals("dam")) {
           selectList = service.meDamStnInfoData(param);
-          data += "dmobscd, obsnm, agcnm, addr, etcaddr, lat, lon, fldlmtwl, pfh" + "\n";
+          data += "init_dt, dmobscd, obsnm, agcnm, addr, etcaddr, lat, lon, fldlmtwl, pfh, status" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
+              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("dmobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
@@ -288,12 +307,18 @@ public class WdmsContController {
               data += selectList.get(i).get("lat") + ",";
               data += selectList.get(i).get("lon") + ",";
               data += selectList.get(i).get("fldlmtwl") + ",";
-              data += selectList.get(i).get("pfh") + "\n";
+              data += selectList.get(i).get("pfh") + ",";
+              if (selectList.get(i).get("flag_nm").equals("기본")) {
+                data += "-" + "\n";
+              } else {
+                data += selectList.get(i).get("flag_nm") + "\n";
+              }
             }
         } else if (fileType.equals("wlStn")) {
           selectList = service.meWlStnInfoData(param);
-          data += "wlobscd, obsnm, agcnm, addr, etcaddr, lat, lon, gdt, attwl, wrnwl, almwl, srswl, pfh, fstnyn" + "\n";
+          data += "init_dt, wlobscd, obsnm, agcnm, addr, etcaddr, lat, lon, gdt, attwl, wrnwl, almwl, srswl, pfh, fstnyn, status" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
+              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("wlobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
@@ -307,7 +332,12 @@ public class WdmsContController {
               data += selectList.get(i).get("almwl") + ",";
               data += selectList.get(i).get("srswl") + ",";
               data += selectList.get(i).get("pfh") + ",";
-              data += selectList.get(i).get("fstnyn") + "\n";
+              data += selectList.get(i).get("fstnyn") + ",";
+              if (selectList.get(i).get("flag_nm").equals("기본")) {
+                data += "-" + "\n";
+              } else {
+                data += selectList.get(i).get("flag_nm") + "\n";
+              }
             }
         } else {log.info("No Valid FileType");}
         
@@ -322,9 +352,9 @@ public class WdmsContController {
     	if (repo_nm.equals("/nas/met")) {return 1;} else if (repo_nm.equals("/home/outer/data")) {return 2;} else if (repo_nm.equals("/nas_khnp_met")) {return 3;} else {log.error("No Valid repo_id"); return -1;}
     }
     
-    private List<Map<String, Object>> jsonPath(String dayParam) {
+    private List<Map<String, Object>> jsonPath(HttpServletRequest req, String dayParam) {
     	try {
-	    	String filePath = selectJson(dayParam);
+	    	String filePath = selectJson(req, dayParam);
 			ObjectMapper objectMapper = new ObjectMapper();
 	        List<Map<String, Object>> stdJson = objectMapper.readValue(new File(filePath), new TypeReference<List<Map<String, Object>>>(){});
 	        return stdJson;
@@ -333,17 +363,4 @@ public class WdmsContController {
             return new ArrayList<>();
         }
     }
-    
-    private void replaceNull(ArrayList<HashMap<String, Object>> list) {
-        for (var i = 0; i < list.size(); i++) {
-        	HashMap<String, Object> map = new HashMap<>();
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                Object value = entry.getValue();
-                if (value == null || value == " " || value == "	" || ((String) value).trim().isEmpty()) {
-                    entry.setValue("-");
-                }
-            }
-        }
-    }
-
 }

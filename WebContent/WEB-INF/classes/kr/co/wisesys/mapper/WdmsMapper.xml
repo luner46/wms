@@ -198,30 +198,6 @@ select agcnm from wms.me_wl_stn_info mwsi group by agcnm
 select agcnm from wms.me_dam_stn_info mdsi group by agcnm
 </select>
 
-<update id="updateMeRnStnInfoFlag" parameterType="map">
-UPDATE wms.me_rn_stn_info c LEFT JOIN wms.me_rn_stn_info p ON c.rfobscd = p.rfobscd AND p.init_dt = #{yesterday} SET c.flag = CASE WHEN p.rfobscd IS NULL THEN '1' WHEN c.obsnm != p.obsnm THEN '3' WHEN c.agcnm != p.agcnm THEN '4' WHEN c.addr != p.addr OR c.etcaddr != p.etcaddr THEN '5' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' ELSE c.flag END WHERE c.init_dt = #{today} OR (c.rfobscd IS NULL AND c.init_dt = #{yesterday})
-</update>
-
-<update id="updateMeRnStnInfoDelFlag" parameterType="map">
-UPDATE wms.me_rn_stn_info p LEFT JOIN wms.me_rn_stn_info c ON p.rfobscd = c.rfobscd AND c.init_dt = #{today} SET p.flag = '2' WHERE p.init_dt = #{yesterday} AND c.rfobscd IS NULL
-</update>
-
-<update id="updateMeWlStnInfoFlag" parameterType="map">
-UPDATE wms.me_wl_stn_info c LEFT JOIN wms.me_wl_stn_info p ON c.wlobscd = p.wlobscd AND p.init_dt = #{yesterday} SET c.flag = CASE WHEN p.wlobscd IS NULL THEN '1' WHEN c.obsnm != p.obsnm THEN '3' WHEN c.agcnm != p.agcnm THEN '4' WHEN c.addr != p.addr OR c.etcaddr != p.etcaddr THEN '5' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' WHEN c.gdt != p.gdt THEN '7' WHEN c.attwl != p.attwl THEN '8' WHEN c.wrnwl != p.wrnwl THEN '9' WHEN c.almwl != p.almwl THEN '10' WHEN c.srswl != p.srswl THEN '11' WHEN c.pfh != p.pfh THEN '12' WHEN c.fstnyn != p.fstnyn THEN '13' ELSE c.flag END WHERE c.init_dt = #{today} OR (c.wlobscd IS NULL AND c.init_dt = #{yesterday})
-</update>
-
-<update id="updateMeWlStnInfoDelFlag" parameterType="map">
-UPDATE wms.me_wl_stn_info p LEFT JOIN wms.me_wl_stn_info c ON p.wlobscd = c.wlobscd AND c.init_dt = #{today} SET p.flag = '2' WHERE p.init_dt = #{yesterday} AND c.wlobscd IS NULL
-</update>
-
-<update id="updateMeDamStnInfoFlag" parameterType="map">
-UPDATE wms.me_dam_stn_info c LEFT JOIN wms.me_dam_stn_info p ON c.dmobscd = p.dmobscd AND p.init_dt = #{yesterday} SET c.flag =  CASE WHEN p.dmobscd IS NULL THEN '1' WHEN c.obsnm != p.obsnm THEN '3' WHEN c.agcnm != p.agcnm THEN '4' WHEN c.addr != p.addr OR c.etcaddr != p.etcaddr THEN '5' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' WHEN c.fldlmtwl != p.fldlmtwl THEN '14' WHEN c.pfh != p.pfh THEN '12' ELSE c.flag END WHERE c.init_dt = #{today} OR (c.dmobscd IS NULL AND c.init_dt = #{yesterday})
-</update>
-
-<update id="updateMeDamStnInfoDelFlag" parameterType="map">
-UPDATE wms.me_dam_stn_info p LEFT JOIN wms.me_dam_stn_info c ON p.dmobscd = c.dmobscd AND c.init_dt = #{today} SET p.flag = '2' WHERE p.init_dt = #{yesterday}  AND c.dmobscd IS NULL
-</update>
-
 <update id="updateCorrectionData">
     <foreach collection="correctionData" item="item" separator=";">
         UPDATE wms.wdms_file_data

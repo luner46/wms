@@ -376,6 +376,42 @@ function clipBoard() {
     });
 }
 
+function scheduleHourlyInsert() {
+    var now = new Date();
+    var targetTime = new Date();
+    
+    var yDayTime = new Date();
+    yDayTime.setDate(yDayTime.getDate() - 1);
+    var todayTime = new Date();
+    
+    targetTime.setHours(now.getHours() + (now.getMinutes() >= 1 ? 1 : 0));
+    targetTime.setMinutes(1);
+    targetTime.setSeconds(0);
+    targetTime.setMilliseconds(0);
+
+    var nextTimeTarget = (targetTime - now);
+    
+    setTimeout(function() {
+    	var now = new Date();
+    	var yDayTime = new Date();
+        yDayTime.setDate(yDayTime.getDate() - 1);
+        var todayTime = new Date();
+        
+    	insertFileCount(yDayTime.getTime());
+    	insertFileCount(todayTime.getTime());
+    	
+        setInterval(function() {
+        	var now = new Date();
+        	var yDayTime = new Date();
+            yDayTime.setDate(yDayTime.getDate() - 1);
+            var todayTime = new Date();
+            
+        	insertFileCount(yDayTime.getTime());
+        	insertFileCount(todayTime.getTime());
+        }, 60 * 60 * 1000);
+    }, nextTimeTarget);
+}
+
 function nowDate() {
     var now = new Date();
 
@@ -488,6 +524,7 @@ $(function() {
 	clipBoard();
 	createCalendar(new Date().getMonth() + 1, new Date().getFullYear());
 	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+	scheduleHourlyInsert();
 });
 
 
