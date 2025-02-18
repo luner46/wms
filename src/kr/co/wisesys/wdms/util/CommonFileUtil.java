@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -237,6 +238,10 @@ public class CommonFileUtil {
 	   LocalDate yesterday = today.minusDays(1);
 	   LocalTime now = LocalTime.now();
 	   
+	   boolean isPreviousMonth = (issuedDateParsed.getMonthValue() < today.getMonthValue() && 
+               issuedDateParsed.getYear() == today.getYear()) ||
+               (issuedDateParsed.getYear() < today.getYear());
+	   
 	   String suffix = "";
 	   
 	   int hour = now.getHour() -1;
@@ -300,6 +305,9 @@ public class CommonFileUtil {
     	   if (issuedDateParsed.isEqual(today)) {
     		   if((hour+1) < 12) return today.getDayOfMonth() -2;
     		   else return today.getDayOfMonth() -1;
+    	   } else if(isPreviousMonth) {
+    		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+    		   return lastDayOfMonth;
     	   } else {
     		   if((hour+1) < 12) return today.getDayOfMonth() -2; 
     		   else return today.getDayOfMonth() -1;  
@@ -308,6 +316,9 @@ public class CommonFileUtil {
     	   if (issuedDateParsed.isEqual(today)) {
     		   if((hour+1) < 12) return today.getDayOfMonth() -1;
     		   else return today.getDayOfMonth();
+    	   } else if(isPreviousMonth) {
+    		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+    		   return lastDayOfMonth;
     	   } else {
     		   if((hour+1) < 12) return today.getDayOfMonth() -1;
     		   else return today.getDayOfMonth();  
