@@ -309,10 +309,22 @@ public class SFTPFileService {
         CommonFileUtil commonFileUtil = new CommonFileUtil();
         Set<String> existingFiles = getExistingFiles(remoteDir);
 
+        String[] pathParts = remoteDir.split("/");
+        int year = Integer.parseInt(pathParts[pathParts.length - 2]);  
+        int month = Integer.parseInt(pathParts[pathParts.length - 1]); 
+
+        LocalDate issuedMonth = LocalDate.of(year, month, 1); 
+        LocalDate startDate = issuedMonth.withDayOfMonth(1); 
+        LocalDate endDate = issuedMonth.withDayOfMonth(issuedMonth.lengthOfMonth());
+
         LocalDate today = LocalDate.now();
-        LocalDate issuedMonth = LocalDate.of(today.getYear(), today.getMonth(), 1); // 현재 월의 첫 날
-        LocalDate startDate = issuedMonth.withDayOfMonth(1); // 현재 달의 1일부터 시작
-        LocalDate endDate = issuedMonth.withDayOfMonth(issuedMonth.lengthOfMonth()); // 현재 달의 마지막 날까지
+        if (issuedMonth.getMonth() == today.getMonth() && issuedMonth.getYear() == today.getYear()) {
+            if (fileId == 2) {
+                endDate = today.minusDays(1);
+            } else if (fileId == 25) {
+                endDate = today; 
+            }
+        }
 
         String fileExtension = commonFileUtil.fileExtension(fileId);
 
@@ -323,26 +335,18 @@ public class SFTPFileService {
 
             String fileName = issueYear + issueMonth + issueDay + fileExtension;
 
-            // ✅ 1일이면 이전 달 마지막 날짜를 백업 파일로 사용, 아니면 전날 백업
-            LocalDate backupDateLocal;
-            if (issuedDate.getDayOfMonth() == 1) {
-                backupDateLocal = issuedDate.minusMonths(1).withDayOfMonth(issuedDate.minusMonths(1).lengthOfMonth());
-            } else {
-                backupDateLocal = issuedDate.minusDays(1);
+            if (existingFiles.contains(fileName)) {
+                continue; 
             }
 
+            String backupFileName = getNearestBackupFile(issuedDate, backupBaseDir, fileExtension, startDate);
 
-            String backupYear = backupDateLocal.format(DateTimeFormatter.ofPattern("yyyy"));
-            String backupMonth = backupDateLocal.format(DateTimeFormatter.ofPattern("MM"));
-            String backupDay = backupDateLocal.format(DateTimeFormatter.ofPattern("dd"));
+            if (backupFileName == null) {
+                log.warn(issueMonth + "월 내에서 백업 파일을 찾을 수 없음: " + fileName);
+                continue;
+            }
 
-            String backupFileName = backupYear + backupMonth + backupDay + fileExtension;
-
-            // ✅ **1월이면 1월에서만 찾도록 설정 (절대 2월로 넘어가지 않도록)**
-            String backupDir = "/home/kms/data/asos_ssb_pet_1day/" + issueYear + "/" + issueMonth;
-
-            log.info("📂 backupDir : " + backupDir);
-            log.info("📄 backupFileName : " + backupFileName);
+            String backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + issueYear + "/" + issueMonth);
 
             Set<String> backupFiles = getExistingFiles(backupDir);
 
@@ -350,6 +354,35 @@ public class SFTPFileService {
         }
     }
 
+    /**
+     * 가장 가까운 백업 파일을 찾는 메서드 (최대 7일 전까지 조회)
+     */
+    private String getNearestBackupFile(LocalDate targetDate, String backupBaseDir, String fileExtension, LocalDate startDate) {
+        for (int i = 1; i <= 7; i++) { 
+            LocalDate backupDate = targetDate.minusDays(i);
+
+            if (backupDate.isBefore(startDate)) {
+                break;
+            }
+
+            String backupYear = backupDate.format(DateTimeFormatter.ofPattern("yyyy"));
+            String backupMonth = backupDate.format(DateTimeFormatter.ofPattern("MM"));
+            String backupDay = backupDate.format(DateTimeFormatter.ofPattern("dd"));
+
+            String backupFileName = backupYear + backupMonth + backupDay + fileExtension;
+            String backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + backupYear + "/" + backupMonth);
+
+            try {
+                Set<String> backupFiles = getExistingFiles(backupDir);
+                if (backupFiles.contains(backupFileName)) {
+                    return backupFileName; 
+                }
+            } catch (SftpException e) {
+                log.warn("백업 파일 조회 중 오류 발생: " + backupDir, e);
+            }
+        }
+        return null; 
+    }
     
     /**
      * 10분 및 1시간 단위 파일 생성 및 업로드 (fileId: 1, 31, 28)
@@ -379,17 +412,19 @@ public class SFTPFileService {
                 String backupDir = null;
                 Set<String> backupFiles = new HashSet<>();
 
-                // 최대 7일 동안 과거데이터 조회
                 for (int i = 1; i <= 1008; i++) {
-                    backupDateTime = fileDateTime.minusMinutes(i * 10); // -10분씩 감소
+                    backupDateTime = fileDateTime.minusMinutes(i * 10);
                     String backupYear = backupDateTime.format(DateTimeFormatter.ofPattern("yyyy"));
                     String backupMonth = backupDateTime.format(DateTimeFormatter.ofPattern("MM"));
                     String backupDay = backupDateTime.format(DateTimeFormatter.ofPattern("dd"));
                     String backupTime = backupDateTime.format(DateTimeFormatter.ofPattern((fileId == 28) ? "HH" : "HHmm"));
                     String tempBackupFileName = backupYear + backupMonth + backupDay + backupTime + fileExtension;
 
-                    // 백업 폴더 경로 업데이트
                     backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}/\\d{2}$", "/" + backupYear + "/" + backupMonth + "/" + backupDay);
+                    
+                    if (shouldSkipFileCreation(issuedDate, isToday, isYesterday, isBeforeNoon, hour, time, fileId)) {
+                        continue;
+                    }
                     
                     try {
                         backupFiles = getExistingFiles(backupDir);
@@ -469,7 +504,7 @@ public class SFTPFileService {
     }
     
     /**
-     * 가장 적절한 백업 파일을 찾는 메서드
+     * gdaps,ldaps 가장 적절한 백업 파일을 찾는 메서드
      */
     private String findBestBackupFile(String prefix, String datePart, String timePart, String fileExtension, String backupDir) {
         LocalDateTime originalTime = LocalDateTime.parse(datePart + timePart, DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
