@@ -28,12 +28,12 @@ public class CommonScheduleUtil {
     // updateMeStnInfo_매일 02시에 실행
     @Scheduled(cron = "0 0 2 * * *")
     public void scheduledUpdateStnInfo() {
-        int updateResult = updateStnInfo();
+        updateStnInfo();
         log.info("Scheduled Update");
     }
 
     // insertFileCount_매 시간 1분에 실행
-    @Scheduled(cron = "0 1 * * * *")
+    @Scheduled(cron = "30 0 * * * *")
     public void scheduledInsertFileCount() {
     	// 당일 데이터 INSERT
         Calendar calendar = Calendar.getInstance();

@@ -17,27 +17,15 @@
 document.addEventListener("DOMContentLoaded", function() {
     var path = window.location.pathname;
     var activeMenu = null;
-
-    if (path.includes("/wsms/")) {
-        activeMenu = document.getElementById("wsms");
-    } else if (path.includes("/wdms/")) {
-        activeMenu = document.getElementById("wdms");
-    } else {
-        activeMenu = document.getElementById("whms"); 
-    }
-
+    
+    if(path.includes("/wsms/")) activeMenu = document.getElementById("wsms");
+    if(path.includes("/wdms/")) activeMenu = document.getElementById("wdms");
+    if(path.includes("/whms/")) activeMenu = document.getElementById("whms");
+    
+    if (!activeMenu) activeMenu = document.getElementById("whms");
     if (activeMenu) activeMenu.classList.add("active");
+
 });
-
-function movePage(idx) {
-    var urls = [
-        "/whms/whms_monitoring.do",
-        "/wsms/wsms_monitoring.do",
-        "/wdms/wdms_monitoring.do"
-    ];
-    location.href = urls[idx - 1];
-}
-
 </script>
 <body>
 	<input type="hidden" class="currentDateFormat" value="${currentDateFormat}" />
@@ -45,9 +33,9 @@ function movePage(idx) {
 <div id="wrap">
     <div class="header_top">
         <ul>
-	        <li><a href="javascript:movePage(1);" id="whms">하드웨어</a></li>
-	        <li><a href="javascript:movePage(2);" id="wsms">시스템</a></li>
-	        <li><a href="javascript:movePage(3);" id="wdms">데이터</a></li>
+	        <li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
+	        <li><a href="/wsms/wsms_monitoring.do" id="wsms">시스템</a></li>
+	        <li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
 	    </ul>
     </div>
 	

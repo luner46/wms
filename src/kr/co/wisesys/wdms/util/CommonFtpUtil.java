@@ -56,11 +56,16 @@ public class CommonFtpUtil {
 			session.setConfig(config);
 			
 			session.connect();
+			if (!session.isConnected()) {log.error("Not connected");}
 			channelSftp = (ChannelSftp) session.openChannel("sftp");
 			channelSftp.connect();
 			
 			String remoteDir = filePath.replace("yyyy", yyyy).replace("mm", month).replace("dd", day);
 			log.info("success remoteDir={}",remoteDir);
+			
+			try {channelSftp.stat(remoteDir);} catch (SftpException e) {
+	            log.error("acccess denied={}", remoteDir);
+	        }
 			
 			@SuppressWarnings("unchecked")
 	        Vector<ChannelSftp.LsEntry> fileList = channelSftp.ls(remoteDir);

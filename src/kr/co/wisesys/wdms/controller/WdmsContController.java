@@ -44,10 +44,17 @@ import kr.co.wisesys.wdms.util.CommonFtpUtil;
 public class WdmsContController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     
-    @Value("#{config['sftp_host']}") private String sftp_host;
-    @Value("#{config['sftp_port']}") private int sftp_port;
-    @Value("#{config['sftp_id']}") private String sftp_id;
-    @Value("#{config['sftp_pwd']}") private String sftp_pwd;
+    // KHNP
+    @Value("#{config['khnp_host']}") private String khnp_host;
+    @Value("#{config['khnp_port']}") private int khnp_port;
+    @Value("#{config['khnp_id']}") private String khnp_id;
+    @Value("#{config['khnp_pwd']}") private String khnp_pwd;
+    
+    // RND
+    @Value("#{config['rnd_host']}") private String rnd_host;
+    @Value("#{config['rnd_port']}") private int rnd_port;
+    @Value("#{config['rnd_id']}") private String rnd_id;
+    @Value("#{config['rnd_pwd']}") private String rnd_pwd;
     
     @Autowired
 	private WdmsService service;
@@ -95,20 +102,27 @@ public class WdmsContController {
 
                 String server_nm = stdObject.get("server_nm").toString();
                 String repo_nm = stdObject.get("repo_nm").toString();
+                int type_id = (int) stdObject.get("type_id");
                 int file_id = (int) stdObject.get("file_id");
-                int file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), sftp_host, sftp_port, sftp_id, sftp_pwd);
+                int file_count = 0;
+	                if (server_nm.equals("khnp") && repo_nm.equals("/home/outer/data")) {
+	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), khnp_host, khnp_port, khnp_id, khnp_pwd);
+	                } else if (server_nm.equals("rnd") && repo_nm.equals("/nas/met")){
+	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), rnd_host, rnd_port, rnd_id, rnd_pwd);
+	                }
                 String error_flag = (String) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("error_flag");
                 int std_count = (int) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("std_count");
                 
                 HashMap<String, Object> param = new HashMap<>();
                 param.put("server_id", getServerId(server_nm));
                 param.put("repo_id", getRepoId(repo_nm));
+                param.put("type_id", type_id);
                 param.put("file_id", file_id);
                 param.put("boardTime", formatBoardTime(boardTime));
                 param.put("file_count", file_count);
                 param.put("error_flag", error_flag);
                 param.put("std_count", std_count);
-                
+
                 insertResult += sqlSessionMysql.insert("wdms.insertFileCount", param);
         	}
             return (insertResult > 0) ? "Insert success" : "Insert error";

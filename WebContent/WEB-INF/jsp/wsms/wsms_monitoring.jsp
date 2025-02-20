@@ -3,7 +3,7 @@
 <jsp:include page="/WEB-INF/jsp/include/include_header.jsp"/>
     <style type="text/css"> @import url("/css/wsms.css");</style>
 	<script src="/js/plugin/highcharts/highcharts.js"></script>
-	<script src="https://code.highcharts.com/8.0.4/modules/data.js"></script>
+	<!--  <script src="/js/plugin/highcharts/data.js"></script> -->
 	<title>WSMS - Wiseplus System Monitoring Server</title>
 <script>
 
@@ -116,14 +116,14 @@ function stopLiveChart(system_id) {
         delete charts[system_id].intervalId; 
     }
 
-    // 차트를 완전히 파괴하고 객체에서 삭제
+    /* 차트를 완전히 파괴하고 객체에서 삭제
     if (charts[system_id] && charts[system_id].chart) {
         charts[system_id].chart.destroy();
         delete charts[system_id].chart;
-    }
+    }*/
     
     $('#network_response_' + system_id).empty();
-    $('#con_' + system_id).removeClass('active');
+    //$('#con_' + system_id).removeClass('active');
 }
 
 var status_val = {};
@@ -191,20 +191,34 @@ function fetchLatestData(system_id) {
                             const initTime = point.category;
                             const res_text = point.options.y;
                             
+                            var now = new Date();
+                            
+                            var month = now.getMonth() + 1;
+                            month = month < 10 ? '0' + month : month; 
+                            
+                            var day = now.getDate();
+                            day = day < 10 ? '0' + day : day;
+                            
+                            var hours = now.getHours();
+                            hours = hours < 10 ? '0' + hours : hours;
+
+                            var minutes = now.getMinutes();
+                            minutes = minutes < 10 ? '0' + minutes : minutes;
+                            
                             var hour = "";
                             var minute = "";
                             
                             const latestData = chartData.find(dataPoint => dataPoint[0] === point.category);
                             
-                            if (typeof initTime === 'number') {
+                            /*if (typeof initTime === 'number') {
                                 hour = point.options.name.substring(8, 10);
                                 minute = point.options.name.substring(10, 12);
                             } else {
                             	hour = initTime.substring(8, 10);
                             	minute = initTime.substring(10, 12);
-                            }
+                            }*/
 
-                            return '시간 : ' + hour + ':' + minute + '<br>응답속도 : ' + (res_text * 1000).toFixed(2) + 'ms';
+                            return '시간 : ' + hours + ':' + minutes + '<br>응답속도 : ' + (res_text * 1000).toFixed(2) + 'ms';
                             
                         }
                     },
@@ -256,20 +270,34 @@ function fetchLatestData(system_id) {
                             const initTime = point.category;
                             const res_text = point.options.y;
                             
+							var now = new Date();
+                            
+                            var month = now.getMonth() + 1;
+                            month = month < 10 ? '0' + month : month; 
+                            
+                            var day = now.getDate();
+                            day = day < 10 ? '0' + day : day;
+                            
+                            var hours = now.getHours();
+                            hours = hours < 10 ? '0' + hours : hours;
+
+                            var minutes = now.getMinutes();
+                            minutes = minutes < 10 ? '0' + minutes : minutes;
+                            
                             var hour = "";
                             var minute = "";
                             
                             const latestData = chartData.find(dataPoint => dataPoint[0] === point.category);
                             
-                            if (typeof initTime === 'number') {
+                            /*if (typeof initTime === 'number') {
                                 hour = point.options.name.substring(8, 10);
                                 minute = point.options.name.substring(10, 12);
                             } else {
                             	hour = initTime.substring(8, 10);
                             	minute = initTime.substring(10, 12);
-                            }
+                            }*/
 
-                            return '시간 : ' + hour + ':' + minute + '<br>응답속도 : ' + (res_text * 1000).toFixed(2) + 'ms';
+                            return '시간 : ' + hours + ':' + minutes + '<br>응답속도 : ' + (res_text * 1000).toFixed(2) + 'ms';
                             
                         }
                     },

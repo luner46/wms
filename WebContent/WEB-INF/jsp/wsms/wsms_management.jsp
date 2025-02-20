@@ -62,16 +62,37 @@ function inputSystemInfo() {
 }
 
 function updateSystemInfo(num) {
+	var system_ord = $("#up_system_ord_" + num).val();
+	var system_req = parseInt($("#up_req_time_" + num).val()) * 1000;
+	
 	var systemData = {
         system_id: num,
-        system_ord: $("#up_system_ord_" + num).val(),
+        system_ord: system_ord,
         system_nm: $("#up_system_nm_" + num).val(),
         system_url: $("#up_system_url_" + num).val(),
-        system_req: $("#up_req_time_" + num).val(),
+        system_req: system_req,
         system_res: $("#up_res_time_" + num).val(),
         system_agc: $("#up_order_agency_" + num).val(),
         system_plc: $("#up_server_place_" + num).val()
     };
+	
+	// 중복 순서 입력 방지
+    var duplicate_ord = [];
+    var isDuplicate = false;
+
+    $("input[name='up_system_ord']").each(function () {
+        var ordValue = $(this).val();
+        if (ordValue === system_ord && $(this).attr("id") !== "up_system_ord_" + num) {
+            isDuplicate = true;
+        }
+        duplicate_ord.push(ordValue);
+    });
+
+    if (isDuplicate) {
+        alert("중복된 순서 번호입니다. 다른 번호를 입력해주세요.");
+        return;
+    }
+
 	
 	var answer = confirm("수정하시겠습니까?");
 	

@@ -2,6 +2,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "asos_ssb_pet_10min",
         "file_id" : 1,
         "file_path" : "/home/outer/data/asos_ssb_pet_10min/yyyy/mm/dd",
@@ -11,6 +12,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "asos_ssb_pet_1day",
         "file_id" : 2,
         "file_path" : "/home/outer/data/asos_ssb_pet_1day/yyyy/mm",
@@ -21,6 +23,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis/03",
         "file_id" : 14,
         "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/03",
@@ -31,6 +34,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis/09",
         "file_id" : 15,
         "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/09",
@@ -41,6 +45,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis/15",
         "file_id" : 16,
         "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/15",
@@ -51,6 +56,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis/21",
         "file_id" : 17,
         "file_path" : "/nas_khnp/met/g120_v070_erea_unis/yyyy/mm/dd/21",
@@ -60,6 +66,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/03",
         "file_id" : 21,
         "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/03",
@@ -70,6 +77,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/09",
         "file_id" : 22,
         "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/09",
@@ -80,6 +88,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/15",
         "file_id" : 23,
         "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/15",
@@ -90,6 +99,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "g120_v070_erea_unis_han_172ssb_10m/21",
         "file_id" : 24,
         "file_path" : "/home/outer/data/g120_v070_erea_unis_han_172ssb_10m/yyyy/mm/dd/21",
@@ -99,6 +109,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "kma_asos_1day",
         "file_id" : 25,
         "file_path" : "/home/outer/data/kma_asos_1day/yyyy/mm",
@@ -109,6 +120,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "kma_asos_1hr",
         "file_id" : 28,
         "file_path" : "/home/outer/data/kma_asos_1hr/yyyy/mm/dd",
@@ -118,6 +130,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "kma_aws_10min_qc",
         "file_id" : 31,
         "file_path" : "/home/outer/data/kma_aws_10min_qc/yyyy/mm/dd",
@@ -127,6 +140,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis/03",
         "file_id" : 38,
         "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/03",
@@ -137,6 +151,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis/09",
         "file_id" : 39,
         "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/09",
@@ -147,6 +162,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis/15",
         "file_id" : 40,
         "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/15",
@@ -157,6 +173,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis/21",
         "file_id" : 41,
         "file_path" : "/nas_khnp/met/l015_v070_erlo_unis/yyyy/mm/dd/21",
@@ -166,6 +183,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/03",
         "file_id" : 42,
         "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/03",
@@ -176,6 +194,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/09",
         "file_id" : 43,
         "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/09",
@@ -186,6 +205,7 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/15",
         "file_id" : 44,
         "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/15",
@@ -196,10 +216,198 @@
     {
         "server_nm" : "khnp",
         "repo_nm" : "/home/outer/data",
+        "type_id" : 1,
         "file_nm" : "l015_v070_erlo_unis_han_172ssb_10m/21",
         "file_id" : 45,
         "file_path" : "/home/outer/data/l015_v070_erlo_unis_han_172ssb_10m/yyyy/mm/dd/21",
         "std_count" : "0",
         "std_tm" : "01:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_bo_10min_qc",
+        "file_id" : 49,
+        "file_path" : "/nas/met/me_bo_10min_qc/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_bo_1day_qc",
+        "file_id" : 50,
+        "file_path" : "/nas/met/me_bo_1day_qc/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_bo_1hr_qc",
+        "file_id" : 51,
+        "file_path" : "/nas/met/me_bo_1hr_qc/yyyy/mm/dd",
+        "std_count" : "hh - 1",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_dam_10min_qc",
+        "file_id" : 52,
+        "file_path" : "/nas/met/me_dam_10min_qc/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_dam_1day_qc",
+        "file_id" : 53,
+        "file_path" : "/nas/met/me_dam_1day_qc/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_dam_1hr_qc",
+        "file_id" : 54,
+        "file_path" : "/nas/met/me_dam_1hr_qc/yyyy/mm/dd",
+        "std_count" : "hh - 1",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_rn_10min_qc",
+        "file_id" : 55,
+        "file_path" : "/nas/met/me_rn_10min_qc/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_rn_1day_qc",
+        "file_id" : 56,
+        "file_path" : "/nas/met/me_rn_1day_qc/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_rn_1hr_qc",
+        "file_id" : 57,
+        "file_path" : "/nas/met/me_rn_1hr_qc/yyyy/mm/dd",
+        "std_count" : "hh - 1",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_wl_10min_qc",
+        "file_id" : 58,
+        "file_path" : "/nas/met/me_wl_10min_qc/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_wl_1day_qc",
+        "file_id" : 59,
+        "file_path" : "/nas/met/me_wl_1day_qc/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "me_wl_1hr_qc",
+        "file_id" : 60,
+        "file_path" : "/nas/met/me_wl_1hr_qc/yyyy/mm/dd",
+        "std_count" : "hh - 1",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_10min/tm_ef",
+        "file_id" : 66,
+        "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_ef/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_10min/tm_ssb",
+        "file_id" : 67,
+        "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_ssb/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_10min/tm_thi",
+        "file_id" : 68,
+        "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_thi/yyyy/mm/dd",
+        "std_count" : "(hh * 6) - 2",
+        "std_tm" : "yyyy/mm/dd/hh:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_1day/tm_ef",
+        "file_id" : 69,
+        "file_path" : "/nas/met/tm_ssb_pcp_1day/tm_ef/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_1day/tm_ssb",
+        "file_id" : 70,
+        "file_path" : "/nas/met/tm_ssb_pcp_1day/tm_ssb/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
+    },
+    {
+        "server_nm" : "rnd",
+        "repo_nm" : "/nas/met",
+        "type_id" : 2,
+        "file_nm" : "tm_ssb_pcp_1day/tm_thi",
+        "file_id" : 71,
+        "file_path" : "/nas/met/tm_ssb_pcp_1day/tm_thi/yyyy/mm",
+        "prev_std_count" : "dd - 2",
+        "next_std_count" : "dd - 1",
+        "std_tm" : "yyyy/mm/dd/06:00:00"
     }
 ]

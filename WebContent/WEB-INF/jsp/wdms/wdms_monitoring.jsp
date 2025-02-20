@@ -138,13 +138,13 @@ function createCalendar(mm, yy) {
             } else {
                 // 오늘 데이터
                 if (dayCount == dd && mm == (date.getMonth() + 1) && currentYear == date.getFullYear()) {
-                    week += '<li class="today day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li></ul></li>';
+                    week += '<li class="today day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li><li class="li_rnd">RND</li></ul></li>';
                 // 해당 월 오늘 이전 데이터
                 } else if (dayCount < dd && mm == (date.getMonth() + 1) && currentYear == date.getFullYear()) {
-                   	week += '<li class="past day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li></ul></li>';
+                   	week += '<li class="past day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li><li class="li_rnd">RND</li></ul></li>';
                 // 전 월 데이터
                 } else if ((currentMonth < (date.getMonth() + 1) && currentYear == date.getFullYear()) || currentYear < date.getFullYear()) {
-                	week += '<li class="past day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li></ul></li>';
+                	week += '<li class="past day' + dayCount.toString().padStart(2, '0') + '" onclick="openBoard(' + currentYear + ', ' + currentMonth + ', ' + dayCount.toString().padStart(2, '0') + ');"><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"><li class="li_khnp">KHNP</li><li class="li_rnd">RND</li></ul></li>';
                 // 오늘 이후 데이터
                 } else {
                     week += '<li><span class="date">' + dayCount.toString().padStart(2, '0') + '</span><ul class="list"></ul></li>';
@@ -188,8 +188,8 @@ function createCalendarIcon(firstDate, lastDate, yy, mm) {
                 url: '/wdmsCont/fileListData.do',
                 data: {boardTime: boardTime, dayParam: dayParam},
                 success: function (data) {
-                    var isError = false;
-                    var isCorrection = false;
+                    var isError = {khnp: false, rnd: false};
+                    var isCorrection = {khnp: false, rnd: false};
 
                     for (var j = 0; j < data.length; j++) {
                         var server_nm = data[j]["server_nm"];
@@ -197,17 +197,28 @@ function createCalendarIcon(firstDate, lastDate, yy, mm) {
                         var error_flag = data[j]["error_flag"];
 
                         if (server_nm == 'khnp' && repo_nm == '/home/outer/data') {
-                            if (error_flag == 'y') {isError = true;} else if (error_flag == 'c') {isCorrection = true;}
+                            if (error_flag == 'y') {isError.khnp = true;} else if (error_flag == 'c') {isCorrection.khnp = true;}
+                        } else if (server_nm == 'rnd' && repo_nm == '/nas/met') {
+                            if (error_flag == 'y') {isError.rnd = true;} else if (error_flag == 'c') {isCorrection.rnd = true;}
                         }
                     }
 
-                    if (isError) {
+                    if (isError.khnp) {
                     	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').addClass("error");
-                    } else if (!isError && isCorrection) {
+                    } else if (!isError.khnp && isCorrection.khnp) {
                     	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').addClass("reprod");
                     } else {
                     	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').removeClass("error");
                     	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').removeClass("reprod");
+                    }
+                    
+                    if (isError.rnd) {
+                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').addClass("error");
+                    } else if (!isError.rnd && isCorrection.rnd) {
+                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').addClass("reprod");
+                    } else {
+                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').removeClass("error");
+                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').removeClass("reprod");
                     }
                 }
             });
@@ -230,21 +241,30 @@ function fileCount(date) {
         url: '/wdmsCont/fileListData.do',
         data: {boardTime: boardTime, dayParam: dayParam},
         success: function (data) {
-            var khnpErrorCount = 0;
-
             $('.cnt_wrap .cnt .tbl-wrap tbody').empty();
             $('.cnt_wrap .cnt h3').empty();
+            
+			var server_error_count = {khnp: 0, rnd: 0};
+            var tbl_rows = {khnp: '', rnd: ''};
+            var total_count = {khnp: 0, rnd: 0};
+            var error_flag_std = {khnp: false, rnd: false};
 
-            var tbl_rows = {khnp: '', nas_khnp: '', rnd: ''};
-            var total_count = 0;
-            var error_flag_std = false;
             for (var i = 0; i < data.length; i++){
-                if (data[i]["error_flag"] == 'y' || data[i]["error_flag"] == 'c'){
-                    total_count++;
-                    if (data[i]["error_flag"] == 'y') {
-                        error_flag_std = true;
+            	if (data[i]["server_nm"] == 'khnp'){
+            		if (data[i]["error_flag"] == 'y' || data[i]["error_flag"] == 'c'){
+                        total_count.khnp++;
+                        if (data[i]["error_flag"] == 'y') {
+                            error_flag_std.khnp = true;
+                        }
                     }
-                }
+            	} else if (data[i]["server_nm"] == 'rnd'){
+            		if (data[i]["error_flag"] == 'y' || data[i]["error_flag"] == 'c'){
+                        total_count.rnd++;
+                        if (data[i]["error_flag"] == 'y') {
+                            error_flag_std.rnd = true;
+                        }
+                    }
+            	}
             }
 
             for (var i = 0; i < data.length; i++) {
@@ -264,15 +284,20 @@ function fileCount(date) {
                 
                 if (error_flag == 'y' || error_flag == 'c') {
                     if (server_nm == 'khnp' && repo_nm == '/home/outer/data') {
-                        khnpErrorCount++;
-                        tbl_rows.khnp += createTableRow(total_count, file_nm, file_attr, file_desc, file_count, std_count, file_path, error_flag_desc);
-                        total_count--;
+                    	server_error_count.khnp++;
+                        tbl_rows.khnp += createTableRow(total_count.khnp, file_nm, file_attr, file_desc, file_count, std_count, file_path, error_flag_desc);
+                        total_count.khnp--;
+                    } else if (server_nm == 'rnd' && repo_nm == '/nas/met') {
+                    	server_error_count.rnd++;
+                        tbl_rows.rnd += createTableRow(total_count.rnd, file_nm, file_attr, file_desc, file_count, std_count, file_path, error_flag_desc);
+                        total_count.rnd--;
                     }
                 }
             }
-            updateTable(error_flag_std, '.cnt_wrap .cnt_khnp h3','.cnt .etc', 'KHNP' , '.tbl-wrap.tbl_khnp tbody', tbl_rows.khnp, boardTime);
-            createErrorMsg(boardTime, khnpErrorCount, error_flag_std);
-            errorState(khnpErrorCount, error_flag_std);
+            updateTable(error_flag_std.khnp, '.cnt_wrap .cnt_khnp h3','.cnt .etc_khnp', 'KHNP' , '.tbl-wrap.tbl_khnp tbody', tbl_rows.khnp, boardTime);
+            updateTable(error_flag_std.rnd, '.cnt_wrap .cnt_rnd h3','.cnt .etc_rnd', 'RND' , '.tbl-wrap.tbl_rnd tbody', tbl_rows.rnd, boardTime);
+            createErrorMsg(boardTime, server_error_count, error_flag_std);
+            errorState(server_error_count, error_flag_std);
         }
     });
 
@@ -285,19 +310,37 @@ function fileCount(date) {
     }
 
     function updateTable(error_flag_std, tbl_title, tbl_btn, tbl_nm, tbl_list, tbl_rows, stdDate) {
-        if (tbl_rows.length == 0) {
-            $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
-            $(tbl_title).addClass('khnp');
-            $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
-            tbl_rows = '<tr><td colspan="5" style="height: 550px;">이상 없음</td></tr>';
-        } else if (tbl_rows.length != 0 && error_flag_std == false) {
-            $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
-            $(tbl_title).addClass('khnp');
-            $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
-        } else {
-           $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
-            $(tbl_title).addClass('khnp');
-            $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake" onclick="reproduction();">재생산</button>');
+        if (tbl_nm == 'KHNP') {
+        	if (tbl_rows.length == 0) {
+                $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
+                $(tbl_title).addClass('khnp');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+                tbl_rows = '<tr><td colspan="5" style="height: 260px;">이상 없음</td></tr>';
+            } else if (tbl_rows.length != 0 && error_flag_std == false) {
+                $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
+                $(tbl_title).addClass('khnp');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+            } else {
+               $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
+                $(tbl_title).addClass('khnp');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake" onclick="reproduction();">재생산</button>');
+            }
+        }
+        if (tbl_nm == 'RND') {
+        	if (tbl_rows.length == 0) {
+                $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
+                $(tbl_title).addClass('rnd');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+                tbl_rows = '<tr><td colspan="5" style="height: 260px;">이상 없음</td></tr>';
+            } else if (tbl_rows.length != 0 && error_flag_std == false) {
+                $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
+                $(tbl_title).addClass('rnd');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+            } else {
+               $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
+                $(tbl_title).addClass('rnd');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ');">scan</button><button type="submit" class="btn_remake" onclick="reproduction();">재생산</button>');
+            }
         }
             
         $(tbl_list).html(tbl_rows);
@@ -313,26 +356,27 @@ function fileCount(date) {
         });
     }
 
-    function errorState(khnpCount, error_flag_std) {
-        if (khnpCount == 0 || error_flag_std == false) {
-            $('.cnt_wrap').removeClass('active');
+    function errorState(server_error_count, error_flag_std) {
+        if (error_flag_std.khnp == true || error_flag_std.rnd == true) {
+        	$('.cnt_wrap').addClass('active');
         } else {
-            $('.cnt_wrap').addClass('active');
+        	$('.cnt_wrap').removeClass('active');
         }
     }
 }
 
-function createErrorMsg(boardTime, khnp_error_count, error_flag_std){
+function createErrorMsg(boardTime, server_error_count, error_flag_std){
 	var alarmTime = new Date(boardTime);
 	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0');
 	
 	var errorMsg = [];
 	var alarmMsg = '';
 	
-    if (khnp_error_count > 0 && error_flag_std == true) {errorMsg.push('KHNP');}
+    if (server_error_count.khnp > 0 && error_flag_std.khnp == true) {errorMsg.push('<span class="khnp" style="color: #FFC21F">KHNP</span>');}
+    if (server_error_count.rnd > 0 && error_flag_std.rnd == true) {errorMsg.push('<span class="rnd" style="color: #7a62f8">RND</span>');}
 
     if (errorMsg.length > 0) {
-    	alarmMsg = '[' + formattedAlarmTime + '] <span>' + errorMsg.join(', ') + '</span> 자료에 <span>문제</span>가 발생하였습니다.';
+    	alarmMsg = '[' + formattedAlarmTime + '] ' + errorMsg.join(', ') + ' 자료에 <span>문제</span>가 발생하였습니다.';
     } else {
     	alarmMsg = '[' + formattedAlarmTime + '] 모든 자료가 정상입니다.';
     }
@@ -376,13 +420,13 @@ function clipBoard() {
     });
 }
 
-function scheduleHourlyReload() {
+function hourlySchedule() {
     var now = new Date();
     var targetTime = new Date();
     
     targetTime.setHours(now.getHours() + (now.getMinutes() >= 1 ? 1 : 0));
     targetTime.setMinutes(1);
-    targetTime.setSeconds(10);
+    targetTime.setSeconds(0);
     targetTime.setMilliseconds(0);
 
     var nextTimeTarget = (targetTime - now);
@@ -394,6 +438,29 @@ function scheduleHourlyReload() {
         	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
         	createCalendarIcon(1, new Date().getDate(), new Date().getFullYear(), new Date().getMonth() + 1);
         }, 60 * 60 * 1000);
+    }, nextTimeTarget);
+}
+
+function dailySchedule() {
+    var now = new Date();
+    var targetTime = new Date();
+    
+    targetTime.setHours(0);
+    targetTime.setMinutes(1);
+    targetTime.setSeconds(0);
+    targetTime.setMilliseconds(0);
+    
+    if (now > targetTime) {
+        targetTime.setDate(targetTime.getDate() + 1);
+    }
+
+    var nextTimeTarget = (targetTime - now);
+    
+    setTimeout(function() {
+		createCalendar(date.getFullYear(), date.getMonth() + 1);
+    	setInterval(function() {
+    		createCalendar(date.getFullYear(), date.getMonth() + 1);
+        }, 24 * 60 * 60 * 1000);
     }, nextTimeTarget);
 }
 
@@ -509,10 +576,9 @@ $(function() {
 	clipBoard();
 	createCalendar(new Date().getMonth() + 1, new Date().getFullYear());
 	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
-	scheduleHourlyReload();
+	hourlySchedule();
+	dailySchedule();
 });
-
-
 
 </script>
 <div class="loadingMsg" style="display: none; justify-content: center; align-items: center; width: 100%; height: 100%; background-color: rgba(49,49,49,0.6); position: absolute; z-index: 9999; text-align: center; top: 0; left: 0;">
@@ -550,15 +616,41 @@ $(function() {
 			</div>
 			<div class="cnt br_b cnt_khnp" data-server-type="2">
 				<h3></h3>
-				<div class="etc"></div>
-				<div class="tbl-wrap tbl_khnp" style="height: 600px;">
+				<div class="etc etc_khnp"></div>
+				<div class="tbl-wrap tbl_khnp">
 					<table>
 						<colgroup>
 							<col style="width: 5%">
 							<col style="width: auto">
 							<col style="width: 10%">
 							<col style="width: 17%">
-							<col style="width: 13%">
+							<col style="width: 15%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>파일명 (파일 설명)</th>
+								<th>속성</th>
+								<th>자료현황</th>
+								<th>자료상태</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="cnt br_b cnt_rnd" data-server-type="1">
+				<h3></h3>
+				<div class="etc etc_rnd"></div>
+				<div class="tbl-wrap tbl_rnd">
+					<table>
+						<colgroup>
+							<col style="width: 5%">
+							<col style="width: auto">
+							<col style="width: 10%">
+							<col style="width: 17%">
+							<col style="width: 15%">
 						</colgroup>
 						<thead>
 							<tr>
