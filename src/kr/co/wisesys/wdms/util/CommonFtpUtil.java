@@ -71,7 +71,6 @@ public class CommonFtpUtil {
 	        Vector<ChannelSftp.LsEntry> fileList = channelSftp.ls(remoteDir);
 	        for (ChannelSftp.LsEntry entry : fileList) {
 	            String fileName = entry.getFilename();
-	            
 	            // 현재 디렉토리(`.`)와 부모 디렉토리(`..`)는 제외
 	            if (!fileName.equals(".") && !fileName.equals("..")) {
 	                if (!entry.getAttrs().isDir()) {

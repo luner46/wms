@@ -4,8 +4,6 @@
 <html lang="ko">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<meta http-equiv="Pragma" content="no-cache"/>
-	<meta http-equiv="Cache-Control" content="No-Cache"/>
 	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css" />
 	<link rel="stylesheet" href="/css/jquery-ui.min.css" />
 	<script src="/js/plugin/clipboard/clipboard.min.js"></script>

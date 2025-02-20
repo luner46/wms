@@ -121,6 +121,11 @@ public class CommonFileUtil {
         	if (Integer.parseInt(changedValue) < 1) {
         		changedValue = "0";
         	}
+        } else if (stdObject.get("std_count").toString().contains("(hh * 6) - 1")) {
+        	changedValue = Integer.toString((int) ((parseStdHour * 6) - 1));
+        	if (Integer.parseInt(changedValue) < 1) {
+        		changedValue = "0";
+        	}
         } else if (stdObject.get("std_count").toString().contains("hh * 6")) {
         	changedValue = Integer.toString((int) (parseStdHour * 6));
         } else if (stdObject.get("std_count").toString().contains("hh - 1")) {

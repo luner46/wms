@@ -32,7 +32,7 @@ public class CommonScheduleUtil {
         log.info("Scheduled Update");
     }
 
-    // insertFileCount_매 시간 1분에 실행
+    // insertFileCount_매 시간 30초에 실행
     @Scheduled(cron = "30 0 * * * *")
     public void scheduledInsertFileCount() {
     	// 당일 데이터 INSERT
@@ -45,9 +45,8 @@ public class CommonScheduleUtil {
         calendar.add(Calendar.DATE, -1);
         String ydayBoardTime = format.format(calendar.getTime());
 
-        contController.insertFileCount(todayboardTime, "t");
-        contController.insertFileCount(ydayBoardTime, "y");
-        
+        contController.insertFileCount(ydayBoardTime, "y", "all");
+        contController.insertFileCount(todayboardTime, "t", "all");
         log.info("Scheduled Insert");
     }
     

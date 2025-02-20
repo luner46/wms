@@ -89,41 +89,92 @@ public class WdmsContController {
 
     @RequestMapping(value = "/insertFileCount.do")
     @ResponseBody
-    public String insertFileCount(@RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam) {
+    public String insertFileCount(@RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam, @RequestParam(required=false, defaultValue="all") String serverParam) {
     	int insertResult = 0;
 
     	CommonFileUtil commonFileUtil = new CommonFileUtil();
     	CommonFtpUtil commonFtpUtil = new CommonFtpUtil();
-    	
     	try {
-	        // JSON에 저장된 기준 데이터를 순환
-        	for (int j = 0; j < jsonPath(dayParam).size(); j++) {
-                Map<String, Object> stdObject = jsonPath(dayParam).get(j);
+    		// JSON에 저장된 기준 데이터를 순환
+    		if (serverParam.equals("khnp")) {
+    			for (int j = 0; j < jsonPath(dayParam).size(); j++) {
+                    Map<String, Object> stdObject = jsonPath(dayParam).get(j);
+                    if (stdObject.get("server_nm").toString().equals("khnp")) {
+	                    String server_nm = stdObject.get("server_nm").toString();
+	                    String repo_nm = stdObject.get("repo_nm").toString();
+	                    int type_id = (int) stdObject.get("type_id");
+	                    int file_id = (int) stdObject.get("file_id");
+	                    int file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), khnp_host, khnp_port, khnp_id, khnp_pwd);
+	                    String error_flag = (String) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("error_flag");
+	                    int std_count = (int) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("std_count");
+	                    
+	                    HashMap<String, Object> param = new HashMap<>();
+	                    param.put("server_id", getServerId(server_nm));
+	                    param.put("repo_id", getRepoId(repo_nm));
+	                    param.put("type_id", type_id);
+	                    param.put("file_id", file_id);
+	                    param.put("boardTime", formatBoardTime(boardTime));
+	                    param.put("file_count", file_count);
+	                    param.put("error_flag", error_flag);
+	                    param.put("std_count", std_count);
+	
+	                    insertResult += sqlSessionMysql.insert("wdms.insertFileCount", param);
+                    }
+    			}
+    		} else if (serverParam.equals("rnd")) {
+    			for (int j = 0; j < jsonPath(dayParam).size(); j++) {
+                    Map<String, Object> stdObject = jsonPath(dayParam).get(j);
+                    if (stdObject.get("server_nm").toString().equals("rnd")) {
+                    	String server_nm = stdObject.get("server_nm").toString();
+                        String repo_nm = stdObject.get("repo_nm").toString();
+                        int type_id = (int) stdObject.get("type_id");
+                        int file_id = (int) stdObject.get("file_id");
+                        int file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), rnd_host, rnd_port, rnd_id, rnd_pwd);
+                        String error_flag = (String) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("error_flag");
+                        int std_count = (int) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("std_count");
+                        
+                        HashMap<String, Object> param = new HashMap<>();
+                        param.put("server_id", getServerId(server_nm));
+                        param.put("repo_id", getRepoId(repo_nm));
+                        param.put("type_id", type_id);
+                        param.put("file_id", file_id);
+                        param.put("boardTime", formatBoardTime(boardTime));
+                        param.put("file_count", file_count);
+                        param.put("error_flag", error_flag);
+                        param.put("std_count", std_count);
 
-                String server_nm = stdObject.get("server_nm").toString();
-                String repo_nm = stdObject.get("repo_nm").toString();
-                int type_id = (int) stdObject.get("type_id");
-                int file_id = (int) stdObject.get("file_id");
-                int file_count = 0;
-	                if (server_nm.equals("khnp") && repo_nm.equals("/home/outer/data")) {
-	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), khnp_host, khnp_port, khnp_id, khnp_pwd);
-	                } else if (server_nm.equals("rnd") && repo_nm.equals("/nas/met")){
-	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), rnd_host, rnd_port, rnd_id, rnd_pwd);
-	                }
-                String error_flag = (String) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("error_flag");
-                int std_count = (int) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("std_count");
-                
-                HashMap<String, Object> param = new HashMap<>();
-                param.put("server_id", getServerId(server_nm));
-                param.put("repo_id", getRepoId(repo_nm));
-                param.put("type_id", type_id);
-                param.put("file_id", file_id);
-                param.put("boardTime", formatBoardTime(boardTime));
-                param.put("file_count", file_count);
-                param.put("error_flag", error_flag);
-                param.put("std_count", std_count);
+                        insertResult += sqlSessionMysql.insert("wdms.insertFileCount", param);
+                    }
+    			}
+    		} else {
+    			for (int j = 0; j < jsonPath(dayParam).size(); j++) {
+                    Map<String, Object> stdObject = jsonPath(dayParam).get(j);
 
-                insertResult += sqlSessionMysql.insert("wdms.insertFileCount", param);
+                    String server_nm = stdObject.get("server_nm").toString();
+                    String repo_nm = stdObject.get("repo_nm").toString();
+                    int type_id = (int) stdObject.get("type_id");
+                    int file_id = (int) stdObject.get("file_id");
+                    int file_count = 0;
+    	                if (server_nm.equals("khnp") && repo_nm.equals("/home/outer/data")) {
+    	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), khnp_host, khnp_port, khnp_id, khnp_pwd);
+    	                } else if (server_nm.equals("rnd") && repo_nm.equals("/nas/met")){
+    	                	file_count = commonFtpUtil.countFile(boardTime, stdObject.get("file_path").toString(), rnd_host, rnd_port, rnd_id, rnd_pwd);
+    	                }
+                    String error_flag = (String) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("error_flag");
+                    int std_count = (int) commonFileUtil.checkFileCount(file_count, stdObject, boardTime, dayParam).get("std_count");
+                    
+                    HashMap<String, Object> param = new HashMap<>();
+                    param.put("server_id", getServerId(server_nm));
+                    param.put("repo_id", getRepoId(repo_nm));
+                    param.put("type_id", type_id);
+                    param.put("file_id", file_id);
+                    param.put("boardTime", formatBoardTime(boardTime));
+                    param.put("file_count", file_count);
+                    param.put("error_flag", error_flag);
+                    param.put("std_count", std_count);
+
+                    insertResult += sqlSessionMysql.insert("wdms.insertFileCount", param);
+    			}
         	}
             return (insertResult > 0) ? "Insert success" : "Insert error";
         } catch (Exception e) {

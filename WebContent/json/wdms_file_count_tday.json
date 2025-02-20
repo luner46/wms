@@ -230,7 +230,7 @@
         "file_nm" : "me_bo_10min_qc",
         "file_id" : 49,
         "file_path" : "/nas/met/me_bo_10min_qc/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -261,7 +261,7 @@
         "file_nm" : "me_dam_10min_qc",
         "file_id" : 52,
         "file_path" : "/nas/met/me_dam_10min_qc/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -292,7 +292,7 @@
         "file_nm" : "me_rn_10min_qc",
         "file_id" : 55,
         "file_path" : "/nas/met/me_rn_10min_qc/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -323,7 +323,7 @@
         "file_nm" : "me_wl_10min_qc",
         "file_id" : 58,
         "file_path" : "/nas/met/me_wl_10min_qc/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -354,7 +354,7 @@
         "file_nm" : "tm_ssb_pcp_10min/tm_ef",
         "file_id" : 66,
         "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_ef/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -364,7 +364,7 @@
         "file_nm" : "tm_ssb_pcp_10min/tm_ssb",
         "file_id" : 67,
         "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_ssb/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
@@ -374,7 +374,7 @@
         "file_nm" : "tm_ssb_pcp_10min/tm_thi",
         "file_id" : 68,
         "file_path" : "/nas/met/tm_ssb_pcp_10min/tm_thi/yyyy/mm/dd",
-        "std_count" : "(hh * 6) - 2",
+        "std_count" : "(hh * 6) - 1",
         "std_tm" : "yyyy/mm/dd/hh:00:00"
     },
     {
