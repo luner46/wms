@@ -112,6 +112,7 @@ function meStnInfoList() {
                 var agcnm = data[i]['agcnm'];
                 var addr = data[i]['addr'];
                 var etcaddr = data[i]['etcaddr'];
+                var etcaddrClass = (etcaddr == '-') ? '' : 't_left';
                 var lat = data[i]['lat'];
                 var lon = data[i]['lon'];
                 var gdt = data[i]['gdt'];
@@ -128,35 +129,34 @@ function meStnInfoList() {
                 if (flag == '0') {flagTxt = '-'} else if (flag == '1') {flagTxt = '신규'} else if (flag == '2') {flagTxt = '종료'} else if (flag == '3') {flagTxt = '관측소명 변경'} else if (flag == '4') {flagTxt = '기관 변경'} else if (flag == '5') {flagTxt = '주소 변경'} else if (flag == '6') {flagTxt = '위치 변경'}
 				if (tableType == 'rnStn') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
-					} else if (flag == '3' || flag == '4' || flag == '5' || flag == '6') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+					} else if (flag == '0') {
+						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
 					}
 				} else if (tableType == 'wlStn') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
-					} else if (flag == '3' || flag == '4' || flag == '5' || flag == '6') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+					} else if (flag == '0') {
+						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';
 					}
 				} else if (tableType == 'dam') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
-					} else if (flag == '3' || flag == '4' || flag == '5' || flag == '6') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+					} else if (flag == '0') {
+						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="t_left">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';
 					}
-					
 				}
             }
             if (tableRows.length == 0) {$('.tbl_con_wrap .tbl_wrap2 .tbl_state tbody').html('<tr><td colspan="16">조건에 맞는 데이터가 없습니다.</td></tr>');}
