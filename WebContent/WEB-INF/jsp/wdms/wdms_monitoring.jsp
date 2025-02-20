@@ -323,7 +323,8 @@ function fileCount(date) {
             } else {
                $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
                 $(tbl_title).addClass('khnp');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'khnp\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction();">재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'khnp\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction(2);">재생산</button>');
+                
             }
         }
         if (tbl_nm == 'RND') {
@@ -339,7 +340,7 @@ function fileCount(date) {
             } else {
                $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
                 $(tbl_title).addClass('rnd');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction();">재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction(1);">재생산</button>');
             }
         }
             
@@ -490,10 +491,8 @@ function nowDate() {
     return formattedDate;
 }
 
-function reproduction() {
+function reproduction(repoId) {
 	var issue_date = nowDate();
-	
-	var repoId = $('.cnt.cnt_khnp').data('server-type');
 	
 	var alarmText = $('header .alarm.active').text();
 	
@@ -504,14 +503,20 @@ function reproduction() {
 	} 
 	
     var correctionData = [];
-    $('.tbl-wrap.tbl_khnp tbody tr').each(function () {
-        var fileType = $(this).find('td:nth-child(2)').text().trim();
-        var cleanedFileType = fileType.replace(/\(.*\)/g, '').trim();
+    $('.tbl-wrap.tbl_' + (repoId == 2 ? 'khnp' : 'rnd') + ' tbody tr').each(function () {
+    	var rowData = [];
+    	
+    	$(this).find('td').each(function () {
+            rowData.push($(this).text().trim());
+        });
+    	
+        var fileType = rowData[1];
+        
         var errorFlag = $(this).find('#not_prblm').text().includes("이상 없음");
         
         if (fileType && !errorFlag) {
             correctionData.push({
-            	fileType: cleanedFileType,
+            	fileType: fileType,
                 issuedate: formattedDate,
                 repoId: repoId
             });
@@ -539,21 +544,12 @@ function reproduction() {
                 var currentYear = $('.calendarYear').text().split('년')[0].trim();
                 var currentMonth = $('.calendarYear').text().split('년 ')[1].split('월')[0].trim();
                 
-                console.log('currentYear : ' + currentYear);
-                console.log('currentMonth : ' + currentMonth);
-                
                 selectedDate = new Date(currentYear, currentMonth, activeDay);
                 
                 createCalendar(parseInt(currentMonth), parseInt(currentYear));
                 openBoard(parseInt(currentYear), parseInt(currentMonth), parseInt(activeDay));
                 
             }
-            
-            //createCalendar(new Date().getMonth() + 1, new Date().getFullYear());
-            //openBoard(selectedDate.getFullYear(), selectedDate.getMonth() + 1, selectedDate.getDate());
-            
-            
-            
         },
         beforeSend: function() {
 			$('.loadingMsg').show();

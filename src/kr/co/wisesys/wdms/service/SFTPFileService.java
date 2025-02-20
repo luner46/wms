@@ -43,12 +43,18 @@ public class SFTPFileService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     
-    @Value("#{config['sftp_host']}") String sftp_host;
-    @Value("#{config['sftp_port']}") String sftp_port;
-    @Value("#{config['sftp_id']}") String sftp_id;
-    @Value("#{config['sftp_pwd']}") String sftp_pwd;
+    @Value("#{config['khnp_host']}") String khnp_host;
+    @Value("#{config['khnp_port']}") String khnp_port;
+    @Value("#{config['khnp_id']}") String khnp_id;
+    @Value("#{config['khnp_pwd']}") String khnp_pwd;
     
-    @Value("#{config['directory_path']}") String directory_path;
+    @Value("#{config['rnd_host']}") String rnd_host;
+    @Value("#{config['rnd_port']}") String rnd_port;
+    @Value("#{config['rnd_id']}") String rnd_id;
+    @Value("#{config['rnd_pwd']}") String rnd_pwd;
+    
+    @Value("#{config['khnp_directory_path']}") String khnp_directory_path;
+    @Value("#{config['rnd_directory_path']}") String rnd_directory_path;
     
     private Session session;
     private ChannelSftp channelSftp;
@@ -56,10 +62,23 @@ public class SFTPFileService {
     /**
      * SFTP 연결 설정
      */
-    public void connectSFTP() throws JSchException {
+    public void connectSFTP(String repoId) throws JSchException {
+    	
+    	String host, port, id, pwd;
+    	
+    	int repo_id = Integer.parseInt(repoId);
+    	
+    	if(repo_id == 1) { // rnd server
+    		host = rnd_host; port = rnd_port; id = rnd_id; pwd = rnd_pwd;
+    	} else if (repo_id == 2) { // khnp server
+            host = khnp_host; port = khnp_port; id = khnp_id; pwd = khnp_pwd;
+        } else {
+            throw new IllegalArgumentException("Invalid repoId: " + repoId);
+        }
+    	
         JSch jsch = new JSch();
-        session = jsch.getSession(sftp_id, sftp_host, Integer.parseInt(sftp_port));
-        session.setPassword(sftp_pwd);
+        session = jsch.getSession(id, host, Integer.parseInt(port));
+        session.setPassword(pwd);
 
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
@@ -91,31 +110,67 @@ public class SFTPFileService {
         String formattedMonth = date.format(DateTimeFormatter.ofPattern("MM"));
 
         if (fileId == 1) {
-            return directory_path + "asos_ssb_pet_10min/" + formattedDate;
+            return khnp_directory_path + "asos_ssb_pet_10min/" + formattedDate;
         } else if (fileId == 31) {
-            return directory_path + "kma_aws_10min_qc/" + formattedDate;
+            return khnp_directory_path + "kma_aws_10min_qc/" + formattedDate;
         } else if (fileId == 28) {
-            return directory_path + "kma_asos_1hr/" + formattedDate;
+            return khnp_directory_path + "kma_asos_1hr/" + formattedDate;
         } else if (fileId == 2) {
-            return directory_path + "asos_ssb_pet_1day/" + formattedYear + "/" + formattedMonth;
+            return khnp_directory_path + "asos_ssb_pet_1day/" + formattedYear + "/" + formattedMonth;
         } else if (fileId == 25) {
-            return directory_path + "kma_asos_1day/" + formattedYear + "/" + formattedMonth;
+            return khnp_directory_path + "kma_asos_1day/" + formattedYear + "/" + formattedMonth;
         } else if (fileId == 21) {
-            return directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/03";
+            return khnp_directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/03";
         } else if (fileId == 22) {
-            return directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/09";
+            return khnp_directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/09";
         } else if (fileId == 23) {
-            return directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/15";
+            return khnp_directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/15";
         } else if (fileId == 24) {
-            return directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/21";
+            return khnp_directory_path + "g120_v070_erea_unis_han_172ssb_10m/" + formattedDate + "/21";
         } else if (fileId == 42) {
-            return directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/03";
+            return khnp_directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/03";
         } else if (fileId == 43) {
-            return directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/09";
+            return khnp_directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/09";
         } else if (fileId == 44) {
-            return directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/15";
+            return khnp_directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/15";
         } else if (fileId == 45) {
-            return directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/21";
+            return khnp_directory_path + "l015_v070_erlo_unis_han_172ssb_10m/" + formattedDate + "/21";
+        } else if(fileId == 49) {
+        	return rnd_directory_path + "me_bo_10min_qc/" + formattedDate;
+        } else if(fileId == 50) {
+        	return rnd_directory_path + "me_bo_1day_qc/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 51) {
+        	return rnd_directory_path + "me_bo_1hr_qc/" + formattedDate;
+        } else if(fileId == 52) {
+        	return rnd_directory_path + "me_dam_10min_qc/" + formattedDate;
+        } else if(fileId == 53) {
+        	return rnd_directory_path + "me_dam_1day_qc/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 54) {
+        	return rnd_directory_path + "me_dam_1hr_qc/" + formattedDate;
+        } else if(fileId == 55) {
+        	return rnd_directory_path + "me_rn_10min_qc/" + formattedDate;
+        } else if(fileId == 56) {
+        	return rnd_directory_path + "me_rn_1day_qc/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 57) {
+        	return rnd_directory_path + "me_rn_1hr_qc/" + formattedDate;
+        } else if(fileId == 58) {
+        	return rnd_directory_path + "me_wl_10min_qc/" + formattedDate;
+        } else if(fileId == 59) {
+        	return rnd_directory_path + "me_wl_1day_qc/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 60) {
+        	return rnd_directory_path + "me_wl_1hr_qc/" + formattedDate;
+        } else if(fileId == 66) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ef/" + formattedDate; 
+        } else if(fileId == 67) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ssb/" + formattedDate; 
+        } else if(fileId == 68) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_thi/" + formattedDate;
+        } else if(fileId == 69) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ef/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 70) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ssb/" + formattedYear + "/" + formattedMonth;
+        } else if(fileId == 71) {
+        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_thi/" + formattedYear + "/" + formattedMonth;
         }
         
         throw new IllegalArgumentException("Invalid fileId: " + fileId);
@@ -267,7 +322,7 @@ public class SFTPFileService {
         String fileType;
         
         try {
-            if (fileId == 25 || fileId == 28 || fileId == 31) {
+            if (fileId == 25 || fileId == 28 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58) {
                 tempFile = File.createTempFile("temp_", ".csv");
                 fileType = "CSV";
             } else {
@@ -281,7 +336,7 @@ public class SFTPFileService {
                 String oldDate = backupFileName.substring(4, 16);
                 String newDate = fileName.substring(4, 16);
                 updateFileContent(tempFile, oldDate, newDate, fileType);
-            } else if(fileId == 1 || fileId == 31){
+            } else if(fileId == 1 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58){
                 updateFileContent(tempFile, backupFileName.substring(0, 12), fileName.substring(0, 12), fileType);
             } else if(fileId == 28){
                 updateFileContent(tempFile, backupFileName.substring(0, 10), fileName.substring(0, 10), fileType);
@@ -547,9 +602,9 @@ public class SFTPFileService {
     /**
      * 메인 파일 생성 메서드
      */
-    public void createFile(String fileType, String issuedate) {
+    public void createFile(String fileType, String issuedate, String repoId) {
         try {
-            connectSFTP();
+            connectSFTP(repoId);
             CommonFileUtil commonFileUtil = new CommonFileUtil();
             Map<String, Integer> fileMapping = commonFileUtil.getFileMapping();
             Integer fileId = fileMapping.get(fileType);
@@ -565,7 +620,7 @@ public class SFTPFileService {
             
             if (fileId == 2 || fileId == 25) {
                 createAndUpload1DayFiles(remoteDir, backupDir, fileId);
-            } else if (fileId == 1 || fileId == 31 || fileId == 28) {
+            } else if (fileId == 1 || fileId == 31 || fileId == 28 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58) {
                 createAndUploadHourlyFiles(remoteDir, backupDir, fileId, issuedate, isToday, isYesterday, isBeforeNoon);
             } else {
                 createAndUploadG120Files(remoteDir, backupDir, fileId, issuedate);

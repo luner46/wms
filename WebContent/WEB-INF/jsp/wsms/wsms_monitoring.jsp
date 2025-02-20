@@ -40,7 +40,7 @@ function selectSystemInfo() {
                                     '</div>' +
                                 '</div>' +
                                 '<div class="item_network">' +
-                                    '<div class="network_con">' +
+                                    '<div class="network_con" id="network_con' + system_id + '"">' +
                                         '<div class="contents" id="container_' + system_id + '"></div>' +
                                     '</div>' +
                                     '<div class="network_response" id="network_response_' + system_id + '">' +
@@ -121,7 +121,7 @@ function stopLiveChart(system_id) {
         charts[system_id].chart.destroy();
         delete charts[system_id].chart;
     }*/
-    
+    $('#network_con' + system_id).removeClass('active');
     $('#network_response_' + system_id).empty();
     //$('#con_' + system_id).removeClass('active');
 }
@@ -171,9 +171,9 @@ function fetchLatestData(system_id) {
             	
             	const chartSeries = charts[system_id].chart.series[0];
                 const latestData = chartData[chartData.length - 1];
-
+                
                 chartSeries.addPoint([latestData[0], latestData[1], latestData[2], latestData[3]], true, chartSeries.data.length >= 60);
-				
+                
                 const showPlotLine = latestData[1] >= limit_center_line * 0.8;
                 charts[system_id].chart.update({
                     yAxis: {
@@ -228,7 +228,11 @@ function fetchLatestData(system_id) {
             	const showPlotLine = percent_res_time >= limit_center_line * 0.8;
                 charts[system_id].chart = Highcharts.chart('container_' + system_id, {
                 	chart: {
-                        type: 'line'
+                        type: 'line',
+                        //spacing: [0, 0, 0, 0]
+                        spacingRight: 0,
+                        spacingLeft: 0,
+                        marginLeft: -70 
                     },
                     title: {
                         text: ''
@@ -263,6 +267,7 @@ function fetchLatestData(system_id) {
                     series: [{
                         name: '',
                         data: null
+                        //data: Array(60).fill(null)
                     }],
                     tooltip: {
                         formatter: function() {
@@ -311,7 +316,8 @@ function fetchLatestData(system_id) {
                         series: {
                             marker: {
                                 enabled: false
-                            }
+                            },
+                            lineWidth: 3
                         }
                     }
                 });
@@ -390,6 +396,9 @@ function statusMain(val) {
 }
 
 function startLiveChart(system_id, req_time, return_res_time) {
+	
+	$('#network_con' + system_id).addClass('active'); 
+	
     var plus_minute = selectPlusTimeProc(req_time);
     var issue_minute = selectAddTimeProc(req_time);
     var isFirstRun = true;

@@ -141,7 +141,11 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 #contents .item .item_text .link > span > a::after {position: absolute;top: 2px;right: 0;width: 12px;height: 12px;background: url(../images/img_link.png) 50% 50% no-repeat;content:'';background-size: cover;}
 #contents .item .item_network {width: calc(63% - 51px);height: 100%;background-color: rgba(217,217,217, .1);border-radius: 8px;overflow: hidden;display: flex;flex-flow: row wrap;align-items: center;gap: 10px;padding: 14px 12px;}
 #contents .item .item_network .network_con {width: 55%;height: 100%;position: relative;padding-right: 10px;background-color: #222222;border-radius: 4px;}
-/*#contents .item .item_network .network_con::after {position: absolute; right: 0; top: 0; width: 1px; height: 100%; background-color: rgba(255,255,255,.05); content:'';}*/
+#contents .item .item_network .network_con.active::before{position:absolute;top:0;left:0;content:''; background:url('../images/network_bg.png') 0 center / 120% repeat #222; background-size: 50px; width:100%;height:100%; animation: bgmove 50s linear infinite;}
+@keyframes bgmove {
+  0% {background-position:0% center;}
+  100% {background-position:-1000% center;}
+}
 #contents .item .item_network .network_response {width: calc(45% - 90px);}
 #contents .item .item_network .network_response .tt {font-size: .8rem;font-weight: 200;color: #ccc;margin-bottom: 4px;}
 #contents .item .item_network .network_response .text {font-size: 1rem;font-weight: 300;color: var(--color-white);}
@@ -171,7 +175,7 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 .form_wrap input[type=text] {width: 100%;}
 .form_wrap span {display: inline-block; width: 40px; height: 20px; position: absolute; right: 0; top: 50%; transform: translate(0, -50%); font-size: .9em; color: #ccc;}
 .highcharts-credits {display: none;}
-.highcharts-background {fill:#222222;}
+.highcharts-background {fill: none;}
 .highcharts-legend-item highcharts-line-series highcharts-color-0 highcharts-series-0 {display: none;}
 .highcharts-legend {display: none;}
 .highcharts-axis-title {transform: translate(-10px, 13px);}

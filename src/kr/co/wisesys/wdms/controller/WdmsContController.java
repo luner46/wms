@@ -221,9 +221,13 @@ public class WdmsContController {
 	    	        	
 	    	            int updateValue = commonFileUtil.getHourlyValue(fileType, issuedate);
 	    	            
+	    	            //log.info("fileType : " +  fileType);
+	    	            //log.info("updateValue : " +  updateValue);
+	    	            //log.info("repoId : " +  repoId);
+	    	             
 	    	            service.updateCorrectionData(fileId, issuedate, updateValue, repoId);
 	    	             
-	    	            sftpFileService.createFile(fileType, issuedate);
+	    	            sftpFileService.createFile(fileType, issuedate, repoId);
 	    	            
 	    	        } else {
 	    	            //log.info("fileType 매핑 실패: " + fileType); 

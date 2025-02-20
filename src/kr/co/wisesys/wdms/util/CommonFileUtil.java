@@ -187,7 +187,7 @@ public class CommonFileUtil {
     /**
      * 파일 아이디 매핑
      */
-	public Map<String, Integer> getFileMapping() {
+    public Map<String, Integer> getFileMapping() {
 	    Map<String, Integer> fileMapping = new HashMap<>();
 	    
 	    fileMapping.put("asos_ssb_pet_10min", 1);
@@ -203,6 +203,25 @@ public class CommonFileUtil {
 	    fileMapping.put("l015_v070_erlo_unis_han_172ssb_10m/09", 43);
 	    fileMapping.put("l015_v070_erlo_unis_han_172ssb_10m/15", 44);
 	    fileMapping.put("l015_v070_erlo_unis_han_172ssb_10m/21", 45);
+	    
+	    fileMapping.put("me_bo_10min_qc", 49);
+	    fileMapping.put("me_bo_1day_qc", 50);
+	    fileMapping.put("me_bo_1hr_qc", 51);
+	    fileMapping.put("me_dam_10min_qc", 52);
+	    fileMapping.put("me_dam_1day_qc", 53);
+	    fileMapping.put("me_dam_1hr_qc", 54);
+	    fileMapping.put("me_rn_10min_qc", 55);
+	    fileMapping.put("me_rn_1day_qc", 56);
+	    fileMapping.put("me_rn_1hr_qc", 57);
+	    fileMapping.put("me_wl_10min_qc", 58);
+	    fileMapping.put("me_wl_1day_qc", 59);
+	    fileMapping.put("me_wl_1hr_qc", 60);
+	    fileMapping.put("tm_ssb_pcp_10min/tm_ef", 66);
+	    fileMapping.put("tm_ssb_pcp_10min/tm_ssb", 67);
+	    fileMapping.put("tm_ssb_pcp_10min/tm_thi", 68);
+	    fileMapping.put("tm_ssb_pcp_1day/tm_ef", 69);
+	    fileMapping.put("tm_ssb_pcp_1day/tm_ssb", 70);
+	    fileMapping.put("tm_ssb_pcp_1day/tm_thi", 71);
 	    return fileMapping;
 	}
 	
@@ -226,111 +245,171 @@ public class CommonFileUtil {
     	if (fileId == 28) fileExtension = ".csv";
     	if (fileId == 31) fileExtension = ".csv";
     	
+    	if (fileId >= 49 && fileId <= 60) fileExtension = ".csv";
+    	if (fileId >= 66 && fileId <= 71) fileExtension = ".txt";
+    	
 	    return fileExtension;
 	}
 	
     /**
      * 타입 시간별 값 반환, DB 업데이트용
      */ 
-   public int getHourlyValue(String fileType,String issuedate) {
-	   
-	   Map<String, Integer> fileMapping = getFileMapping();
-	   Integer fileId = fileMapping.get(fileType);
-	   
-	   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-	   LocalDateTime dateTime = LocalDateTime.parse(issuedate, formatter);
-	   LocalDate issuedDateParsed = dateTime.toLocalDate(); 
+    public int getHourlyValue(String fileType,String issuedate) {
+ 	   
+ 	   Map<String, Integer> fileMapping = getFileMapping();
+ 	   Integer fileId = fileMapping.get(fileType);
+ 	   
+ 	   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+ 	   LocalDateTime dateTime = LocalDateTime.parse(issuedate, formatter);
+ 	   LocalDate issuedDateParsed = dateTime.toLocalDate(); 
 
-	   LocalDate today = LocalDate.now();
-	   LocalDate yesterday = today.minusDays(1);
-	   LocalTime now = LocalTime.now();
-	   
-	   boolean isPreviousMonth = (issuedDateParsed.getMonthValue() < today.getMonthValue() && 
-               issuedDateParsed.getYear() == today.getYear()) ||
-               (issuedDateParsed.getYear() < today.getYear());
-	   
-	   String suffix = "";
-	   
-	   int hour = now.getHour() -1;
-	   
-	   //log.info("현재시간 : " + hour);
-	   
-	   if(fileId == 1) { // asos_ssb_pet_10min
-		   if (issuedDateParsed.isEqual(today)) return hour * 7 - (hour-1); // 오늘일때
-		   if (issuedDateParsed.isEqual(yesterday)) return now.isBefore(LocalTime.of(12, 0)) ? 139 : 144; // 어제일때 12:00 이전: 139, 이후:144 반환
-		   if (issuedDateParsed.isBefore(yesterday)) return 144; // 과거일때
-	   } else if (fileId == 31) { // kma_aws_10min_qc
-		   if (issuedDateParsed.isEqual(today)) return (hour + 1) * 6; // 오늘일때
-		   else return 144; // 어제,과거일때 144 반환
-       } else if (fileId == 28) { // kma_asos_1hr
-    	   if (issuedDateParsed.isEqual(today)) return hour + 1; // 오늘일때
-    	   else return 24; // 어제,과거일때 24 반환
-       } else if (fileId == 21) { // g120_v070_erea_unis_han_172ssb_10m/03
-    	   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 1044; // 오늘일때 07:00 이전:0, 이후:1044 반환
-    	   else return 1044; // 어제,과거일때 1044 반환
-       } else if (fileType.startsWith("g120_v070_erea_unis_han_172ssb_10m")) {
-    	   suffix = fileType.substring(fileType.lastIndexOf("/"));
-    	   if(suffix.equals("/03")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 1044; // 오늘일때 07:00 이전: 0, 이후:1044 반환
-    		   else return 1044;
-    	   } else if(suffix.equals("/09")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(13, 0)) ? 0 : 1044; // 오늘일때 13:00 이전: 0, 이후:1044 반환
-    		   else return 1044;
-    	   } else if(suffix.equals("/15")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(19, 0)) ? 0 : 1044; // 오늘일때 19:00 이전: 0, 이후:1044 반환
-    		   else return 1044;
-    	   } else if(suffix.equals("/21")) {
-    		   if(issuedDateParsed.isEqual(today)) { // 오늘일때 0
-    			   return 0;
-    		   } else if(issuedDateParsed.isEqual(yesterday)) { // 어제일때
-    			   return now.isBefore(LocalTime.of(2, 0)) ? 0 : 1044; // 오늘일때 02:00 이전: 0, 이후:1044 반환
-    		   } else {
-    			   return 1044;
-    		   }
-    	   } 
-       } else if (fileType.startsWith("l015_v070_erlo_unis_han_172ssb_10m")) {
-    	   suffix = fileType.substring(fileType.lastIndexOf("/"));
-    	   if(suffix.equals("/03")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 576; // 오늘일때 07:00 이전: 0, 이후:576 반환
-    		   else return 576;
-    	   } else if(suffix.equals("/09")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(13, 0)) ? 0 : 576; // 오늘일때 13:00 이전: 0, 이후:576 반환
-    		   else return 576;
-    	   } else if(suffix.equals("/15")) {
-    		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(19, 0)) ? 0 : 576; // 오늘일때 19:00 이전: 0, 이후:576 반환
-    		   else return 576;
-    	   } else if(suffix.equals("/21")) {
-    		   if(issuedDateParsed.isEqual(today)) { // 오늘일때 0
-    			   return 0;
-    		   } else if(issuedDateParsed.isEqual(yesterday)) { // 어제일때
-    			   return now.isBefore(LocalTime.of(2, 0)) ? 0 : 576; // 오늘일때 02:00 이전: 0, 이후:576 반환
-    		   } else {
-    			   return 576;
-    		   }
-    	   } 
-       } else if(fileId == 2) { // asos_ssb_pet_1day
-    	   if (issuedDateParsed.isEqual(today)) {
-    		   if((hour+1) < 12) return today.getDayOfMonth() -2;
-    		   else return today.getDayOfMonth() -1;
-    	   } else if(isPreviousMonth) {
-    		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
-    		   return lastDayOfMonth;
-    	   } else {
-    		   if((hour+1) < 12) return today.getDayOfMonth() -2; 
-    		   else return today.getDayOfMonth() -1;  
-    	   }
-       } else if(fileId == 25) { // kma_asos_1day
-    	   if (issuedDateParsed.isEqual(today)) {
-    		   if((hour+1) < 12) return today.getDayOfMonth() -1;
-    		   else return today.getDayOfMonth();
-    	   } else if(isPreviousMonth) {
-    		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
-    		   return lastDayOfMonth;
-    	   } else {
-    		   if((hour+1) < 12) return today.getDayOfMonth() -1;
-    		   else return today.getDayOfMonth();  
-    	   }
-       }
-	   throw new IllegalArgumentException("처리되지 않은 파일 타입: " + fileType);
-   }
+ 	   LocalDate today = LocalDate.now();
+ 	   LocalDate yesterday = today.minusDays(1);
+ 	   LocalTime now = LocalTime.now();
+ 	   
+ 	   boolean isPreviousMonth = (issuedDateParsed.getMonthValue() < today.getMonthValue() && 
+                issuedDateParsed.getYear() == today.getYear()) ||
+                (issuedDateParsed.getYear() < today.getYear());
+ 	   
+ 	   String suffix = "";
+ 	   
+ 	   int hour = now.getHour() -1;
+ 	   
+ 	   //log.info("현재시간 : " + hour);
+ 	   
+ 	   if(fileId == 1) { // asos_ssb_pet_10min
+ 		   if (issuedDateParsed.isEqual(today)) return hour * 7 - (hour-1); // 오늘일때
+ 		   if (issuedDateParsed.isEqual(yesterday)) return now.isBefore(LocalTime.of(12, 0)) ? 139 : 144; // 어제일때 12:00 이전: 139, 이후:144 반환
+ 		   if (issuedDateParsed.isBefore(yesterday)) return 144; // 과거일때
+ 	   } else if (fileId == 31) { // kma_aws_10min_qc
+ 		   if (issuedDateParsed.isEqual(today)) return (hour + 1) * 6; // 오늘일때
+ 		   else return 144; // 어제,과거일때 144 반환
+        } else if (fileId == 28) { // kma_asos_1hr
+     	   if (issuedDateParsed.isEqual(today)) return hour + 1; // 오늘일때
+     	   else return 24; // 어제,과거일때 24 반환
+        } else if (fileId == 21) { // g120_v070_erea_unis_han_172ssb_10m/03
+     	   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 1044; // 오늘일때 07:00 이전:0, 이후:1044 반환
+     	   else return 1044; // 어제,과거일때 1044 반환
+        } else if (fileType.startsWith("g120_v070_erea_unis_han_172ssb_10m")) {
+     	   suffix = fileType.substring(fileType.lastIndexOf("/"));
+     	   if(suffix.equals("/03")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 1044; // 오늘일때 07:00 이전: 0, 이후:1044 반환
+     		   else return 1044;
+     	   } else if(suffix.equals("/09")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(13, 0)) ? 0 : 1044; // 오늘일때 13:00 이전: 0, 이후:1044 반환
+     		   else return 1044;
+     	   } else if(suffix.equals("/15")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(19, 0)) ? 0 : 1044; // 오늘일때 19:00 이전: 0, 이후:1044 반환
+     		   else return 1044;
+     	   } else if(suffix.equals("/21")) {
+     		   if(issuedDateParsed.isEqual(today)) { // 오늘일때 0
+     			   return 0;
+     		   } else if(issuedDateParsed.isEqual(yesterday)) { // 어제일때
+     			   return now.isBefore(LocalTime.of(2, 0)) ? 0 : 1044; // 오늘일때 02:00 이전: 0, 이후:1044 반환
+     		   } else {
+     			   return 1044;
+     		   }
+     	   } 
+        } else if (fileType.startsWith("l015_v070_erlo_unis_han_172ssb_10m")) {
+     	   suffix = fileType.substring(fileType.lastIndexOf("/"));
+     	   if(suffix.equals("/03")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(7, 0)) ? 0 : 576; // 오늘일때 07:00 이전: 0, 이후:576 반환
+     		   else return 576;
+     	   } else if(suffix.equals("/09")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(13, 0)) ? 0 : 576; // 오늘일때 13:00 이전: 0, 이후:576 반환
+     		   else return 576;
+     	   } else if(suffix.equals("/15")) {
+     		   if (issuedDateParsed.isEqual(today)) return now.isBefore(LocalTime.of(19, 0)) ? 0 : 576; // 오늘일때 19:00 이전: 0, 이후:576 반환
+     		   else return 576;
+     	   } else if(suffix.equals("/21")) {
+     		   if(issuedDateParsed.isEqual(today)) { // 오늘일때 0
+     			   return 0;
+     		   } else if(issuedDateParsed.isEqual(yesterday)) { // 어제일때
+     			   return now.isBefore(LocalTime.of(2, 0)) ? 0 : 576; // 오늘일때 02:00 이전: 0, 이후:576 반환
+     		   } else {
+     			   return 576;
+     		   }
+     	   } 
+        } else if(fileId == 2) { // asos_ssb_pet_1day
+     	   if (issuedDateParsed.isEqual(today)) {
+     		   if((hour+1) < 12) return today.getDayOfMonth() -2;
+     		   else return today.getDayOfMonth() -1;
+     	   } else if(isPreviousMonth) {
+     		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+     		   return lastDayOfMonth;
+     	   } else {
+     		   if((hour+1) < 12) return today.getDayOfMonth() -2; 
+     		   else return today.getDayOfMonth() -1;  
+     	   }
+        } else if(fileId == 25) { // kma_asos_1day
+     	   if (issuedDateParsed.isEqual(today)) {
+     		   if((hour+1) < 12) return today.getDayOfMonth() -1;
+     		   else return today.getDayOfMonth();
+     	   } else if(isPreviousMonth) {
+     		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+     		   return lastDayOfMonth;
+     	   } else {
+     		   if((hour+1) < 12) return today.getDayOfMonth() -1;
+     		   else return today.getDayOfMonth();  
+     	   }
+        } else if(fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58) { // 환경부 10분 자료
+     	   if (issuedDateParsed.isEqual(today)) return (hour+1) * 6; // 오늘일때
+     	   else return 144;
+        } else if(fileId == 50 || fileId == 53 || fileId == 56 || fileId == 59) { // 환경부 1일 자료
+     	   if (issuedDateParsed.isEqual(today)) {
+     		   return today.getDayOfMonth() -1;
+     	   } else if(isPreviousMonth) {
+     		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+     		   return lastDayOfMonth;
+     	   } else {
+     		   return today.getDayOfMonth() -1;
+     	   }
+        } else if(fileId == 51 || fileId == 54 || fileId == 57 || fileId == 60) { // 환경부 1시간 자료
+     	   if (issuedDateParsed.isEqual(today)) return hour +1; // 오늘일때
+     	   else return 24; // 어제,과거일때 24 반환
+        } else if(fileType.startsWith("tm_ssb_pcp_10min")) {
+     	   suffix = fileType.substring(fileType.lastIndexOf("/"));
+     	   if(suffix.equals("/tm_ef")) {
+     		   if (issuedDateParsed.isEqual(today)) return (hour+1) * 6;
+     		   else return 144;
+     	   } else if(suffix.equals("/tm_ssb")) {
+     		   if (issuedDateParsed.isEqual(today)) return (hour+1) * 6;
+     		   else return 144;
+     	   } else if(suffix.equals("/tm_thi")) {
+     		   if (issuedDateParsed.isEqual(today)) return (hour+1) * 6;
+     		   else return 144;
+     	   } 
+        } else if(fileType.startsWith("tm_ssb_pcp_1day")) {
+     	   suffix = fileType.substring(fileType.lastIndexOf("/"));
+     	   if(suffix.equals("/tm_ef")) {
+     		   if (issuedDateParsed.isEqual(today)) {
+         		   return today.getDayOfMonth() -1;
+         	   } else if(isPreviousMonth) {
+         		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+         		   return lastDayOfMonth;
+         	   } else {
+         		   return today.getDayOfMonth() -1;
+         	   }
+     	   } else if(suffix.equals("/tm_ssb")) {
+     		   if (issuedDateParsed.isEqual(today)) {
+         		   return today.getDayOfMonth() -1;
+         	   } else if(isPreviousMonth) {
+         		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+         		   return lastDayOfMonth;
+         	   } else {
+         		   return today.getDayOfMonth() -1;
+         	   }
+     	   } else if(suffix.equals("/tm_thi")) {
+     		   if (issuedDateParsed.isEqual(today)) {
+         		   return today.getDayOfMonth() -1;
+         	   } else if(isPreviousMonth) {
+         		   int lastDayOfMonth = issuedDateParsed.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+         		   return lastDayOfMonth;
+         	   } else {
+         		   return today.getDayOfMonth() -1;
+         	   }
+     	   } 
+        }
+ 	   throw new IllegalArgumentException("처리되지 않은 파일 타입: " + fileType);
+    }
 }

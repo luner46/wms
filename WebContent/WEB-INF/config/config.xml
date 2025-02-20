@@ -2,15 +2,34 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties>
-	
-	<entry key="sftp_host">223.130.152.144</entry>
-	<entry key="sftp_port">7021</entry>
-	<entry key="sftp_id">wisesys</entry>
-	<entry key="sftp_pwd">6wpW%5HY!^</entry>
-	<entry key="directory_path">/home/outer/data/</entry>
-	
-	<entry key="host">192.168.0.164</entry>
-	<entry key="port">6021</entry>
-	<entry key="user">wisesys</entry>
-	<entry key="password">#sRJj!wy77YQhg</entry>
+    
+    <!-- wdms khnp(한수원) 서버 -->
+    <entry key="khnp_host">223.130.152.144</entry>
+    <entry key="khnp_port">7021</entry>
+    <entry key="khnp_id">wisesys</entry>
+    <entry key="khnp_pwd">6wpW%5HY!^</entry>
+    <!--<entry key="khnp_directory_path">/home/outer/data/</entry>-->
+    <entry key="khnp_directory_path">/home/kms/data/</entry>
+    
+    <!--  
+    <entry key="rnd_host">211.209.185.141</entry>
+    <entry key="rnd_port">7021</entry>
+    <entry key="rnd_id">metdata</entry>
+    <entry key="rnd_pwd">CT39r%2m6^</entry>
+    <entry key="rnd_directory_path">/nas/met/</entry> -->
+    
+    <!-- wsms work(nia) 서버 -->
+    <entry key="host">192.168.0.164</entry>
+    <entry key="port">6021</entry>
+    <entry key="user">wisesys</entry>
+    <entry key="password">#sRJj!wy77YQhg</entry>
+    
+    <!-- 로컬 테스트용 wdms rnd(연구) 서버 --> 
+      
+    <entry key="rnd_host">211.209.185.141</entry>
+    <entry key="rnd_port">7021</entry>
+    <entry key="rnd_id">kms</entry>
+    <entry key="rnd_pwd">4can#Uwt</entry>
+    <entry key="rnd_directory_path">/home/kms/data/</entry>
+    
 </properties>
