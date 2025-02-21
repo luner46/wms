@@ -331,16 +331,16 @@ function fileCount(date) {
         	if (tbl_rows.length == 0) {
                 $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
                 $(tbl_title).addClass('rnd');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled" disabled>재생산</button>');
                 tbl_rows = '<tr><td colspan="5" style="height: 260px;">이상 없음</td></tr>';
             } else if (tbl_rows.length != 0 && error_flag_std == false) {
                 $(tbl_title).html(tbl_nm + '<span class="normal">정상</span>');
                 $(tbl_title).addClass('rnd');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled">재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled" disabled>재생산</button>');
             } else {
                $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
                 $(tbl_title).addClass('rnd');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction(1);">재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled" onclick="reproduction(1);" disabled>재생산</button>');
             }
         }
             
@@ -368,7 +368,7 @@ function fileCount(date) {
 
 function createErrorMsg(boardTime, server_error_count, error_flag_std){
 	var alarmTime = new Date(boardTime);
-	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0');
+	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0') + ' ' + alarmTime.getHours().toString().padStart(2, '0') + ':' + alarmTime.getMinutes().toString().padStart(2, '0');
 	
 	var errorMsg = [];
 	var alarmMsg = '';
