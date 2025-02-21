@@ -220,10 +220,6 @@ public class WdmsContController {
 	    		    	}
 	    	        	
 	    	            int updateValue = commonFileUtil.getHourlyValue(fileType, issuedate);
-	    	            
-	    	            //log.info("fileType : " +  fileType);
-	    	            //log.info("updateValue : " +  updateValue);
-	    	            //log.info("repoId : " +  repoId);
 	    	             
 	    	            service.updateCorrectionData(fileId, issuedate, updateValue, repoId);
 	    	             

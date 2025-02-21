@@ -1,15 +1,9 @@
 package kr.co.wisesys.wdms.service;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
@@ -17,10 +11,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.AbstractMap;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Stream;
@@ -166,11 +162,11 @@ public class SFTPFileService {
         } else if(fileId == 68) {
         	return rnd_directory_path + "tm_ssb_pcp_10min/tm_thi/" + formattedDate;
         } else if(fileId == 69) {
-        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ef/" + formattedYear + "/" + formattedMonth;
+        	return rnd_directory_path + "tm_ssb_pcp_1day/tm_ef/" + formattedYear + "/" + formattedMonth;
         } else if(fileId == 70) {
-        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_ssb/" + formattedYear + "/" + formattedMonth;
+        	return rnd_directory_path + "tm_ssb_pcp_1day/tm_ssb/" + formattedYear + "/" + formattedMonth;
         } else if(fileId == 71) {
-        	return rnd_directory_path + "tm_ssb_pcp_10min/tm_thi/" + formattedYear + "/" + formattedMonth;
+        	return rnd_directory_path + "tm_ssb_pcp_1day/tm_thi/" + formattedYear + "/" + formattedMonth;
         }
         
         throw new IllegalArgumentException("Invalid fileId: " + fileId);
@@ -180,7 +176,7 @@ public class SFTPFileService {
      * fileId에 따른 백업 디렉토리 반환
      */
     private String getBackupDir(int fileId, LocalDate date) {
-        if(fileId == 2 || fileId == 25) {
+        if(fileId == 2 || fileId == 25 || fileId == 50 || fileId == 53 || fileId == 56 || fileId == 59 || fileId == 69 || fileId == 70 || fileId == 71) {
             return getRemoteDir(fileId, date.minusMonths(1));
         }else if((fileId >= 21 && fileId <= 24) || (fileId >= 42 && fileId <= 45)) {
             return getRemoteDir(fileId, date.minusDays(0));
@@ -242,30 +238,6 @@ public class SFTPFileService {
         }
         return files;
     }
-
-
-    /**
-     * 특정 파일을 건너뛰어야 하는지 확인
-     */
-    private boolean shouldSkipFileCreation(LocalDate issuedDate, boolean isToday, boolean isYesterday, boolean isBeforeNoon, int hour, String time, int fileId) {
-        LocalTime currentTime = LocalTime.now();
-        int flooredMinute = (currentTime.getMinute() / 10) * 10;
-        LocalTime latestAllowedTime = LocalTime.of(currentTime.getHour(), flooredMinute);
-
-        LocalTime parsedTime = (fileId == 28) ? LocalTime.of(hour, 0) : LocalTime.parse(time, DateTimeFormatter.ofPattern("HHmm"));
-
-        // 오늘 날짜일 경우 제한 조건 적용
-        if (isToday) {
-            if (parsedTime.isAfter(latestAllowedTime)) {
-                return true;
-            }
-            if (fileId == 28 && parsedTime.isAfter(LocalTime.of(currentTime.getHour(), 0))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
     
     /**
      * 파일 내용 수정
@@ -322,7 +294,7 @@ public class SFTPFileService {
         String fileType;
         
         try {
-            if (fileId == 25 || fileId == 28 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58) {
+            if (fileId == 25 || fileId == 28 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58 || fileId == 50 || fileId == 53 || fileId == 56 || fileId == 59 || fileId == 51 || fileId == 54 || fileId == 57 || fileId == 60) {
                 tempFile = File.createTempFile("temp_", ".csv");
                 fileType = "CSV";
             } else {
@@ -336,9 +308,9 @@ public class SFTPFileService {
                 String oldDate = backupFileName.substring(4, 16);
                 String newDate = fileName.substring(4, 16);
                 updateFileContent(tempFile, oldDate, newDate, fileType);
-            } else if(fileId == 1 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58){
+            } else if(fileId == 1 || fileId == 31 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58 || fileId == 66 || fileId == 67 || fileId == 68){
                 updateFileContent(tempFile, backupFileName.substring(0, 12), fileName.substring(0, 12), fileType);
-            } else if(fileId == 28){
+            } else if(fileId == 28 || fileId == 51 || fileId == 54 || fileId == 57 || fileId == 60){
                 updateFileContent(tempFile, backupFileName.substring(0, 10), fileName.substring(0, 10), fileType);
             } else {
                 updateFileContent(tempFile, backupFileName.substring(0, 8), fileName.substring(0, 8), fileType);
@@ -374,7 +346,7 @@ public class SFTPFileService {
 
         LocalDate today = LocalDate.now();
         if (issuedMonth.getMonth() == today.getMonth() && issuedMonth.getYear() == today.getYear()) {
-            if (fileId == 2) {
+            if (fileId == 2 || fileId == 50 || fileId == 53 || fileId == 56 || fileId == 59 || fileId == 69 || fileId == 70 || fileId == 71) {
                 endDate = today.minusDays(1);
             } else if (fileId == 25) {
                 endDate = today; 
@@ -410,10 +382,10 @@ public class SFTPFileService {
     }
 
     /**
-     * 가장 가까운 백업 파일을 찾는 메서드 (최대 7일 전까지 조회)
+     * 최대7일 전 가장 가까운 백업 파일을 찾는 메서드 
      */
     private String getNearestBackupFile(LocalDate targetDate, String backupBaseDir, String fileExtension, LocalDate startDate) {
-        for (int i = 1; i <= 7; i++) { 
+        for (int i = 1; i <= 7; i++) {  
             LocalDate backupDate = targetDate.minusDays(i);
 
             if (backupDate.isBefore(startDate)) {
@@ -426,7 +398,7 @@ public class SFTPFileService {
 
             String backupFileName = backupYear + backupMonth + backupDay + fileExtension;
             String backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + backupYear + "/" + backupMonth);
-
+            
             try {
                 Set<String> backupFiles = getExistingFiles(backupDir);
                 if (backupFiles.contains(backupFileName)) {
@@ -436,71 +408,147 @@ public class SFTPFileService {
                 log.warn("백업 파일 조회 중 오류 발생: " + backupDir, e);
             }
         }
+
+        try {
+            String correctedBackupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + targetDate.format(DateTimeFormatter.ofPattern("yyyy")) + "/" + targetDate.format(DateTimeFormatter.ofPattern("MM")));
+
+            Set<String> backupFiles = getExistingFiles(correctedBackupDir);
+            if (!backupFiles.isEmpty()) {
+                String earliestFile = backupFiles.stream()
+                    .filter(f -> f.endsWith(fileExtension)) 
+                    .sorted() 
+                    .findFirst() 
+                    .orElse(null);
+
+                if (earliestFile != null) {
+                    return earliestFile;
+                }
+            }
+        } catch (SftpException e) {
+            log.warn("백업 디렉토리 조회 중 오류 발생: " + backupBaseDir, e);
+        }
+
         return null; 
     }
     
     /**
-     * 10분 및 1시간 단위 파일 생성 및 업로드 (fileId: 1, 31, 28)
+     * 10분 및 1시간 단위 파일 생성 및 업로드 
      */
-    private void createAndUploadHourlyFiles(String remoteDir, String backupBaseDir, int fileId, String issuedate, boolean isToday, boolean isYesterday, boolean isBeforeNoon) throws SftpException {
-
+    private void createAndUploadHourlyFiles(String remoteDir, String backupBaseDir, int fileId, String issuedate, boolean isToday) throws SftpException {
         CommonFileUtil commonFileUtil = new CommonFileUtil();
-        Set<String> existingFiles = getExistingFiles(remoteDir);
+        Set<String> existingFiles = getExistingFiles(remoteDir); 
 
         LocalDate issuedDate = LocalDate.parse(issuedate.substring(0, 8), DateTimeFormatter.ofPattern("yyyyMMdd"));
         String fileExtension = commonFileUtil.fileExtension(fileId);
 
-        for (int hour = 0; hour < 24; hour++) {
-            for (int minute = 0; minute < 60; minute += 10) {
+        int currentHour = LocalTime.now().getHour();
+        int maxHour = isToday ? currentHour : 24;
 
-                String time = (fileId == 28) ? String.format("%02d", hour) : String.format("%02d%02d", hour, minute);
+        String previousFileName = null;  
+
+        for (int hour = 0; hour < maxHour; hour++) {
+            for (int minute = 0; minute < 60; minute += 10) {
+                String time = (fileId == 28 || fileId == 51 || fileId == 54 || fileId == 57 || fileId == 60)
+                    ? String.format("%02d", hour) 
+                    : String.format("%02d%02d", hour, minute);
+
                 String fileName = issuedate.substring(0, 8) + time + fileExtension;
 
                 if (existingFiles.contains(fileName)) {
+                    previousFileName = fileName;  // 이전 파일 갱신
                     continue;
                 }
-
-                LocalDateTime fileDateTime = LocalDateTime.of(issuedDate, LocalTime.of(hour, minute));
-                LocalDateTime backupDateTime = fileDateTime.minusMinutes(10);
 
                 String backupFileName = null;
                 String backupDir = null;
-                Set<String> backupFiles = new HashSet<>();
 
-                for (int i = 1; i <= 1008; i++) {
-                    backupDateTime = fileDateTime.minusMinutes(i * 10);
-                    String backupYear = backupDateTime.format(DateTimeFormatter.ofPattern("yyyy"));
-                    String backupMonth = backupDateTime.format(DateTimeFormatter.ofPattern("MM"));
-                    String backupDay = backupDateTime.format(DateTimeFormatter.ofPattern("dd"));
-                    String backupTime = backupDateTime.format(DateTimeFormatter.ofPattern((fileId == 28) ? "HH" : "HHmm"));
-                    String tempBackupFileName = backupYear + backupMonth + backupDay + backupTime + fileExtension;
+                if (previousFileName != null && existingFiles.contains(previousFileName)) {
+                    backupFileName = previousFileName;
+                    backupDir = remoteDir;
+                } else {
+                    for (int days = 1; days <= 7; days++) {
+                        LocalDate backupDate = issuedDate.minusDays(days);
+                        String backupYear = backupDate.format(DateTimeFormatter.ofPattern("yyyy"));
+                        String backupMonth = backupDate.format(DateTimeFormatter.ofPattern("MM"));
+                        String backupDay = backupDate.format(DateTimeFormatter.ofPattern("dd"));
 
-                    backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}/\\d{2}$", "/" + backupYear + "/" + backupMonth + "/" + backupDay);
-                    
-                    if (shouldSkipFileCreation(issuedDate, isToday, isYesterday, isBeforeNoon, hour, time, fileId)) {
-                        continue;
-                    }
-                    
-                    try {
-                        backupFiles = getExistingFiles(backupDir);
-                    } catch (SftpException e) {
-                        continue; 
-                    }
+                        backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}/\\d{2}$", "/" + backupYear + "/" + backupMonth + "/" + backupDay);
 
-                    if (backupFiles.contains(tempBackupFileName)) {
-                        backupFileName = tempBackupFileName;
-                        break; 
+                        try {
+                            Set<String> backupFiles = getExistingFiles(backupDir);
+                            Optional<String> nearestFile = findNearestPastFile(backupFiles, fileName, fileExtension);
+                            if (nearestFile.isPresent()) {
+                                backupFileName = nearestFile.get();
+                                break;
+                            }
+                        } catch (SftpException e) {
+                            log.warn("⛔ 백업 파일 조회 중 오류 발생: " + backupDir, e);
+                        }
                     }
                 }
 
-                if (backupFileName == null) {
-                    log.warn("7일 내 적절한 백업 파일을 찾을 수 없음: " + fileName);
-                    continue;
+                if (backupFileName != null) {
+                    createAndUploadFile(remoteDir, backupDir, fileName, backupFileName, existingFiles, getExistingFiles(backupDir), fileId);
+                    previousFileName = fileName;  // 새로 생성한 파일을 다음 루프에서 참조하도록 갱신
+                } else {
+                    log.warn("❌ 7일 내 적절한 백업 파일을 찾을 수 없음: " + fileName);
                 }
-
-                createAndUploadFile(remoteDir, backupDir, fileName, backupFileName, existingFiles, backupFiles, fileId);
             }
         }
+    }
+
+    /**
+     * 7일 내 가장 가까운 과거 파일 찾기 
+     */
+    private Optional<String> findNearestPastFile(Set<String> files, String targetFile, String fileExtension) {
+        if (files.isEmpty()) return Optional.empty();
+        
+        if (!targetFile.endsWith(fileExtension)) {
+            return Optional.empty();
+        }
+
+        String fileNameWithoutExt = targetFile.replace(fileExtension, ""); 
+        if (fileNameWithoutExt.length() < 10) {
+            return Optional.empty();
+        }
+
+        int targetTime;
+        try {
+            if (fileNameWithoutExt.length() >= 12) {
+                targetTime = Integer.parseInt(fileNameWithoutExt.substring(8, 12));
+            } else {
+                targetTime = Integer.parseInt(fileNameWithoutExt.substring(8, 10)) * 100;
+            }
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+
+        return files.stream()
+            .filter(f -> f.endsWith(fileExtension))
+            .map(f -> {
+                String fWithoutExt = f.replace(fileExtension, "");
+                if (fWithoutExt.length() < 10) {
+                    return null;
+                }
+
+                try {
+                    int fileTime;
+                    if (fWithoutExt.length() >= 12) {
+                        fileTime = Integer.parseInt(fWithoutExt.substring(8, 12)); 
+                    } else {
+                        fileTime = Integer.parseInt(fWithoutExt.substring(8, 10)) * 100; 
+                    }
+
+                    return new AbstractMap.SimpleEntry<>(f, fileTime);
+                } catch (NumberFormatException e) {
+                    log.warn("🚨 파일명에서 HHmm 변환 실패: " + f);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            
+            .max(Comparator.comparingInt(Map.Entry::getValue))
+            .map(Map.Entry::getKey);
     }
     
     /**
@@ -559,7 +607,7 @@ public class SFTPFileService {
     }
     
     /**
-     * gdaps,ldaps 가장 적절한 백업 파일을 찾는 메서드
+     * gdaps,ldaps 가장 적절한 백업 파일찾기
      */
     private String findBestBackupFile(String prefix, String datePart, String timePart, String fileExtension, String backupDir) {
         LocalDateTime originalTime = LocalDateTime.parse(datePart + timePart, DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
@@ -612,16 +660,14 @@ public class SFTPFileService {
             LocalDate issuedDate = LocalDate.parse(issuedate.substring(0, 8), DateTimeFormatter.ofPattern("yyyyMMdd"));
             LocalDate today = LocalDate.now();
             boolean isToday = issuedDate.equals(today);
-            boolean isYesterday = issuedDate.equals(today.minusDays(1));
-            boolean isBeforeNoon = LocalTime.now().getHour() < 12;
             
             String remoteDir = getRemoteDir(fileId, issuedDate);
             String backupDir = getBackupDir(fileId, issuedDate);
             
-            if (fileId == 2 || fileId == 25) {
+            if (fileId == 2 || fileId == 25 || fileId == 50 || fileId == 53 || fileId == 56 || fileId == 59 || fileId == 69 || fileId == 70 || fileId == 71) {
                 createAndUpload1DayFiles(remoteDir, backupDir, fileId);
-            } else if (fileId == 1 || fileId == 31 || fileId == 28 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58) {
-                createAndUploadHourlyFiles(remoteDir, backupDir, fileId, issuedate, isToday, isYesterday, isBeforeNoon);
+            } else if (fileId == 1 || fileId == 31 || fileId == 28 || fileId == 49 || fileId == 52 || fileId == 55 || fileId == 58 || fileId == 51 || fileId == 54 || fileId == 57 || fileId == 60 || fileId == 66 || fileId == 67 || fileId == 68) {
+                createAndUploadHourlyFiles(remoteDir, backupDir, fileId, issuedate, isToday);
             } else {
                 createAndUploadG120Files(remoteDir, backupDir, fileId, issuedate);
             }

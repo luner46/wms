@@ -340,7 +340,7 @@ function fileCount(date) {
             } else {
                $(tbl_title).html(tbl_nm + '<span class="error">문제발생</span>');
                 $(tbl_title).addClass('rnd');
-                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake disabled" onclick="reproduction(1);" disabled>재생산</button>');
+                $(tbl_btn).html('<button type="submit" onclick="insertFileCount(' + selectedDate.getTime() + ', \'rnd\');">scan</button><button type="submit" class="btn_remake" onclick="reproduction(1);">재생산</button>');
             }
         }
             
@@ -494,9 +494,9 @@ function nowDate() {
 function reproduction(repoId) {
 	var issue_date = nowDate();
 	
-	var alarmText = $('header .alarm.active').text();
+	var alarmText = $('header .alarm.active').html();
 	
-	var dateMatch = alarmText.match(/\[(\d{4})-(\d{2})-(\d{2})\]/);
+	var dateMatch = alarmText.match(/\[(\d{4})-(\d{2})-(\d{2}) \d{2}:\d{2}\]/);
 	if (dateMatch) {
 	    var formattedDate = dateMatch[1] + dateMatch[2] + dateMatch[3] + issue_date; 
 	    
