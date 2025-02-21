@@ -375,6 +375,11 @@ public class SFTPFileService {
 
             String backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + issueYear + "/" + issueMonth);
 
+            if (!existingFiles.contains(backupFileName)) {
+                LocalDate previousMonth = issuedDate.minusMonths(1);
+                backupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + previousMonth.format(DateTimeFormatter.ofPattern("yyyy")) + "/" + previousMonth.format(DateTimeFormatter.ofPattern("MM")));
+            }
+
             Set<String> backupFiles = getExistingFiles(backupDir);
 
             createAndUploadFile(remoteDir, backupDir, fileName, backupFileName, existingFiles, backupFiles, fileId);
@@ -385,6 +390,8 @@ public class SFTPFileService {
      * 최대7일 전 가장 가까운 백업 파일을 찾는 메서드 
      */
     private String getNearestBackupFile(LocalDate targetDate, String backupBaseDir, String fileExtension, LocalDate startDate) {
+        String selectedBackupFile = null;
+
         for (int i = 1; i <= 7; i++) {  
             LocalDate backupDate = targetDate.minusDays(i);
 
@@ -402,32 +409,53 @@ public class SFTPFileService {
             try {
                 Set<String> backupFiles = getExistingFiles(backupDir);
                 if (backupFiles.contains(backupFileName)) {
-                    return backupFileName; 
+                    return backupFileName;  
                 }
             } catch (SftpException e) {
                 log.warn("백업 파일 조회 중 오류 발생: " + backupDir, e);
             }
         }
 
-        try {
-            String correctedBackupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + targetDate.format(DateTimeFormatter.ofPattern("yyyy")) + "/" + targetDate.format(DateTimeFormatter.ofPattern("MM")));
+        LocalDate previousMonth = targetDate.minusMonths(1);
+        String previousMonthDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + previousMonth.format(DateTimeFormatter.ofPattern("yyyy")) + "/" + previousMonth.format(DateTimeFormatter.ofPattern("MM")));
 
+        try {
+            Set<String> previousMonthFiles = getExistingFiles(previousMonthDir);
+            if (!previousMonthFiles.isEmpty()) {
+                selectedBackupFile = previousMonthFiles.stream()
+                    .filter(f -> f.endsWith(fileExtension))
+                    .sorted(Comparator.reverseOrder()) 
+                    .findFirst()
+                    .orElse(null);
+
+                if (selectedBackupFile != null) {
+                    return selectedBackupFile;
+                }
+            }
+        } catch (SftpException e) {
+            log.warn("이전 달 백업 디렉토리 조회 중 오류 발생: " + previousMonthDir, e);
+        }
+
+        String correctedBackupDir = backupBaseDir.replaceFirst("/\\d{4}/\\d{2}$", "/" + targetDate.format(DateTimeFormatter.ofPattern("yyyy")) + "/" + targetDate.format(DateTimeFormatter.ofPattern("MM")));
+        
+        try {
             Set<String> backupFiles = getExistingFiles(correctedBackupDir);
             if (!backupFiles.isEmpty()) {
-                String earliestFile = backupFiles.stream()
+                selectedBackupFile = backupFiles.stream()
                     .filter(f -> f.endsWith(fileExtension)) 
                     .sorted() 
                     .findFirst() 
                     .orElse(null);
 
-                if (earliestFile != null) {
-                    return earliestFile;
+                if (selectedBackupFile != null) {
+                    return selectedBackupFile;
                 }
             }
         } catch (SftpException e) {
-            log.warn("백업 디렉토리 조회 중 오류 발생: " + backupBaseDir, e);
+            log.warn("백업 디렉토리 조회 중 오류 발생: " + correctedBackupDir, e);
         }
 
+        log.warn("백업 파일을 찾을 수 없음.");
         return null; 
     }
     
@@ -455,7 +483,7 @@ public class SFTPFileService {
                 String fileName = issuedate.substring(0, 8) + time + fileExtension;
 
                 if (existingFiles.contains(fileName)) {
-                    previousFileName = fileName;  // 이전 파일 갱신
+                    previousFileName = fileName; 
                     continue;
                 }
 
@@ -482,7 +510,7 @@ public class SFTPFileService {
                                 break;
                             }
                         } catch (SftpException e) {
-                            log.warn("⛔ 백업 파일 조회 중 오류 발생: " + backupDir, e);
+                            log.warn("백업 파일 조회 중 오류 발생: " + backupDir, e);
                         }
                     }
                 }
@@ -491,7 +519,7 @@ public class SFTPFileService {
                     createAndUploadFile(remoteDir, backupDir, fileName, backupFileName, existingFiles, getExistingFiles(backupDir), fileId);
                     previousFileName = fileName;  // 새로 생성한 파일을 다음 루프에서 참조하도록 갱신
                 } else {
-                    log.warn("❌ 7일 내 적절한 백업 파일을 찾을 수 없음: " + fileName);
+                    log.warn("7일 내 적절한 백업 파일을 찾을 수 없음: " + fileName);
                 }
             }
         }
@@ -541,7 +569,7 @@ public class SFTPFileService {
 
                     return new AbstractMap.SimpleEntry<>(f, fileTime);
                 } catch (NumberFormatException e) {
-                    log.warn("🚨 파일명에서 HHmm 변환 실패: " + f);
+                    log.warn("파일명에서 HHmm 변환 실패: " + f);
                     return null;
                 }
             })
