@@ -58,7 +58,7 @@ function todayErrorCount() {
 
 function createTdayErrorMsg(boardTime, server_error_count, error_flag_std){
 	var alarmTime = new Date(boardTime);
-	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0');
+    var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0') + ' ' + alarmTime.getHours().toString().padStart(2, '0') + ':' + alarmTime.getMinutes().toString().padStart(2, '0');
 	
 	var errorMsg = [];
 	var alarmMsg = '';
