@@ -209,16 +209,20 @@ public class WdmsContController {
 	    	        Integer fileId = fileMapping.get(fileType);
 	    	        
 	    	        if (fileId != null) {
-
-	    	        	if (!issueDateLocal.equals(today)) {
-	    	        		
+	    	        	
+	    	        	if(issueDateLocal.equals(today)) {
+	    	        		issuedate = issuedate;
+	    	        		log.info("111issuedate : "+issuedate);
+	    	        	}else if(issueDateLocal.equals(today.minusDays(1))) {
+	    	        		issuedate = issuedate;
+	    	        		log.info("222issuedate : "+issuedate);
+	    	        	}else {
 	    	        		int hour = LocalDateTime.MAX.getHour();
 	    		    		String max_hour = String.format("%02d", hour);
 	    	        		
 	    	        		issuedate = issuedate.substring(0, 8) + max_hour + issuedate.substring(10,12);
-	    	        		
-	    		    	}
-	    	        	
+	    	        	}
+
 	    	            int updateValue = commonFileUtil.getHourlyValue(fileType, issuedate);
 	    	             
 	    	            service.updateCorrectionData(fileId, issuedate, updateValue, repoId);
