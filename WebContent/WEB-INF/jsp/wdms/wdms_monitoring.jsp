@@ -512,6 +512,8 @@ function reproduction(repoId) {
     	
         var fileType = rowData[1];
         
+        console.log(fileType);
+        
         var errorFlag = $(this).find('#not_prblm').text().includes("이상 없음");
         
         if (fileType && !errorFlag) {
