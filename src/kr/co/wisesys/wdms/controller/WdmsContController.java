@@ -212,10 +212,8 @@ public class WdmsContController {
 	    	        	
 	    	        	if(issueDateLocal.equals(today)) {
 	    	        		issuedate = issuedate;
-	    	        		log.info("111issuedate : "+issuedate);
 	    	        	}else if(issueDateLocal.equals(today.minusDays(1))) {
 	    	        		issuedate = issuedate;
-	    	        		log.info("222issuedate : "+issuedate);
 	    	        	}else {
 	    	        		int hour = LocalDateTime.MAX.getHour();
 	    		    		String max_hour = String.format("%02d", hour);
