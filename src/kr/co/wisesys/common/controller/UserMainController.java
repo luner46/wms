@@ -51,7 +51,7 @@ public class UserMainController {
 	    	
 	    	session.setAttribute("user_id", user_id);
 	    	
-	    	session.setMaxInactiveInterval(604800);  // 로그인후 세션유지시간 7일
+	    	session.setMaxInactiveInterval(-1);  // 로그인후 세션 무한대
 	    	
 	    	return "redirect:/whms/whms_monitoring.do";
 	    }else {
