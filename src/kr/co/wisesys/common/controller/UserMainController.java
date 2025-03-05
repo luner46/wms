@@ -51,6 +51,8 @@ public class UserMainController {
 	    	
 	    	session.setAttribute("user_id", user_id);
 	    	
+	    	session.setMaxInactiveInterval(604800);  // 로그인후 세션유지시간 7일
+	    	
 	    	return "redirect:/whms/whms_monitoring.do";
 	    }else {
 	    	redirectAttributes.addFlashAttribute("errorMessage", "아이디 또는 비밀번호가 잘못되었습니다.");
