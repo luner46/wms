@@ -257,3 +257,25 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, .ui-button.ui-state-disabled:hover, .ui-button.ui-state-disabled:active {border: 0 !important; background-color: #666; font-weight: normal;}
 .ui-state-active {border: 0 !important; background-color: var(--color-blue) !important;}
 .ui-datepicker-prev:hover, .ui-datepicker-next:hover{background: none;}
+
+/* login */
+#login_wrap {width: 100%; height: 100%; background: url(/images/img_loginbg.png) 0 0 no-repeat #24262A; background-size: cover; position: relative;}
+#login_wrap footer {position: absolute; bottom: 0; left: 50%; width: 100%; transform: translateX(-50%);}
+#login_wrap > form {width: 100%; height: 100%; display:table; position:relative;}
+.login_form {display:table-cell; vertical-align:middle;}
+.login_form > div {max-width: 380px; min-height: 400px; max-height: 600px; height: 80%; background-color: #2D2F33; border: 1px solid #24262A; margin: 0 auto; padding: 2em 2em 6em; border-radius: 8px; box-sizing: border-box; box-shadow: 0 0 10px 3px rgba(0,0,0, .3);}
+.login_form .img_logo {width: 60px; padding: .5em; background-color: #fff; border-radius: 4px;}
+.login_form .img_logo img {width: 70%; display: block; margin: 0 auto;}
+.login_form .login_text {margin: 2em 0;}
+.login_form .login_text p {color: rgba(255,255,255, .4); font-size: .9em; font-weight: 300;}
+.login_form .login_text strong {color: rgba(255,255,255, 1); font-size: 2em; font-weight: 600;}
+.login_form .login_input > p {background-color: #404246; background-repeat: no-repeat; background-size: 20px 20px; background-position: 10px 8px; margin: 8px 0; border-radius: 0; padding: 0 0 0 38px; border: 0;}
+.login_form .login_input input { background-color: #404246; text-align: left; width: 100%; height: 40px; line-height: 40px; font-size: 16px; padding: 0; border: 0; border-radius: 0; transition: all .3s ease-in-out;}
+.login_form .login_input input:focus {outline: 0;}
+.login_form .login_input input::-webkit-value {font-size:16px}
+.login_form .login_input .input_id { background-image: url(/images/img_login.png);}
+.login_form .login_input .input_pw {background-image: url(/images/img_pw.png);}
+.login_form .login_input input::placeholder {color: rgba(255,255,255,.3); font-size: 16px;}
+.login_form .login_input .input_loginbtn {background-color: #1b4bbd; text-align: center;color: #fff; width: 100%; height: 40px; line-height: 40px; border-radius: 0; margin: 4px 0; transition: all .3s ease-in-out;}
+.login_form .login_input .input_loginbtn:hover {background-color: #0836a0;}
+.login_form input:-webkit-autofill, .login_form input:-webkit-autofill:hover, .login_form input:-webkit-autofill:focus {font-size: 16px !important; -webkit-text-fill-color: #fff !important; -webkit-box-shadow: 0 0 0px 1000px #404246 inset; transition: background-color 5000s ease-in-out 0s;}

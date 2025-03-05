@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -31,9 +31,19 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="wrap">
     <div class="header_top">
         <ul>
-	        <li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
-	        <li><a href="/wsms/wsms_monitoring.do" id="wsms">시스템</a></li>
-	        <li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
+        	<c:choose>
+	        	<c:when test="${sessionScope.user_id == 'admin'}">
+			        <li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
+			        <li><a href="/wsms/wsms_monitoring.do" id="wsms">시스템</a></li>
+			        <li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
+			        <li><a href="/user/user_logout.do">로그아웃</a></li>
+		        </c:when>
+		        <c:otherwise>
+		        	<li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
+		        	<li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
+		        	<li><a href="/user/user_logout.do">로그아웃</a></li>
+				</c:otherwise>
+			</c:choose>
 	    </ul>
     </div>
 	
