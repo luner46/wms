@@ -3,70 +3,6 @@
 	<style type="text/css">@import url("/css/wdms.css");</style>
 	<title>WDMS - Wiseplus Data Mornitoring System</title>
 <script>
-function todayErrorCount() {
-	var currentTime = new Date();
-	currentTime.setMinutes(0);
-    var dayParam = 't';
-    var boardTime = currentTime.getFullYear().toString() + '-' + (currentTime.getMonth() + 1).toString().padStart(2, '0') + '-' + currentTime.getDate().toString().padStart(2, '0') + ' ' + currentTime.getHours().toString().padStart(2, '0') + ':' + currentTime.getMinutes().toString().padStart(2, '0');
-    
-    $.ajax({
-        url: '/wdmsCont/fileListData.do',
-        data: {boardTime: boardTime, dayParam: dayParam},
-        success: function (data) {
-            var khnpErrorCount = 0;
-
-            var error_flag_std = false;
-            for (var i = 0; i < data.length; i++){
-            	if (data[i]["error_flag"] == 'y' || data[i]["error_flag"] == 'c'){
-            		if (data[i]["error_flag"] == 'y') {
-            			error_flag_std = true;
-            		}
-            	}
-            }
-
-            for (var i = 0; i < data.length; i++) {
-                var server_nm = data[i]["server_nm"];
-                var repo_nm = data[i]["repo_nm"];
-                var file_nm = data[i]["file_nm"];
-                var file_count = data[i]["file_count"];
-                var std_count = data[i]["std_count"];
-                var error_flag = data[i]["error_flag"];
-                var error_flag_desc = "";
-                	if (error_flag == 'y') {error_flag_desc = '이상'} else if (error_flag == 'c') {error_flag_desc = '재생산'} else {error_flag_desc = '정상'}
-                var file_path = data[i]["file_path"];
-                var file_desc = data[i]["file_desc"];
-                var file_attr = data[i]["file_attr"];
-                    if (file_attr == '1'){file_attr = '원시'} else if (file_attr == '2') {file_attr = '생산'};
-                
-                if (error_flag == 'y' || error_flag == 'c') {
-                    if (server_nm == 'khnp' && repo_nm == '/home/outer/data') {
-                        khnpErrorCount++;
-                    }
-                }
-            }
-            createTdayErrorMsg(boardTime, khnpErrorCount, error_flag_std);
-        }
-    });
-}
-
-function createTdayErrorMsg(boardTime, khnp_error_count, error_flag_std){
-	var alarmTime = new Date(boardTime);
-	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0');
-	
-	var errorMsg = [];
-	var alarmMsg = '';
-	
-    if (khnp_error_count > 0 && error_flag_std == true) {errorMsg.push('KHNP');}
-
-    if (errorMsg.length > 0) {
-    	alarmMsg = '[' + formattedAlarmTime + '] <span>' + errorMsg.join(', ') + '</span> 자료에 <span>문제</span>가 발생하였습니다.';
-    } else {
-    	alarmMsg = '[' + formattedAlarmTime + '] 모든 자료가 정상입니다.';
-    }
-
-    $('header .alarm.active').html('<p>' + alarmMsg + '</p>');
-}
-
 function dateSelect(selectedDate) {
 	var selectedDateFormat = new Date(selectedDate);
     var boardTime = selectedDateFormat.getFullYear().toString() + '-' + (selectedDateFormat.getMonth() + 1).toString().padStart(2, '0') + '-' + selectedDateFormat.getDate().toString().padStart(2, '0') + ' ' + selectedDateFormat.getHours().toString().padStart(2, '0') + ':' + selectedDateFormat.getMinutes().toString().padStart(2, '0');
@@ -95,6 +31,9 @@ function dateSelect(selectedDate) {
     
     // 당일 데이터
     } else if (selectedDateFormat >= startOfToday) {
+    	if (currentTime.getMinutes() < 1) {
+    		currentTime.setHours(currentTime.getHours() - 1);
+    	}
     	currentTime.setMinutes(0);
         dayParam = 't';
         boardTime = currentTime.getFullYear().toString() + '-' + (currentTime.getMonth() + 1).toString().padStart(2, '0') + '-' + currentTime.getDate().toString().padStart(2, '0') + ' ' + currentTime.getHours().toString().padStart(2, '0') + ':' + currentTime.getMinutes().toString().padStart(2, '0');
@@ -569,8 +508,7 @@ function reproduction(repoId) {
 
 $(function() {
 	var currentPage = window.location.pathname;
-	if (currentPage == '/wdms/wdms_monitoring.do') {$('.mornitoring').addClass('active');} else if (currentPage == '/wdms/wdms_specMng.do') {$('.spec_mng').addClass('active');}
-	todayErrorCount();
+	if (currentPage == '/wdms/wdms_monitoring.do') {$('.mornitoring').addClass('active');} else if (currentPage == '/wdms/wdms_specMng.do') {$('.spec_mng').addClass('active');} else if (currentPage == '/wdms/wdms_metroStatus.do') {$('.metro_status').addClass('active');}
 	clipBoard();
 	createCalendar(new Date().getMonth() + 1, new Date().getFullYear());
 	openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
@@ -596,6 +534,7 @@ $(function() {
         <nav class="nav_wrap">
                <ul>
                    <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
+                   <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
                    <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
                </ul>
            </nav>
@@ -627,7 +566,7 @@ $(function() {
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>파일명 (파일 설명)</th>
+								<th>자료명</th>
 								<th>속성</th>
 								<th>자료현황</th>
 								<th>자료상태</th>
@@ -653,7 +592,7 @@ $(function() {
 						<thead>
 							<tr>
 								<th>No</th>
-								<th>파일명 (파일 설명)</th>
+								<th>자료명</th>
 								<th>속성</th>
 								<th>자료현황</th>
 								<th>자료상태</th>

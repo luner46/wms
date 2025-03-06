@@ -24,4 +24,10 @@ public class WdmsMainController {
 		
 		return "wdms/wdms_specMng";
 	}
+	
+	@RequestMapping(value = "/wdms_metroStatus.do")
+	public String metroStatus(HttpServletRequest req, Model model) {
+		
+		return "wdms/wdms_metroStatus";
+	}
 }

@@ -289,6 +289,26 @@ public class WdmsContController {
         return updateResult;
     }
     
+    @RequestMapping(value = "/selectMetroStatus.do")
+    @ResponseBody
+    public ArrayList<HashMap<String, Object>> selectMetroStatus(Model model){
+    	ArrayList<HashMap<String, Object>> dataList = new ArrayList<>(); 
+    	dataList.addAll(sqlSessionMysql.selectList("wdms.selectMetroStatus"));
+    	model.addAttribute("dataList",dataList);
+        return dataList;
+    }
+    
+    @RequestMapping(value = "/updateMetroStatus.do")
+    @ResponseBody
+    public String updateMetroStatus(@RequestBody List<Map<String, Object>> metroStatusData) {
+    	String updateResult = "update_active";
+    	for (var i = 0; i < metroStatusData.size(); i++) {
+    		Map<String, Object> param = metroStatusData.get(i);
+    		updateResult += sqlSessionMysql.update("wdms.updateMetroStatus", param);
+    	}
+    	return updateResult;
+    }
+    
     private String formatBoardTime(String boardTime) throws Exception {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyyMMddHHmm");
@@ -345,27 +365,20 @@ public class WdmsContController {
         param.put("stateOrder", stateOrder);
         if (fileType.equals("rnStn")) {
           selectList = service.meRnStnInfoData(param);
-          data += "init_dt, rfobscd, obsnm, agcnm, addr, etcaddr, lat, lon, status" + "\n";
+          data += "rfobscd, obsnm, agcnm, addr, etcaddr, lat, lon" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
-              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("rfobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
               data += selectList.get(i).get("addr") + ",";
               data += selectList.get(i).get("etcaddr") + ",";
               data += selectList.get(i).get("lat") + ",";
-              data += selectList.get(i).get("lon") + ",";
-              if (selectList.get(i).get("flag_nm").equals("기본")) {
-                data += "-" + "\n";
-              } else {
-                data += selectList.get(i).get("flag_nm") + "\n";
-              }
+              data += selectList.get(i).get("lon") + "\n";
             }
         } else if (fileType.equals("dam")) {
           selectList = service.meDamStnInfoData(param);
-          data += "init_dt, dmobscd, obsnm, agcnm, addr, etcaddr, lat, lon, fldlmtwl, pfh, status" + "\n";
+          data += "dmobscd, obsnm, agcnm, addr, etcaddr, lat, lon, fldlmtwl, pfh" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
-              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("dmobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
@@ -374,18 +387,12 @@ public class WdmsContController {
               data += selectList.get(i).get("lat") + ",";
               data += selectList.get(i).get("lon") + ",";
               data += selectList.get(i).get("fldlmtwl") + ",";
-              data += selectList.get(i).get("pfh") + ",";
-              if (selectList.get(i).get("flag_nm").equals("기본")) {
-                data += "-" + "\n";
-              } else {
-                data += selectList.get(i).get("flag_nm") + "\n";
-              }
+              data += selectList.get(i).get("pfh") + "\n";
             }
         } else if (fileType.equals("wlStn")) {
           selectList = service.meWlStnInfoData(param);
-          data += "init_dt, wlobscd, obsnm, agcnm, addr, etcaddr, lat, lon, gdt, attwl, wrnwl, almwl, srswl, pfh, fstnyn, status" + "\n";
+          data += "wlobscd, obsnm, agcnm, addr, etcaddr, lat, lon, gdt, attwl, wrnwl, almwl, srswl, pfh, fstnyn" + "\n";
           for (int i = 0; i < selectList.size(); i++) {
-              data += selectList.get(i).get("init_dt") + ",";
               data += selectList.get(i).get("wlobscd") + ",";
               data += selectList.get(i).get("obsnm") + ",";
               data += selectList.get(i).get("agcnm") + ",";
@@ -399,12 +406,7 @@ public class WdmsContController {
               data += selectList.get(i).get("almwl") + ",";
               data += selectList.get(i).get("srswl") + ",";
               data += selectList.get(i).get("pfh") + ",";
-              data += selectList.get(i).get("fstnyn") + ",";
-              if (selectList.get(i).get("flag_nm").equals("기본")) {
-                data += "-" + "\n";
-              } else {
-                data += selectList.get(i).get("flag_nm") + "\n";
-              }
+              data += selectList.get(i).get("fstnyn") + "\n";
             }
         } else {log.info("No Valid FileType");}
         

@@ -68,6 +68,12 @@ FROM (
         <if test="agcType != null and agcType != '' and agcType != 'all'"> 
             AND agcnm = #{agcType} 
         </if>
+        AND NOT EXISTS (
+	        SELECT 1 
+	        FROM wms.me_rn_stn_info sub_mrsi
+	        WHERE sub_mrsi.rfobscd = mrsi.rfobscd
+	        AND sub_mrsi.init_dt = #{init_dt}
+	    )
     </if>
 ) AS stn_data
 JOIN (
@@ -88,6 +94,12 @@ JOIN (
             <if test="agcType != null and agcType != '' and agcType != 'all'"> 
                 AND agcnm = #{agcType} 
             </if>
+            AND NOT EXISTS (
+	            SELECT 1 
+	            FROM wms.me_rn_stn_info sub_mrsi
+	            WHERE sub_mrsi.rfobscd = wms.me_rn_stn_info.rfobscd
+	            AND sub_mrsi.init_dt = #{init_dt}
+	        )
         </if>
     ) AS count_query
 ) AS sub
@@ -119,6 +131,12 @@ FROM (
         <if test="agcType != null and agcType != '' and agcType != 'all'"> 
             AND agcnm = #{agcType} 
         </if>
+        AND NOT EXISTS (
+	        SELECT 1 
+	        FROM wms.me_wl_stn_info sub_mwsi
+	        WHERE sub_mwsi.wlobscd = mwsi.wlobscd
+	        AND sub_mwsi.init_dt = #{init_dt}
+	    )
     </if>
 ) AS stn_data
 JOIN (
@@ -139,6 +157,12 @@ JOIN (
             <if test="agcType != null and agcType != '' and agcType != 'all'"> 
                 AND agcnm = #{agcType} 
             </if>
+            AND NOT EXISTS (
+	            SELECT 1 
+	            FROM wms.me_wl_stn_info sub_mwsi
+	            WHERE sub_mwsi.wlobscd = wms.me_wl_stn_info.wlobscd
+	            AND sub_mwsi.init_dt = #{init_dt}
+	        )
         </if>
     ) AS count_query
 ) AS sub
@@ -170,6 +194,12 @@ FROM (
         <if test="agcType != null and agcType != '' and agcType != 'all'"> 
             AND agcnm = #{agcType} 
         </if>
+        AND NOT EXISTS (
+	        SELECT 1 
+	        FROM wms.me_dam_stn_info sub_mdsi
+	        WHERE sub_mdsi.dmobscd = mdsi.dmobscd
+	        AND sub_mdsi.init_dt = #{init_dt}
+	    )
     </if>
 ) AS stn_data
 JOIN (
@@ -190,6 +220,12 @@ JOIN (
             <if test="agcType != null and agcType != '' and agcType != 'all'"> 
                 AND agcnm = #{agcType} 
             </if>
+            AND NOT EXISTS (
+	            SELECT 1 
+	            FROM wms.me_dam_stn_info sub_mdsi
+	            WHERE sub_mdsi.dmobscd = wms.me_dam_stn_info.dmobscd
+	            AND sub_mdsi.init_dt = #{init_dt}
+	        )
         </if>
     ) AS count_query
 ) AS sub
@@ -242,6 +278,14 @@ UPDATE wms.me_dam_stn_info p LEFT JOIN wms.me_dam_stn_info c ON p.dmobscd = c.dm
         AND file_dt = #{item.issuedate}
         AND repo_id = #{item.repoId}
     </foreach>
+</update>
+
+<select id="selectMetroStatus" resultType="map">
+SELECT wmi.info_id, wmi.type_id, wti.type_nm , wmi.file_id, wfi.file_nm, wfi.file_desc, wmi.file_start_year, wmi.file_end_year, wmi.db_start_year, wmi.db_end_year, wmi.ins_date_check, wmi.ins_size_check, wmi.ins_val_check, wmi.last_update, wmi.file_ord, wmi.msg, wmi.data_source FROM wms.wdms_metro_info wmi JOIN wms.wdms_file_info wfi on wmi.file_id = wfi.file_id JOIN wms.wdms_type_info wti ON wmi.type_id = wti.type_id order by file_ord
+</select>
+
+<update id="updateMetroStatus" parameterType="map">
+update wms.wdms_metro_info set file_start_year = #{file_start_year}, file_end_year = #{file_end_year}, db_start_year = #{db_start_year}, db_end_year = #{db_end_year}, ins_date_check = #{ins_date_check}, ins_size_check = #{ins_size_check}, ins_val_check = #{ins_val_check}, last_update = #{last_update}, msg = #{msg} where type_id = #{type_id} and file_id = #{file_id}
 </update>
 </mapper>
   

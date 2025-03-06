@@ -208,7 +208,9 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 .tbl_wrap2 {width: 100%; height: 100%; overflow: hidden; overflow-y: auto; margin: 0 auto;}
 .tbl_state {width: 100%; margin: 0; padding: 0; border-collapse: collapse; font-size: 1em;}
 .tbl_state caption {display: none;}
-.tbl_state thead th {background-color: #1d1d1d; font-size: 1em; line-height: 1; padding: 16px 6px; font-weight: 600; box-sizing: border-box; text-align: center; position: sticky; top: 0; z-index: 1; color: #fff;}
+.tbl_state thead th {background-color: #1d1d1d; font-size: 1em; line-height: 1; padding: 16px 6px; font-weight: 600; box-sizing: border-box; text-align: center; position: sticky;  z-index: 1; color: #fff;}
+.tbl_state thead tr:nth-child(1) th {top: 0;}
+.tbl_state thead tr:nth-child(2) th {top: 48.5px;}
 .tbl_state thead th small {display: inline-block; font-weight: 300; color: #ddd; font-size: .8em; margin-left: 4px;}
 .tbl_state tbody td {font-size: 1em; line-height: 1.2; font-weight: 300; padding:16px 6px; word-break: keep-all; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255, .2); text-align: center; color: #ccc;}
 .tbl_state tbody tr:first-child td, .tbl_state tbody tr:last-child td {border-top: 0;}
@@ -216,12 +218,10 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 .tbl_state tbody tr.form_input td input {background-color: #434b5f;}
 .tbl_state tbody tr.form_input td input[type=text]:focus {background-color: rgba(0,0,0, .5);}
 .tbl_state tbody tr.form_input td input::placeholder {color: rgba(255,255,255,.4);}
-
 .tbl_state .end {color: var(--color-pink);}
 .tbl_state .modify {color: var(--color-yellow);}
 .tbl_state .new {color: #3787FF;}
 .tbl_search_wrap .date {cursor: pointer; max-width: 100px; padding: 5px 10px; border-radius: 3px; text-align: center; appearance: none; font-size: .9rem !important; font-weight: 600; text-align: left !important;}
-
 .date:focus {outline: none; border-color: #5D9CF5;}
 .ui-datepicker {width: 200px; padding: 5px; background: #222222; border-radius: 4px; box-shadow: 0 4px 40px -8px rgba(0, 0, 0, 1); opacity: 0;}
 @media screen and (max-width: 580px) {
@@ -259,3 +259,19 @@ footer {width: 100%; height: 30px; line-height: 30px;  font-size: .7rem; font-we
 .ui-state-active {border: 0 !important; background-color: var(--color-blue) !important;}
 .ui-datepicker-prev:hover, .ui-datepicker-next:hover{background: none;}
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-hover .ui-widget-header .ui-state-hover {border: 0;}
+/* situation */
+.tbl_state .b_right {border-right: 1px solid #333;}
+.tbl_state .b_left {border-left: 1px solid #333;}
+.tbl_state .b_top {border-top: 1px solid #333;}
+.tbl_state .b_bottom {border-bottom: 1px solid #333;}
+.nav_wrap ul li a { white-space: nowrap;}
+.tbl_comment_wrap {height: 80px; background-color: #313131; position: relative; margin-bottom: 24px; border-radius: 16px; padding: 12px 20px; overflow-y: auto;}
+.tbl_comment_wrap ul {font-size: .8em; font-weight: 200; color: #ccc;}
+.tbl_comment_wrap ul li {padding-left: 15px; position: relative; line-height: 1.4;}
+.tbl_comment_wrap ul li:before {content:'-'; left: 0; top: 0; position: absolute;width: 5px; height: 1px;}
+.situ_input { width: 120px;}
+.situ_select {display: inline-block; border-radius: 4px; line-height: 1.4; padding: 5px 10px; box-sizing: border-box; transition: all .3s ease-in-out; border: 2px solid transparent;height: 32px;  text-align: center; font-size: 1em; width:80px;background: url(../images/img_select.png) calc(100% - 6px) 50% no-repeat #505050; background-size: 10px 10px; color: #fff;}
+
+.tbl_situation {height: calc(100% - 50px);}
+.btn_situation{background-color: transparent; box-shadow: 0 0 0 1px inset rgba(255,255,255, .4); color: #fff; height: 32px; padding: 0 16px; margin: 20px 0 0 0; border-radius: 4px; transition: all .2s ease-in-out; min-width: 100px;}
+.btn_situation:hover { box-shadow: 0 0 0 1px inset rgba(255,255,255, .8);} 

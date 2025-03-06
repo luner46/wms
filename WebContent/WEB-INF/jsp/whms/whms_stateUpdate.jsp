@@ -10,7 +10,7 @@
 	<script src="/js/plugin/jquery/jquery-1.12.4.min.js"></script>
 	<script src="/js/plugin/jquery/jquery-ui.min.js"></script>
 	<script src="/js/plugin/highcharts/highcharts.js"></script>
-	<title>WHMS - Wiseplus Hardware Monitoring Server</title>
+	<title>WMS - Wiseplus Monitoring Server</title>
 </head>
 <script>
 function riskStateData(riskStateOrder){

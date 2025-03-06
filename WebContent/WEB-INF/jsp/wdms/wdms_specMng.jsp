@@ -6,6 +6,9 @@
 <script>
 function todayErrorCount() {
 	var currentTime = new Date();
+	if (currentTime.getMinutes() < 1) {
+		currentTime.setHours(currentTime.getHours() - 1);
+	}
 	currentTime.setMinutes(0);
     var dayParam = 't';
     var boardTime = currentTime.getFullYear().toString() + '-' + (currentTime.getMonth() + 1).toString().padStart(2, '0') + '-' + currentTime.getDate().toString().padStart(2, '0') + ' ' + currentTime.getHours().toString().padStart(2, '0') + ':' + currentTime.getMinutes().toString().padStart(2, '0');
@@ -103,6 +106,8 @@ function meStnInfoList() {
             			row[key] = replaceNull(row[key]);
             		}
                 var rownum = data[i]['rownum_desc'];
+                var init_dt = data[i]['init_dt'];
+                	init_dt_txt = init_dt.substring(0, 4) + '.' + init_dt.substring(4, 6) + '.' + init_dt.substring(6, 8);
                 var rfobscd = data[i]['rfobscd'];
                 var wlobscd = data[i]['wlobscd'];
                 var dmobscd = data[i]['dmobscd'];
@@ -129,33 +134,33 @@ function meStnInfoList() {
                 if (flag == '0') {flagTxt = '-'} else if (flag == '1') {flagTxt = '신규'} else if (flag == '2') {flagTxt = '종료'} else if (flag == '3') {flagTxt = '관측소명 변경'} else if (flag == '4') {flagTxt = '기관 변경'} else if (flag == '5') {flagTxt = '주소 변경'} else if (flag == '6') {flagTxt = '위치 변경'}
 				if (tableType == 'rnStn') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
 					} else if (flag == '0') {
 						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td>';	
 					}
 				} else if (tableType == 'wlStn') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';	
 					} else if (flag == '0') {
 						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + gdt + '</td><td>' + attwl + '</td><td>' + wrnwl + '</td><td>' + almwl + '</td><td>' + srswl + '</td><td>' + pfh + '</td><td>' + fstnyn + '</td>';
 					}
 				} else if (tableType == 'dam') {
 					if (flag == '1') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state new">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
 					} else if (flag == '2') {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
+						tableRows += '<tr><td>' + total_count + '</td><td class="state end">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';	
 					} else if (flag == '0') {
 						tableRows += '<tr><td>' + total_count + '</td><td class="state">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';
 					} else {
-						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + '</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';
+						tableRows += '<tr><td>' + total_count + '</td><td class="state modify">' + flagTxt + ' (' + init_dt_txt + ')</td><td>' + obscd + '</td><td>' + obsnm + '</td><td>' + agcnm + '</td><td>' + addr + '</td><td class="' + etcaddrClass + '">' + etcaddr + '</td><td>' + lat + '</td><td>' + lon + '</td><td>' + fldlmtwl + '</td><td>' + pfh + '</td>';
 					}
 				}
             }
@@ -230,12 +235,32 @@ function downloadCSV(){
     window.location.href = "/wdmsCont/downloadCSV.do?fileType=" + fileType + "&agcType=" + agcType + "&init_dt=" + init_dt + "&endObsCheck=" + endObsCheck + "&stateOrder=" + stateOrder + "&stn_info=" + stn_info;
 }
 
+function hourlySchedule() {
+    var now = new Date();
+    var targetTime = new Date();
+    
+    targetTime.setHours(now.getHours() + (now.getMinutes() >= 1 ? 1 : 0));
+    targetTime.setMinutes(1);
+    targetTime.setSeconds(0);
+    targetTime.setMilliseconds(0);
+
+    var nextTimeTarget = (targetTime - now);
+    
+    setTimeout(function() {
+    	todayErrorCount();
+        setInterval(function() {
+        	todayErrorCount();
+        }, 60 * 60 * 1000);
+    }, nextTimeTarget);
+}
+
 $(function () {
 	var currentPage = window.location.pathname;
-	if (currentPage == '/wdms/wdms_monitoring.do') {$('.mornitoring').addClass('active');} else if (currentPage == '/wdms/wdms_specMng.do') {$('.spec_mng').addClass('active');}
+	if (currentPage == '/wdms/wdms_monitoring.do') {$('.mornitoring').addClass('active');} else if (currentPage == '/wdms/wdms_specMng.do') {$('.spec_mng').addClass('active');} else if (currentPage == '/wdms/wdms_metroStatus.do') {$('.metro_status').addClass('active');}
 	todayErrorCount();
     meStnInfoList();
     meAgcnmInfoList();
+    hourlySchedule();
 });
 
 </script>
@@ -253,6 +278,7 @@ $(function () {
         <nav class="nav_wrap">
                <ul>
                    <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
+                   <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
                    <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
                </ul>
            </nav>
