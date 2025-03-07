@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/jsp/include/include_header.jsp"/>
 	<style type="text/css"> @import url("/css/wdms.css");</style>
 	<script src="/js/plugin/clipboard/clipboard.min.js"></script>
@@ -339,7 +340,11 @@ $(function () {
                     </tbody>
                 </table>
             </div>
-            <div class="t_right"><button type="button" class="btn_situation" onclick="saveChangeValue();">저장</button></div>
+            <c:choose>
+	        	<c:when test="${sessionScope.user_id == 'admin'}">
+					<div class="t_right"><button type="button" class="btn_situation" onclick="saveChangeValue();">저장</button></div>
+		        </c:when>
+			</c:choose>
         </div>
     </div>
     <!-- contents -->
