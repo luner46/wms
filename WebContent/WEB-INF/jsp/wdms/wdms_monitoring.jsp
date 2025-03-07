@@ -398,8 +398,12 @@ function dailySchedule() {
     
     setTimeout(function() {
 		createCalendar(date.getFullYear(), date.getMonth() + 1);
+		openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+    	createCalendarIcon(1, new Date().getDate(), new Date().getFullYear(), new Date().getMonth() + 1);
     	setInterval(function() {
     		createCalendar(date.getFullYear(), date.getMonth() + 1);
+    		openBoard(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+        	createCalendarIcon(1, new Date().getDate(), new Date().getFullYear(), new Date().getMonth() + 1);
         }, 24 * 60 * 60 * 1000);
     }, nextTimeTarget);
 }
