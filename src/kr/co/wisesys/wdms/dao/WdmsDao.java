@@ -58,36 +58,6 @@ public class WdmsDao {
 	    return meDamStnInfoList;
 	}
 	
-	public ArrayList<HashMap<String, Object>> meRnAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meRnAgcnmInfoList = new ArrayList<>();
-	    try {
-	    	meRnAgcnmInfoList.addAll(sqlSessionMysql.selectList("wdms.selectMeRnAgcnmInfo"));
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meRnAgcnmInfoList;
-	}
-	
-	public ArrayList<HashMap<String, Object>> meWlAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meWlAgcnmInfoList = new ArrayList<>();
-	    try {
-	    	meWlAgcnmInfoList.addAll(sqlSessionMysql.selectList("wdms.selectMeWlAgcnmInfo"));
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meWlAgcnmInfoList;
-	}
-	
-	public ArrayList<HashMap<String, Object>> meDamAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meDamAgcnmInfoList = new ArrayList<>();
-	    try {
-	    	meDamAgcnmInfoList.addAll(sqlSessionMysql.selectList("wdms.selectMeDamAgcnmInfo"));
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meDamAgcnmInfoList;
-	}
-	
 	public void updateCorrectionData(Map<String, Object> param) {
 		try {
 			sqlSessionMysql.update("wdms.updateCorrectionData", param);

@@ -93,7 +93,7 @@ header h1 a > div {display: inline-block; vertical-align: middle;}
 header h1 a > div p {display: block; font-size: 1.5rem; font-weight: 600; line-height: 1; letter-spacing: 0;}
 header h1 a > div small {display: block; font-size: .5em; line-height: 1;}
 header .alarm {text-align: center; border: 3px solid transparent; background: #313131; height: 40px; padding:0 16px; border-radius: 20px; box-sizing: border-box; position: absolute; left: 50%; top: 20px; transform: translate(-50%, 10px); min-width: 600px;}
-header .alarm > p {font-size: 1.25rem;  line-height: 34px; color: #fff; font-weight: 400;}v 
+header .alarm > p {font-size: 1.25rem;  line-height: 34px; color: #fff; font-weight: 400;}
 header .alarm > p > span {font-weight: 600; color: var(--color-pink)}
 .header_top {height: 30px; background-color: rgba(255,255,255, .02); width: calc(100% + 48px); margin-left: -24px; box-shadow: 5px 5px 5px rgba(0,0,0,.2);}
 .header_top ul {text-align:right;}

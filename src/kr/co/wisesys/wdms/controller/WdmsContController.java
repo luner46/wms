@@ -260,22 +260,7 @@ public class WdmsContController {
         model.addAttribute("selectList", selectList);
         return selectList;
     }
-    
-    @RequestMapping(value = "/selectMeAgcnmInfo.do")
-    @ResponseBody
-    public ArrayList<HashMap<String, Object>> selectMeAgcnmInfo(Model model, @RequestParam String agcType){
-        ArrayList<HashMap<String, Object>> selectAgcnmList = new ArrayList<>();
-        if (agcType.equals("rnStn")) {
-            selectAgcnmList = service.meRnAgcnmInfoData();
-        } else if (agcType.equals("dam")) {
-            selectAgcnmList = service.meDamAgcnmInfoData();
-        } else if (agcType.equals("wlStn")) {
-            selectAgcnmList = service.meWlAgcnmInfoData();
-        } else {log.info("No Valid FileType");}
-        model.addAttribute("selectAgcnmList", selectAgcnmList);
-        return selectAgcnmList;
-    }
-    
+        
     @RequestMapping(value = "/updateStnInfoFlag.do")
     @ResponseBody
     public String updateStnInfoFlag(Model model, @RequestParam String init_dt, @RequestParam String yday_dt){

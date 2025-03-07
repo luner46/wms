@@ -147,7 +147,7 @@ function selectMetroStatus(){
 		                </td>
 	                    <td>${'${data_source}'}</td>
 	                    <td><input type="text" value="${'${last_update}'}" class="date datepicker last_update_picker situ_input last_update" placeholder="날짜 선택" data-lastUpdate="${'${last_update_txt}'}" /></td>
-	                    <td><input type="text" value="${'${msg}'}" class="msg" style="width: 100%;" /></td>
+	                    <td><input type="text" value="${'${msg}'}" class="msg t_left" /></td>
 	                </tr>`;
 			}
 			$('.tbl_con_wrap .tbl_wrap2 .tbl_state tbody').html(metro_status_con);
@@ -160,6 +160,19 @@ function selectMetroStatus(){
 			    $(this).find(".ins_date_check").val(ins_date_check);
 			    $(this).find(".ins_size_check").val(ins_size_check);
 			    $(this).find(".ins_val_check").val(ins_val_check);
+
+			    if ($(this).find(".ins_date_check option:selected").text() == 'O') {
+			    	$(this).find(".ins_date_check").addClass('font_pink');
+			    	$(this).find(".ins_date_check option").css('color',"#FFFFFF");
+			    }
+			    if ($(this).find(".ins_size_check option:selected").text() == 'O') {
+			    	$(this).find(".ins_size_check").addClass('font_pink');
+			    	$(this).find(".ins_size_check option").css('color',"#FFFFFF");
+			    }
+			    if ($(this).find(".ins_val_check option:selected").text() == 'O') {
+			    	$(this).find(".ins_val_check").addClass('font_pink');
+			    	$(this).find(".ins_val_check option").css('color',"#FFFFFF");
+			    }
 			});
 			
             $('.last_update_picker').datepicker({
@@ -268,6 +281,14 @@ $(function () {
 	hourlySchedule();
 });
 </script>
+<style>
+	.tbl_state tbody tr td input[type=text]:focus {color: #000000; background-color: rgba(255, 255, 255, 0.5);}
+	.tbl_state tbody tr td input[type=text].datepicker:focus {color: #FFFFFF; background-color: #505050;}
+	.tbl_state tbody .msg {width: 100%;}
+	.tbl_state tbody .situ_select.font_pink {color: #F98C11;}
+	.tbl_state tbody tr td:nth-child(7) {background-color: rgba(0, 0, 0, 0.3);}
+	.tbl_state tbody tr td:nth-child(n+12):nth-child(-n+14) {background-color: rgba(0, 0, 0, 0.3);}
+</style>
     <header>
         <h1>
         	<a href="/wdms/wdms_monitoring.do" title="WDMS 홈으로">
@@ -278,21 +299,25 @@ $(function () {
 	            </div>
             </a>
         </h1>
-        <div class="alarm active"></div>
+        <c:choose>
+        	<c:when test="${sessionScope.user_id == 'admin'}">
+				<div class="alarm active"></div>
+	        </c:when>
+		</c:choose>
         <nav class="nav_wrap">
-               <ul>
-                   <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
-                   <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
-                   <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
-               </ul>
-           </nav>
+			<ul>
+                <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
+                <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
+                <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
+            </ul>
+        </nav>
     </header>
 	<!-- contents //-->
     <div id="contents">
         <div class="tbl_comment_wrap">
             <ul>
                 <li>날짜체크 : 비어있는 날짜 유무 검수</li>
-                <li>용량체크 : 파일만 생성되고 비어있는 파일 검수</li>
+                <li>용량체크 : 데이터가 없는 파일 검수</li>
                 <li>극값체크 : 값의 이상유무를 판단해서 결과를 보정하는 작업 (예: 10분 강우 50mm 초과시 0.0mm 변환)</li>
             </ul>
         </div>
@@ -333,7 +358,7 @@ $(function () {
                             <th class="b_right">종료연도</th>
                             <th class="b_right">날짜체크</th>
                             <th class="b_right">용량체크</th>
-                            <th class="b_right">값보정</th>
+                            <th class="b_right">극값체크</th>
                         </tr>
                     </thead>
                     <tbody>

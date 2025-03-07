@@ -79,34 +79,4 @@ public class WdmsService {
 	    }
 	    return meDamStnInfoList;
 	}
-	
-	public ArrayList<HashMap<String, Object>> meRnAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meRnAgcnmInfoList = new ArrayList<HashMap<String,Object>>();
-	    try {
-	    	meRnAgcnmInfoList = dao.meRnAgcnmInfoData();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meRnAgcnmInfoList;
-	}
-	
-	public ArrayList<HashMap<String, Object>> meWlAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meWlAgcnmInfoList = new ArrayList<HashMap<String,Object>>();
-	    try {
-	    	meWlAgcnmInfoList = dao.meWlAgcnmInfoData();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meWlAgcnmInfoList;
-	}
-	
-	public ArrayList<HashMap<String, Object>> meDamAgcnmInfoData() {
-	    ArrayList<HashMap<String, Object>> meDamAgcnmInfoList = new ArrayList<HashMap<String,Object>>();
-	    try {
-	    	meDamAgcnmInfoList = dao.meDamAgcnmInfoData();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return meDamAgcnmInfoList;
-	}
 }

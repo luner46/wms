@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function() {
 			        <li><a href="/user/user_logout.do">로그아웃</a></li>
 		        </c:when>
 		        <c:when test="${sessionScope.user_id == null}">
-			        <li><a href="/user/user_logout.do">로그인</a></li>
 		        </c:when>
 		        <c:otherwise>
 		        	<li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>

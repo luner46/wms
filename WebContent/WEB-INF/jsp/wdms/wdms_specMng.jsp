@@ -174,19 +174,18 @@ function meStnInfoList() {
 
 function meAgcnmInfoList() {
     var fileType = $('.fileType').val();
-
-    $.ajax({
-        url: '/wdmsCont/selectMeAgcnmInfo.do',
-        data: {agcType: fileType},
-        success: function (data) {
-            var agcnmList = '<option value="all">전체 관할기관</option>';
-            for (var i = 0; i < data.length; i++) {
-                var agcnm = data[i]['agcnm'];
-                agcnmList += '<option value="' + agcnm + '">' + agcnm + '</option>';
-            }
-            $('.agcnmList').html(agcnmList);
-        }
-    });
+    $('.agcnmList').empty();
+    if (fileType == 'rnStn') {
+    	$('.agcnmList').html('<option value="기상청">기상청 (예정)</option><option value="환경부">환경부</option><option value="한국수자원공사">수자원공사</option><option value="한국수력원자력">한국수력원자력</option><option value="한국농어촌공사">농어촌공사</option><option value="기타">기타</option>');
+    	$('.agcType').val("기상청");
+    } else if (fileType == 'wlStn') {
+    	$('.agcnmList').html('<option value="환경부">환경부</option><option value="안전행정부">행정안전부</option><option value="한국수자원공사">수자원공사</option><option value="한국수력원자력">한국수력원자력</option><option value="한국농어촌공사">농어촌공사</option><option value="기타">기타</option>');
+    	$('.agcType').val("환경부");
+    } else if (fileType == 'dam') {
+    	$('.agcnmList').html('<option value="한국수자원공사">수자원공사</option><option value="한국수력원자력">한국수력원자력</option><option value="한국농어촌공사">농어촌공사</option>');
+    	$('.agcType').val("한국수자원공사");
+    }
+    
 }
 
 function changeFileType(select) {
@@ -285,7 +284,7 @@ $(function () {
     </header>
     <!--// header -->
 	<input type="hidden" class="fileType" value="rnStn" />
-	<input type="hidden" class="agcType" value="all" />
+	<input type="hidden" class="agcType" value="기상청" />
 	<input type="hidden" class="init_dt" value="" />
 	<input type="hidden" class="endObsCheck" value="true" />
 	<input type="hidden" class="stateOrder" value="asc" />

@@ -233,18 +233,6 @@ ON 1=1
 ORDER BY flag ${stateOrder}, dmobscd ASC
 </select>
 
-<select id="selectMeRnAgcnmInfo" resultType="map">
-select agcnm from wms.me_rn_stn_info mrsi group by agcnm
-</select>
-
-<select id="selectMeWlAgcnmInfo" resultType="map">
-select agcnm from wms.me_wl_stn_info mwsi group by agcnm
-</select>
-
-<select id="selectMeDamAgcnmInfo" resultType="map">
-select agcnm from wms.me_dam_stn_info mdsi group by agcnm
-</select>
-
 <update id="updateMeRnStnInfoFlag" parameterType="map">
 UPDATE wms.me_rn_stn_info c LEFT JOIN wms.me_rn_stn_info p ON c.rfobscd = p.rfobscd AND p.init_dt = #{yesterday} SET c.flag = CASE WHEN p.rfobscd IS NULL THEN '1' WHEN c.obsnm != p.obsnm THEN '3' WHEN c.agcnm != p.agcnm THEN '4' WHEN c.addr != p.addr OR c.etcaddr != p.etcaddr THEN '5' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' ELSE c.flag END WHERE c.init_dt = #{today} OR (c.rfobscd IS NULL AND c.init_dt = #{yesterday})
 </update>
