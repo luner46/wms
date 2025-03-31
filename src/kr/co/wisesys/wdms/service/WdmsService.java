@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import kr.co.wisesys.wdms.dao.WdmsDao;
 @Configuration
 @Service
 public class WdmsService {
+	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	private WdmsDao dao;
@@ -78,5 +81,25 @@ public class WdmsService {
 	        e.printStackTrace();
 	    }
 	    return meDamStnInfoList;
+	}
+	
+	public ArrayList<HashMap<String, Object>> kmaAsosInfoData(HashMap<String, Object> param) {
+	    ArrayList<HashMap<String, Object>> kmaAsosInfoList = new ArrayList<HashMap<String,Object>>();
+	    try {
+	    	kmaAsosInfoList = dao.kmaAsosInfoData(param);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kmaAsosInfoList;
+	}
+	
+	public ArrayList<HashMap<String, Object>> kmaAwsInfoData(HashMap<String, Object> param) {
+	    ArrayList<HashMap<String, Object>> kmaAwsInfoList = new ArrayList<HashMap<String,Object>>();
+	    try {
+	    	kmaAwsInfoList = dao.kmaAwsInfoData(param);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kmaAwsInfoList;
 	}
 }

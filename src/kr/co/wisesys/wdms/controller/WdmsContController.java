@@ -38,6 +38,7 @@ import kr.co.wisesys.wdms.service.SFTPFileService;
 import kr.co.wisesys.wdms.service.WdmsService;
 import kr.co.wisesys.wdms.util.CommonFileUtil;
 import kr.co.wisesys.wdms.util.CommonFtpUtil;
+import kr.co.wisesys.wdms.util.CommonScheduleUtil;
 
 @Controller
 @RequestMapping(value = {"/wdmsCont/*"})
@@ -67,7 +68,7 @@ public class WdmsContController {
     
     @Autowired
     private SqlSessionTemplate sqlSessionMysql;
-
+    
     @RequestMapping(value = "/fileListData.do")
     @ResponseBody
     public ArrayList<HashMap<String, Object>> fileListData(@RequestParam("boardTime") String boardTime, @RequestParam("dayParam") String dayParam, Model model) {
@@ -250,12 +251,17 @@ public class WdmsContController {
         param.put("init_dt", init_dt);
         param.put("endObsCheck", endObsCheck);
         param.put("stateOrder", stateOrder);
+        
         if (fileType.equals("rnStn")) {
             selectList = service.meRnStnInfoData(param);
         } else if (fileType.equals("dam")) {
             selectList = service.meDamStnInfoData(param);
         } else if (fileType.equals("wlStn")) {
             selectList = service.meWlStnInfoData(param);
+        } else if (fileType.equals("asos")) {
+        	selectList = service.kmaAsosInfoData(param);
+        } else if (fileType.equals("aws")) {
+        	selectList = service.kmaAwsInfoData(param);
         } else {log.info("No Valid FileType");}
         model.addAttribute("selectList", selectList);
         return selectList;
@@ -274,6 +280,20 @@ public class WdmsContController {
         return updateResult;
     }
     
+    @RequestMapping(value = "/selectKmaYmList.do")
+    @ResponseBody
+    public ArrayList<HashMap<String, Object>> selectKmaYmList(Model model, @RequestParam String fileType){
+    	ArrayList<HashMap<String, Object>> dataList = new ArrayList<>(); 
+    	if (fileType.equals("asos")) {
+    		dataList.addAll(sqlSessionMysql.selectList("wdms.selectKmaAsosYmList"));
+    	} else if (fileType.equals("aws")) {
+    		dataList.addAll(sqlSessionMysql.selectList("wdms.selectKmaAwsYmList"));
+    	} else {log.error("No Valid Filetype");}
+    	model.addAttribute("dataList",dataList);
+    
+        return dataList;
+    }
+    
     @RequestMapping(value = "/selectMetroStatus.do")
     @ResponseBody
     public ArrayList<HashMap<String, Object>> selectMetroStatus(Model model){
@@ -286,7 +306,7 @@ public class WdmsContController {
     @RequestMapping(value = "/updateMetroStatus.do")
     @ResponseBody
     public String updateMetroStatus(@RequestBody List<Map<String, Object>> metroStatusData) {
-    	String updateResult = "update_active";
+    	String updateResult = "";
     	for (var i = 0; i < metroStatusData.size(); i++) {
     		Map<String, Object> param = metroStatusData.get(i);
     		updateResult += sqlSessionMysql.update("wdms.updateMetroStatus", param);
@@ -335,7 +355,7 @@ public class WdmsContController {
         System.arraycopy(csvBytes, 0, finalCsvBytes, bom.length, csvBytes.length);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/csv; charset=MS949"));
-        headers.setContentDispositionFormData("attachment", init_dt + "_" + stn_info + ".csv");
+        headers.setContentDispositionFormData("attachment", stn_info + ".csv");
 
         return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
     }
@@ -393,8 +413,27 @@ public class WdmsContController {
               data += selectList.get(i).get("pfh") + ",";
               data += selectList.get(i).get("fstnyn") + "\n";
             }
-        } else {log.info("No Valid FileType");}
-        
+        } else if (fileType.equals("asos")) {
+            selectList = service.kmaAsosInfoData(param);
+            data += "stn_id, stn_nm, lat, lon, ht" + "\n";
+            for (int i = 0; i < selectList.size(); i++) {
+                data += selectList.get(i).get("stn_id") + ",";
+                data += selectList.get(i).get("stn_nm") + ",";
+                data += selectList.get(i).get("lat") + ",";
+                data += selectList.get(i).get("lon") + ",";
+                data += selectList.get(i).get("ht") + "\n";
+              }
+          } else if (fileType.equals("aws")) {
+              selectList = service.kmaAwsInfoData(param);
+              data += "stn_id, stn_nm, lat, lon, ht" + "\n";
+              for (int i = 0; i < selectList.size(); i++) {
+            	  data += selectList.get(i).get("stn_id") + ",";
+                  data += selectList.get(i).get("stn_nm") + ",";
+                  data += selectList.get(i).get("lat") + ",";
+                  data += selectList.get(i).get("lon") + ",";
+                  data += selectList.get(i).get("ht") + "\n";
+                }
+            } else {log.info("No Valid FileType");}
         return data;
     }
     

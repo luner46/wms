@@ -58,6 +58,26 @@ public class WdmsDao {
 	    return meDamStnInfoList;
 	}
 	
+	public ArrayList<HashMap<String, Object>> kmaAsosInfoData(HashMap<String, Object> param) {
+	    ArrayList<HashMap<String, Object>> kmaAsosInfoList = new ArrayList<>();
+	    try {
+	    	kmaAsosInfoList.addAll(sqlSessionMysql.selectList("wdms.selectKmaAsosInfo", param));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kmaAsosInfoList;
+	}
+	
+	public ArrayList<HashMap<String, Object>> kmaAwsInfoData(HashMap<String, Object> param) {
+	    ArrayList<HashMap<String, Object>> kmaAwsInfoList = new ArrayList<>();
+	    try {
+	    	kmaAwsInfoList.addAll(sqlSessionMysql.selectList("wdms.selectKmaAwsInfo", param));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kmaAwsInfoList;
+	}
+	
 	public void updateCorrectionData(Map<String, Object> param) {
 		try {
 			sqlSessionMysql.update("wdms.updateCorrectionData", param);

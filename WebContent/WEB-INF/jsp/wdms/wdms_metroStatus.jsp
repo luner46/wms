@@ -157,6 +157,9 @@ function selectMetroStatus(){
 			    var ins_size_check = $(this).find(".hidden_ins_size_check").val();
 			    var ins_val_check = $(this).find(".hidden_ins_val_check").val();
 			    
+			    var msg_val = $(this).find('.msg').val();
+			    if (msg_val == '-') {$(this).find('.msg').removeClass('t_left');}
+
 			    $(this).find(".ins_date_check").val(ins_date_check);
 			    $(this).find(".ins_size_check").val(ins_size_check);
 			    $(this).find(".ins_val_check").val(ins_val_check);
@@ -305,11 +308,21 @@ $(function () {
 	        </c:when>
 		</c:choose>
         <nav class="nav_wrap">
-			<ul>
-                <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
-                <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
-                <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
-            </ul>
+	        <c:choose>
+	        	<c:when test="${sessionScope.user_id != null}">
+					<ul>
+		                <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
+		                <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
+		                <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
+		            </ul>
+		        </c:when>
+		        <c:when test="${sessionScope.user_id == null}">
+		        	<ul>
+		        		<li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
+		        	</ul>
+		        </c:when>
+			</c:choose>
+			
         </nav>
     </header>
 	<!-- contents //-->

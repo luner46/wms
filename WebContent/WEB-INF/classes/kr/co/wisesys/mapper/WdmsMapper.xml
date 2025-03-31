@@ -46,191 +46,93 @@ insert into wms.wdms_file_data (server_id, type_id, repo_id, file_id, file_dt, f
 
 <select id="selectMeRnStnInfo" resultType="map" parameterType="map">
 SELECT 
-    stn_data.init_dt, stn_data.rfobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.flag, stn_data.flag_nm, sub.total_count
+stn_data.init_dt, stn_data.rfobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.flag, stn_data.flag_nm, COUNT(*) OVER() as total_count
 FROM (
-    SELECT 
-        mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
+    SELECT mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
     FROM wms.me_rn_stn_info mrsi
     JOIN wms.me_stn_flag_info msfi
     ON mrsi.flag = msfi.flag
     WHERE init_dt = #{init_dt}
-    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-        AND agcnm = #{agcType} 
-    </if>
     <if test="endObsCheck == true">
         UNION ALL
-        SELECT 
-            mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
-        FROM wms.me_rn_stn_info mrsi
-	    JOIN wms.me_stn_flag_info msfi
+	    SELECT mrsi.init_dt, mrsi.rfobscd, mrsi.obsnm, mrsi.agcnm, mrsi.addr, mrsi.etcaddr, mrsi.lat, mrsi.lon, mrsi.flag, msfi.flag_nm
+	    FROM wms.me_rn_stn_info mrsi
+        JOIN wms.me_stn_flag_info msfi
 	    ON mrsi.flag = msfi.flag
-        WHERE mrsi.flag = 2
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        AND NOT EXISTS (
-	        SELECT 1 
-	        FROM wms.me_rn_stn_info sub_mrsi
-	        WHERE sub_mrsi.rfobscd = mrsi.rfobscd
-	        AND sub_mrsi.init_dt = #{init_dt}
-	    )
+	    LEFT JOIN wms.me_rn_stn_info sub_mrsi
+	    ON mrsi.rfobscd = sub_mrsi.rfobscd 
+	    AND sub_mrsi.init_dt = #{init_dt}
+	    WHERE mrsi.flag = '2'
+	    AND sub_mrsi.rfobscd IS NULL
     </if>
 ) AS stn_data
-JOIN (
-    SELECT COUNT(*) AS total_count FROM (
-        SELECT 
-            init_dt
-        FROM wms.me_rn_stn_info
-        WHERE init_dt = #{init_dt}
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        <if test="endObsCheck == true">
-            UNION ALL
-            SELECT 
-                init_dt
-            FROM wms.me_rn_stn_info
-            WHERE flag = 2
-            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-                AND agcnm = #{agcType} 
-            </if>
-            AND NOT EXISTS (
-	            SELECT 1 
-	            FROM wms.me_rn_stn_info sub_mrsi
-	            WHERE sub_mrsi.rfobscd = wms.me_rn_stn_info.rfobscd
-	            AND sub_mrsi.init_dt = #{init_dt}
-	        )
-        </if>
-    ) AS count_query
-) AS sub
-ON 1=1
 ORDER BY flag ${stateOrder}, rfobscd ASC
 </select>
 
 <select id="selectMeWlStnInfo" resultType="map" parameterType="map">
 SELECT 
-    stn_data.init_dt, stn_data.wlobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.gdt, stn_data.attwl, stn_data.wrnwl, stn_data.almwl, stn_data.srswl, stn_data.pfh, stn_data.fstnyn, stn_data.flag, stn_data.flag_nm, sub.total_count
+    stn_data.init_dt, stn_data.wlobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.gdt, stn_data.attwl, stn_data.wrnwl, stn_data.almwl, stn_data.srswl, stn_data.pfh, stn_data.fstnyn, stn_data.flag, stn_data.flag_nm, COUNT(*) OVER() AS total_count
 FROM (
-    SELECT 
-        mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
+    SELECT mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
     FROM wms.me_wl_stn_info mwsi
-    JOIN wms.me_stn_flag_info msfi
+    JOIN wms.me_stn_flag_info msfi 
     ON mwsi.flag = msfi.flag
-    WHERE init_dt = #{init_dt}
-    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-        AND agcnm = #{agcType} 
-    </if>
+    WHERE mwsi.init_dt = #{init_dt}
     <if test="endObsCheck == true">
         UNION ALL
-        SELECT 
-            mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
-        FROM wms.me_wl_stn_info mwsi
-	    JOIN wms.me_stn_flag_info msfi
+	    SELECT mwsi.init_dt, mwsi.wlobscd, mwsi.obsnm, mwsi.agcnm, mwsi.addr, mwsi.etcaddr, mwsi.lat, mwsi.lon, mwsi.gdt, mwsi.attwl, mwsi.wrnwl, mwsi.almwl, mwsi.srswl, mwsi.pfh, mwsi.fstnyn, mwsi.flag, msfi.flag_nm
+	    FROM wms.me_wl_stn_info mwsi
+	    JOIN wms.me_stn_flag_info msfi 
 	    ON mwsi.flag = msfi.flag
-        WHERE mwsi.flag = 2
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        AND NOT EXISTS (
-	        SELECT 1 
-	        FROM wms.me_wl_stn_info sub_mwsi
-	        WHERE sub_mwsi.wlobscd = mwsi.wlobscd
-	        AND sub_mwsi.init_dt = #{init_dt}
-	    )
+	    LEFT JOIN wms.me_wl_stn_info sub_mwsi
+	    ON mwsi.wlobscd = sub_mwsi.wlobscd 
+	    AND sub_mwsi.init_dt = #{init_dt}
+	    WHERE mwsi.flag = '2'
+	    AND sub_mwsi.wlobscd IS NULL
     </if>
 ) AS stn_data
-JOIN (
-    SELECT COUNT(*) AS total_count FROM (
-        SELECT 
-            init_dt
-        FROM wms.me_wl_stn_info
-        WHERE init_dt = #{init_dt}
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        <if test="endObsCheck == true">
-            UNION ALL
-            SELECT 
-                init_dt
-            FROM wms.me_wl_stn_info
-            WHERE flag = 2
-            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-                AND agcnm = #{agcType} 
-            </if>
-            AND NOT EXISTS (
-	            SELECT 1 
-	            FROM wms.me_wl_stn_info sub_mwsi
-	            WHERE sub_mwsi.wlobscd = wms.me_wl_stn_info.wlobscd
-	            AND sub_mwsi.init_dt = #{init_dt}
-	        )
-        </if>
-    ) AS count_query
-) AS sub
-ON 1=1
 ORDER BY flag ${stateOrder}, wlobscd ASC
 </select>
 
 <select id="selectMeDamStnInfo" resultType="map" parameterType="map">
 SELECT 
-   stn_data.init_dt, stn_data.dmobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.fldlmtwl, stn_data.pfh, stn_data.flag, stn_data.flag_nm, sub.total_count
+stn_data.init_dt, stn_data.dmobscd, stn_data.obsnm, stn_data.agcnm, stn_data.addr, stn_data.etcaddr, stn_data.lat, stn_data.lon, stn_data.fldlmtwl, stn_data.pfh, stn_data.flag, stn_data.flag_nm, COUNT(*) OVER() as total_count
 FROM (
-    SELECT 
-        mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
+    SELECT mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
     FROM wms.me_dam_stn_info mdsi
     JOIN wms.me_stn_flag_info msfi
     ON mdsi.flag = msfi.flag
     WHERE init_dt = #{init_dt}
-    <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-        AND agcnm = #{agcType} 
-    </if>
     <if test="endObsCheck == true">
         UNION ALL
-        SELECT 
-            mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
-        FROM wms.me_dam_stn_info mdsi
+	    SELECT mdsi.init_dt, mdsi.dmobscd, mdsi.obsnm, mdsi.agcnm, mdsi.addr, mdsi.etcaddr, mdsi.lat, mdsi.lon, mdsi.fldlmtwl, mdsi.pfh, mdsi.flag, msfi.flag_nm
+	    FROM wms.me_dam_stn_info mdsi
 	    JOIN wms.me_stn_flag_info msfi
 	    ON mdsi.flag = msfi.flag
-        WHERE mdsi.flag = 2
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        AND NOT EXISTS (
-	        SELECT 1 
-	        FROM wms.me_dam_stn_info sub_mdsi
-	        WHERE sub_mdsi.dmobscd = mdsi.dmobscd
-	        AND sub_mdsi.init_dt = #{init_dt}
-	    )
+	    LEFT JOIN wms.me_dam_stn_info sub_mdsi
+	    ON mdsi.dmobscd = sub_mdsi.dmobscd 
+	    AND sub_mdsi.init_dt = #{init_dt}
+	    WHERE mdsi.flag = '2'
+	    AND sub_mdsi.dmobscd IS NULL
     </if>
 ) AS stn_data
-JOIN (
-    SELECT COUNT(*) AS total_count FROM (
-        SELECT 
-            init_dt
-        FROM wms.me_dam_stn_info
-        WHERE init_dt = #{init_dt}
-        <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-            AND agcnm = #{agcType} 
-        </if>
-        <if test="endObsCheck == true">
-            UNION ALL
-            SELECT 
-                init_dt
-            FROM wms.me_dam_stn_info
-            WHERE flag = 2
-            <if test="agcType != null and agcType != '' and agcType != 'all'"> 
-                AND agcnm = #{agcType} 
-            </if>
-            AND NOT EXISTS (
-	            SELECT 1 
-	            FROM wms.me_dam_stn_info sub_mdsi
-	            WHERE sub_mdsi.dmobscd = wms.me_dam_stn_info.dmobscd
-	            AND sub_mdsi.init_dt = #{init_dt}
-	        )
-        </if>
-    ) AS count_query
-) AS sub
-ON 1=1
 ORDER BY flag ${stateOrder}, dmobscd ASC
+</select>
+
+<select id="selectKmaAsosInfo" resultType="map" parameterType="map">
+select kasi.stn_id, kasi.stn_nm, kasi.lat, kasi.lon, trim(kasi.ht) as ht, kasi.yyyymm, kasi.flag, msfi.flag_nm, COUNT(*) OVER() as total_count from wms.kma_asos_stn_info kasi JOIN wms.me_stn_flag_info msfi on kasi.flag COLLATE utf8mb3_unicode_ci = msfi.flag where kasi.yyyymm = #{init_dt} order by flag ${stateOrder}, cast(stn_id as unsigned) asc
+</select>
+
+<select id="selectKmaAwsInfo" resultType="map" parameterType="map">
+select kasi.stn_id, kasi.stn_nm, kasi.lat, kasi.lon, trim(kasi.ht) as ht, kasi.yyyymm, kasi.flag, msfi.flag_nm, COUNT(*) OVER() as total_count from wms.kma_aws_stn_info kasi JOIN wms.me_stn_flag_info msfi on kasi.flag COLLATE utf8mb3_unicode_ci = msfi.flag where kasi.yyyymm = #{init_dt} order by flag ${stateOrder}, cast(stn_id as unsigned) asc
+</select>
+
+<select id="selectKmaAsosYmList" resultType="map">
+select kasi.stn_id, kasi.stn_nm, kasi.lat, kasi.lon, kasi.ht, kasi.yyyymm from wms.kma_asos_stn_info kasi group by yyyymm
+</select>
+
+<select id="selectKmaAwsYmList" resultType="map">
+select kasi.stn_id, kasi.stn_nm, kasi.lat, kasi.lon, kasi.ht, kasi.yyyymm from wms.kma_aws_stn_info kasi group by yyyymm
 </select>
 
 <update id="updateMeRnStnInfoFlag" parameterType="map">
@@ -254,7 +156,31 @@ UPDATE wms.me_dam_stn_info c LEFT JOIN wms.me_dam_stn_info p ON c.dmobscd = p.dm
 </update>
 
 <update id="updateMeDamStnInfoDelFlag" parameterType="map">
-UPDATE wms.me_dam_stn_info p LEFT JOIN wms.me_dam_stn_info c ON p.dmobscd = c.dmobscd AND c.init_dt = #{today} SET p.flag = '2' WHERE p.init_dt = #{yesterday}  AND c.dmobscd IS NULL
+UPDATE wms.me_dam_stn_info p LEFT JOIN wms.me_dam_stn_info c ON p.dmobscd = c.dmobscd AND c.init_dt = #{today} SET p.flag = '2' WHERE p.init_dt = #{yesterday} AND c.dmobscd IS NULL
+</update>
+
+<update id="updateKmaAsosStnInfoFlag" parameterType="map">
+UPDATE wms.kma_asos_stn_info c
+LEFT JOIN wms.kma_asos_stn_info p
+ON c.stn_id = p.stn_id AND p.yyyymm = #{prevYyyymm}
+SET c.flag =  CASE WHEN p.stn_id IS NULL THEN '1' WHEN c.stn_nm != p.stn_nm THEN '3' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' WHEN c.ht != p.ht THEN '15' ELSE c.flag END
+WHERE c.yyyymm = #{latestYyyymm} OR (c.stn_id IS NULL AND c.yyyymm = #{prevYyyymm})
+</update>
+
+<update id="updateKmaAsosStnInfoDelFlag" parameterType="map">
+UPDATE wms.kma_asos_stn_info p LEFT JOIN wms.kma_asos_stn_info c ON p.stn_id = c.stn_id AND c.yyyymm = #{latestYyyymm} SET p.flag = '2' WHERE p.yyyymm = #{prevYyyymm} AND c.stn_id IS NULL
+</update>
+
+<update id="updateKmaAwsStnInfoFlag" parameterType="map">
+UPDATE wms.kma_aws_stn_info c
+LEFT JOIN wms.kma_aws_stn_info p
+ON c.stn_id = p.stn_id AND p.yyyymm = #{prevYyyymm}
+SET c.flag =  CASE WHEN p.stn_id IS NULL THEN '1' WHEN c.stn_nm != p.stn_nm THEN '3' WHEN c.lat != p.lat OR c.lon != p.lon THEN '6' WHEN c.ht != p.ht THEN '15' ELSE c.flag END
+WHERE c.yyyymm = #{latestYyyymm} OR (c.stn_id IS NULL AND c.yyyymm = #{prevYyyymm})
+</update>
+
+<update id="updateKmaAwsStnInfoDelFlag" parameterType="map">
+UPDATE wms.kma_aws_stn_info p LEFT JOIN wms.kma_aws_stn_info c ON p.stn_id = c.stn_id AND c.yyyymm = #{latestYyyymm} SET p.flag = '2' WHERE p.yyyymm = #{prevYyyymm} AND c.stn_id IS NULL
 </update>
 
 <update id="updateCorrectionData">
