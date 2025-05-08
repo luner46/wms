@@ -87,6 +87,19 @@ public class WdmsContController {
             return new ArrayList<>();
         }
     }
+    
+    @RequestMapping(value="/selectCalendarData.do")
+    @ResponseBody
+    public ArrayList<HashMap<String, Object>> selectCalendarData(@RequestParam String startDate, @RequestParam String endDate) {
+    	ArrayList<HashMap<String, Object>> dataList = new ArrayList<>();
+    	try {
+    		dataList = service.selectCalendarData(startDate, endDate);
+    	} catch(Exception e) {
+    		log.error(e.toString());
+    		return null;
+    	}
+    	return dataList;
+    }
 
     @RequestMapping(value = "/insertFileCount.do")
     @ResponseBody

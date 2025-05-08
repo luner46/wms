@@ -303,26 +303,25 @@ $(function () {
             </a>
         </h1>
         <c:choose>
-        	<c:when test="${sessionScope.user_id == 'admin'}">
-				<div class="alarm active"></div>
-	        </c:when>
-		</c:choose>
+        	<c:when test="${sessionScope.user_id == 'admin' || sessionScope.user_id == 'guest'}">
+        		<div class="alarm active"></div>
+        	</c:when>
+        </c:choose>
         <nav class="nav_wrap">
-	        <c:choose>
-	        	<c:when test="${sessionScope.user_id != null}">
-					<ul>
+        	<c:choose>
+        		<c:when test="${sessionScope.user_id != null}">
+        			<ul>
 		                <li><a href="/wdms/wdms_monitoring.do" class="mornitoring">모니터링</a></li>
 		                <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
 		                <li><a href="/wdms/wdms_specMng.do" class="spec_mng">제원관리</a></li>
 		            </ul>
-		        </c:when>
-		        <c:when test="${sessionScope.user_id == null}">
-		        	<ul>
-		        		<li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
-		        	</ul>
-		        </c:when>
-			</c:choose>
-			
+        		</c:when>
+        		<c:when test="${sessionScope.user_id == null}">
+        			<ul>
+		                <li><a href="/wdms/wdms_metroStatus.do" class="metro_status">기상자료 현황</a></li>
+		            </ul>
+        		</c:when>
+        	</c:choose>
         </nav>
     </header>
 	<!-- contents //-->

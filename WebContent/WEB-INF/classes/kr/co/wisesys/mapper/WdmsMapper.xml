@@ -4,33 +4,54 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="wdms">
 <select id="selectFileList" resultType="map" parameterType="String">
-SELECT cd.server_id, cd.type_id, cd.repo_id, cd.file_id, cd.file_dt, cd.file_count, cd.error_flag, cd.std_count, wsi.server_nm, wti.type_nm, wri.repo_nm, wfi.file_nm, wfi.file_desc, wfi.useyn, wfi.file_attr, wfi.file_path
-FROM (
-    SELECT 
-        id.server_id, 
+WITH base_data AS (
+    SELECT wfd.server_id, wfd.type_id, wfd.repo_id, wfd.file_id, DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i') AS issueDate
+    FROM wms.wdms_file_data wfd
+),
+cd AS (
+    SELECT bd.server_id, bd.repo_id, bd.file_id, COALESCE(wfd.error_flag, '-') AS error_flag, bd.issueDate AS file_dt, COALESCE(wfd.file_count, '-') AS file_count, COALESCE(wfd.std_count, '-') AS std_count,
         CASE 
-            WHEN id.server_id = '1' THEN '2' 
-            WHEN id.server_id = '2' THEN '1' 
-            ELSE id.type_id 
-        END AS type_id, 
-        id.repo_id, 
-        id.file_id, 
-        COALESCE(wfd.error_flag, '-') AS error_flag, 
-        id.issueDate AS file_dt, 
-        COALESCE(wfd.file_count, '-') AS file_count, 
-        COALESCE(wfd.std_count, '-') AS std_count
-    FROM (
-        SELECT 
-            wfd.server_id, wfd.type_id, wfd.repo_id, wfd.file_id, DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i') AS issueDate
-        FROM wms.wdms_file_data wfd
-    ) id
+            WHEN bd.server_id = '1' THEN '2'
+            WHEN bd.server_id = '2' THEN '1'
+            ELSE bd.type_id
+        END AS type_id
+    FROM base_data bd
     LEFT JOIN wms.wdms_file_data wfd 
-        ON id.server_id = wfd.server_id
-        AND id.type_id = wfd.type_id
-        AND id.repo_id = wfd.repo_id
-        AND id.file_id = wfd.file_id
-        AND id.issueDate = wfd.file_dt
-) cd
+    ON bd.server_id = wfd.server_id
+    AND bd.type_id = wfd.type_id
+    AND bd.repo_id = wfd.repo_id
+    AND bd.file_id = wfd.file_id
+    AND bd.issueDate = wfd.file_dt
+),
+error_flags AS (
+    SELECT z.server_id, z.file_id,
+        CASE 
+            WHEN EXISTS (
+                SELECT 1 
+                FROM wms.wdms_file_data x
+                WHERE x.server_id = z.server_id
+                AND x.file_id = z.file_id
+                AND x.error_flag = 'c'
+                AND x.file_dt LIKE CONCAT(LEFT(DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i'), 8), '%')
+            ) THEN 'c'
+            ELSE (
+                SELECT COALESCE(y.error_flag, '-')
+                FROM wms.wdms_file_data y
+                WHERE y.server_id = z.server_id
+                AND y.file_id = z.file_id
+                AND y.file_dt = DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i')
+            )
+        END AS error_flag
+    FROM wms.wdms_file_data z
+    WHERE z.file_dt LIKE CONCAT(LEFT(DATE_FORMAT(#{boardTime}, '%Y%m%d%H%i'), 8), '%')
+    GROUP BY z.server_id, z.file_id
+)
+SELECT 
+    cd.server_id, cd.type_id, cd.repo_id, cd.file_id, cd.file_dt, cd.file_count, ef.error_flag, cd.std_count, wsi.server_nm, wti.type_nm, wri.repo_nm, wfi.file_nm, wfi.file_desc, wfi.useyn, wfi.file_attr, wfi.file_path
+FROM cd
+JOIN error_flags ef
+    ON cd.server_id = ef.server_id 
+    AND cd.file_id = ef.file_id
 LEFT JOIN wms.wdms_server_info wsi ON cd.server_id = wsi.server_id
 LEFT JOIN wms.wdms_type_info wti ON cd.type_id = wti.type_id
 LEFT JOIN wms.wdms_repo_info wri ON cd.repo_id = wri.repo_id
@@ -38,6 +59,40 @@ LEFT JOIN wms.wdms_file_info wfi ON cd.file_id = wfi.file_id
 WHERE wfi.useyn = 'y'
 GROUP BY cd.file_id, cd.server_id
 ORDER BY cd.file_id, cd.server_id
+</select>
+
+<select id="selectCalendarData" parameterType="map" resultType="map">
+WITH wdms_file_data AS (
+    SELECT server_id, repo_id, LEFT(file_dt, 8) AS file_date, error_flag, file_dt
+    FROM wms.wdms_file_data wfd
+),
+error_priority AS (
+    SELECT server_id, file_date, 'c' AS error_flag
+    FROM wdms_file_data
+    WHERE error_flag = 'c'
+    GROUP BY server_id, file_date
+),
+latest_flag AS (
+    SELECT server_id, file_date, SUBSTRING_INDEX(GROUP_CONCAT(error_flag ORDER BY file_dt DESC), ',', 1) AS error_flag
+    FROM wdms_file_data
+    GROUP BY server_id, file_date
+),
+final_flags AS (
+    SELECT lf.server_id, lf.file_date, COALESCE(ep.error_flag, lf.error_flag) AS error_flag
+    FROM latest_flag lf
+    LEFT JOIN error_priority ep
+    ON lf.server_id = ep.server_id
+    AND lf.file_date = ep.file_date
+)
+SELECT 
+    f.file_date,
+    s.server_nm,
+    f.error_flag
+FROM final_flags f
+JOIN wms.wdms_server_info s 
+ON f.server_id = s.server_id
+WHERE file_date BETWEEN #{startDate} and #{endDate}
+ORDER BY f.file_date DESC, s.server_nm
 </select>
 
 <insert id="insertFileCount" parameterType="map">

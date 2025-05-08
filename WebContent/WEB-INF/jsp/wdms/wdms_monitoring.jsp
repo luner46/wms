@@ -118,51 +118,38 @@ function openBoard(openYear, openMonth, openDate) {
 }
 
 function createCalendarIcon(firstDate, lastDate, yy, mm) {
-    for (var i = firstDate; i <= lastDate; i++) {
-        (function (i) {
-            var date = new Date(yy, mm - 1, i);
-            var [boardTime, dayParam] = dateSelect(date);
-
-            $.ajax({
-                url: '/wdmsCont/fileListData.do',
-                data: {boardTime: boardTime, dayParam: dayParam},
-                success: function (data) {
-                    var isError = {khnp: false, rnd: false};
-                    var isCorrection = {khnp: false, rnd: false};
-
-                    for (var j = 0; j < data.length; j++) {
-                        var server_nm = data[j]["server_nm"];
-                        var repo_nm = data[j]["repo_nm"];
-                        var error_flag = data[j]["error_flag"];
-
-                        if (server_nm == 'khnp' && repo_nm == '/home/outer/data') {
-                            if (error_flag == 'y') {isError.khnp = true;} else if (error_flag == 'c') {isCorrection.khnp = true;}
-                        } else if (server_nm == 'rnd' && repo_nm == '/nas/met') {
-                            if (error_flag == 'y') {isError.rnd = true;} else if (error_flag == 'c') {isCorrection.rnd = true;}
-                        }
-                    }
-
-                    if (isError.khnp) {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').addClass("error");
-                    } else if (!isError.khnp && isCorrection.khnp) {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').addClass("reprod");
-                    } else {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').removeClass("error");
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_khnp').removeClass("reprod");
-                    }
-                    
-                    if (isError.rnd) {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').addClass("error");
-                    } else if (!isError.rnd && isCorrection.rnd) {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').addClass("reprod");
-                    } else {
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').removeClass("error");
-                    	$('.day' + date.getDate().toString().padStart(2, '0') + ' .list .li_rnd').removeClass("reprod");
-                    }
-                }
-            });
-        })(i);
-    }
+	var startDate = yy + '' + mm.toString().padStart(2, '0') + '' + firstDate.toString().padStart(2, '0');
+	var endDate = yy + '' + mm.toString().padStart(2, '0') + '' + lastDate.toString().padStart(2, '0');
+	
+    $.ajax({
+        url: '/wdmsCont/selectCalendarData.do',
+        data: {startDate: startDate, endDate: endDate},
+        success: function (data) {
+        	for (var i = 0; i < data.length; i++) {
+        		var server_nm = data[i]["server_nm"];
+        		var file_date = data[i]["file_date"];
+        		var error_flag = data[i]["error_flag"];
+        		
+        		if (server_nm == 'khnp' && error_flag == 'y') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_khnp').addClass("error");
+        		} else if (server_nm == 'khnp' && error_flag == 'c') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_khnp').addClass("reprod");
+        		} else if (server_nm == 'khnp' && error_flag == 'n') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_khnp').removeClass("error");
+                	$('.day' + file_date.substr(6, 2) + ' .list .li_khnp').removeClass("reprod");
+        		}
+        		
+        		if (server_nm == 'rnd' && error_flag == 'y') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_rnd').addClass("error");
+        		} else if (server_nm == 'rnd' && error_flag == 'c') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_rnd').addClass("reprod");
+        		} else if (server_nm == 'rnd' && error_flag == 'n') {
+        			$('.day' + file_date.substr(6, 2) + ' .list .li_rnd').removeClass("error");
+                	$('.day' + file_date.substr(6, 2) + ' .list .li_rnd').removeClass("reprod");
+        		}
+        	}
+        }
+    });
 }
 
 function fileCount(date) {
@@ -235,7 +222,7 @@ function fileCount(date) {
             }
             updateTable(error_flag_std.khnp, '.cnt_wrap .cnt_khnp h3','.cnt .etc_khnp', 'KHNP' , '.tbl-wrap.tbl_khnp tbody', tbl_rows.khnp, boardTime);
             updateTable(error_flag_std.rnd, '.cnt_wrap .cnt_rnd h3','.cnt .etc_rnd', 'RND' , '.tbl-wrap.tbl_rnd tbody', tbl_rows.rnd, boardTime);
-            createErrorMsg(boardTime, server_error_count, error_flag_std);
+            createErrorMsg(boardTime, dayParam, server_error_count, error_flag_std);
             errorState(server_error_count, error_flag_std);
         }
     });
@@ -305,10 +292,13 @@ function fileCount(date) {
     }
 }
 
-function createErrorMsg(boardTime, server_error_count, error_flag_std){
+function createErrorMsg(boardTime, dayParam, server_error_count, error_flag_std){
 	var alarmTime = new Date(boardTime);
+	if (dayParam == 'y') {
+		alarmTime.setHours(23, 0, 0, 0);
+	}
 	var formattedAlarmTime = alarmTime.getFullYear().toString().padStart(2, '0') + '-' + (alarmTime.getMonth() + 1).toString().padStart(2, '0') + '-' + alarmTime.getDate().toString().padStart(2, '0') + ' ' + alarmTime.getHours().toString().padStart(2, '0') + ':' + alarmTime.getMinutes().toString().padStart(2, '0');
-	
+
 	var errorMsg = [];
 	var alarmMsg = '';
 	

@@ -36,6 +36,7 @@ public class UserMainController {
 	
 	@PostMapping(value = {"/user_login.do"})
 	public String userLogin(HttpServletRequest req, HttpSession session, RedirectAttributes redirectAttributes) {
+		session.removeAttribute("user_id");
 		
 		String user_id = req.getParameter("user_id")==null?"":req.getParameter("user_id");
 		String user_pw = req.getParameter("user_pw")==null?"":req.getParameter("user_pw");

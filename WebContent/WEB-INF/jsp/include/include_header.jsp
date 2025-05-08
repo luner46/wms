@@ -32,20 +32,21 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="header_top">
         <ul>
         	<c:choose>
-	        	<c:when test="${sessionScope.user_id != null && sessionScope.user_id == 'admin'}">
-			        <li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
+        		<c:when test="${sessionScope.user_id != null && sessionScope.user_id == 'admin'}">
+        			<li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
 			        <li><a href="/wsms/wsms_monitoring.do" id="wsms">시스템</a></li>
 			        <li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
 			        <li><a href="/user/user_logout.do">로그아웃</a></li>
-		        </c:when>
-		        <c:when test="${sessionScope.user_id == null}">
-		        </c:when>
-		        <c:otherwise>
-		        	<li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
-		        	<li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
-		        	<li><a href="/user/user_logout.do">로그아웃</a></li>
-				</c:otherwise>
-			</c:choose>
+        		</c:when>
+        		<c:when test="${sessionScope.user_id != null && sessionScope.user_id == 'guest'}">
+        			<li><a href="/whms/whms_monitoring.do" id="whms">하드웨어</a></li>
+			        <li><a href="/wsms/wsms_monitoring.do" id="wsms">시스템</a></li>
+			        <li><a href="/wdms/wdms_monitoring.do" id="wdms">데이터</a></li>
+			        <li><a href="/user/user_loginForm.do">로그인</a></li>
+        		</c:when>
+        		<c:when test="${sessionScope.user_id == null}">
+        		</c:when>
+        	</c:choose>
 	    </ul>
     </div>
 	

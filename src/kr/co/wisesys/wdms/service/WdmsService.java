@@ -32,6 +32,11 @@ public class WdmsService {
 	    return fileList;
 	}
 	
+	public ArrayList<HashMap<String, Object>> selectCalendarData(String startDate, String endDate) {
+	    return dao.selectCalendarData(startDate, endDate);
+	}
+
+	
 	public void updateCorrectionData(int fileId, String issuedate, int updateValue, String repoId) {
 		List<Map<String, Object>> correctionData = new ArrayList<>();
 	    Map<String, Object> param = new HashMap<>();

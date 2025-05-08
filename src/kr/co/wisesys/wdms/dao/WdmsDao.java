@@ -2,6 +2,7 @@ package kr.co.wisesys.wdms.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -22,6 +23,19 @@ public class WdmsDao {
 		ArrayList<HashMap<String, Object>> fileList = new ArrayList<>();
 		try {
 			fileList.addAll(sqlSessionMysql.selectList("wdms.selectFileList", boardTime));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileList;
+	}
+	
+	public ArrayList<HashMap<String, Object>> selectCalendarData(String startDate, String endDate) {
+		ArrayList<HashMap<String, Object>> fileList = new ArrayList<>();
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("startDate", startDate);
+		param.put("endDate", endDate);
+		try {
+			fileList.addAll(sqlSessionMysql.selectList("wdms.selectCalendarData", param));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
