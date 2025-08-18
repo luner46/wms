@@ -62,37 +62,30 @@ ORDER BY cd.file_id, cd.server_id
 </select>
 
 <select id="selectCalendarData" parameterType="map" resultType="map">
-WITH wdms_file_data AS (
-    SELECT server_id, repo_id, LEFT(file_dt, 8) AS file_date, error_flag, file_dt
-    FROM wms.wdms_file_data wfd
-),
-error_priority AS (
-    SELECT server_id, file_date, 'c' AS error_flag
-    FROM wdms_file_data
-    WHERE error_flag = 'c'
-    GROUP BY server_id, file_date
-),
-latest_flag AS (
-    SELECT server_id, file_date, SUBSTRING_INDEX(GROUP_CONCAT(error_flag ORDER BY file_dt DESC), ',', 1) AS error_flag
-    FROM wdms_file_data
-    GROUP BY server_id, file_date
-),
-final_flags AS (
-    SELECT lf.server_id, lf.file_date, COALESCE(ep.error_flag, lf.error_flag) AS error_flag
-    FROM latest_flag lf
-    LEFT JOIN error_priority ep
-    ON lf.server_id = ep.server_id
-    AND lf.file_date = ep.file_date
-)
-SELECT 
-    f.file_date,
-    s.server_nm,
-    f.error_flag
-FROM final_flags f
-JOIN wms.wdms_server_info s 
-ON f.server_id = s.server_id
-WHERE file_date BETWEEN #{startDate} and #{endDate}
-ORDER BY f.file_date DESC, s.server_nm
+WITH wdms_file_data AS 
+(SELECT						server_id, repo_id, LEFT(file_dt, 8) AS file_date, error_flag, file_dt
+FROM						wms.wdms_file_data wfd),
+error_priority AS
+(SELECT DISTINCT			server_id, file_date, 'c' AS error_flag
+FROM						wdms_file_data
+WHERE						error_flag = 'c'),
+latest_flag AS
+(SELECT						server_id, file_date, SUBSTRING_INDEX(GROUP_CONCAT(error_flag ORDER BY file_dt DESC, FIELD(error_flag, 'y','n') asc), ',', 1) AS error_flag
+FROM						wdms_file_data
+GROUP BY					server_id, file_date),
+final_flags AS
+(SELECT						lf.server_id, lf.file_date, COALESCE(ep.error_flag, lf.error_flag) AS error_flag
+FROM						latest_flag lf
+LEFT JOIN					error_priority ep
+ON							lf.server_id = ep.server_id
+AND							lf.file_date = ep.file_date)
+SELECT						f.file_date, s.server_nm, f.error_flag
+FROM						final_flags f
+JOIN						wms.wdms_server_info s 
+ON							f.server_id = s.server_id
+WHERE						file_date
+BETWEEN						#{startDate} and #{endDate}
+ORDER BY					f.file_date DESC, s.server_nm ASC
 </select>
 
 <insert id="insertFileCount" parameterType="map">
