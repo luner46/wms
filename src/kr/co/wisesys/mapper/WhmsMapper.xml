@@ -4,58 +4,18 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="whms">
 <select id="selectCurrentServer" resultType="map">
-	SELECT
-		cd.server_id as server_id,
-		cd.init_tm as init_tm,
-		cd.cpu_per as cpu_per,
-		cd.mem_per as mem_per,
-		cd.disk_per as disk_per,
-		cd.temp_val as temp_val,
-		cd.net_per as net_per,
-		cd.risk_check as risk_check,
-		cd.risk_result as risk_result,
-		wsb.boot as boot,
-	    wsi.server_nm as server_nm,
-	    wsi.server_ord as server_ord,
-	    wsi.st_cpu_per as st_cpu_per,
-	    wsi.st_mem_per as st_mem_per,
-	    wsi.st_disk_per as st_disk_per,
-	    wsi.st_temp_val as st_temp_val,
-	    wsi.st_net_per as st_net_per
-	FROM
-		(
-			SELECT
-			id.server_id as server_id,
-			COALESCE(wsd.init_tm, 'not_connection') as init_tm,
-			COALESCE(wsd.cpu_per, 'not_connection') as cpu_per,
-			COALESCE(wsd.mem_per, 'not_connection') as mem_per,
-			COALESCE(wsd.disk_per, 'not_connection') as disk_per,
-			COALESCE(wsd.temp_val, 'not_connection') as temp_val,
-			COALESCE(wsd.net_per, 'not_connection') as net_per,
-			COALESCE(wsd.risk_check, 'not_connection') as risk_check,
-			COALESCE(wsd.risk_result, 'not_connection') as risk_result
-		FROM
-			(
-				SELECT
-					wsd.server_id as server_id,
-					DATE_FORMAT(DATE_SUB(#{currentDateFormat}, INTERVAL 1 MINUTE), '%Y%m%d%H%i') AS issueDate
-					<!-- DATE_FORMAT(#{currentDateFormat}, '%Y%m%d%H%i') AS issueDate -->
-				FROM
-					whms_server_data wsd
-			) id
-		LEFT JOIN
-			whms_server_data wsd on id.server_id = wsd.server_id
-		AND
-			id.issueDate = wsd.init_tm
-		) cd
-	JOIN
-	    whms_server_info wsi on cd.server_id = wsi.server_id
-	LEFT JOIN
-	    whms_server_boot wsb on cd.server_id = wsb.server_id
-	AND
-		LEFT(cd.init_tm, 8) = wsb.init_tm
-	GROUP BY
-		cd.server_id
+SELECT			cd.server_id as server_id, cd.init_tm as init_tm, cd.cpu_per as cpu_per, cd.mem_per as mem_per, cd.disk_per as disk_per, cd.temp_val as temp_val, cd.net_per as net_per, cd.risk_check as risk_check, cd.risk_result as risk_result, wsb.boot as boot, wsi.server_nm as server_nm, wsi.server_ord as server_ord, wsi.st_cpu_per as st_cpu_per, wsi.st_mem_per as st_mem_per, wsi.st_disk_per as st_disk_per, wsi.st_temp_val as st_temp_val, wsi.st_net_per as st_net_per
+FROM
+(SELECT			id.server_id as server_id, COALESCE(wsd.init_tm, 'not_connection') as init_tm, COALESCE(wsd.cpu_per, 'not_connection') as cpu_per, COALESCE(wsd.mem_per, 'not_connection') as mem_per, COALESCE(wsd.disk_per, 'not_connection') as disk_per, COALESCE(wsd.temp_val, 'not_connection') as temp_val, COALESCE(wsd.net_per, 'not_connection') as net_per, COALESCE(wsd.risk_check, 'not_connection') as risk_check, COALESCE(wsd.risk_result, 'not_connection') as risk_result
+FROM
+(SELECT			wsd.server_id as server_id, DATE_FORMAT(DATE_SUB(#{currentDateFormat}, INTERVAL 1 MINUTE), '%Y%m%d%H%i') AS issueDate
+FROM			whms_server_data wsd) id
+LEFT JOIN		whms_server_data wsd on id.server_id = wsd.server_id
+AND				id.issueDate = wsd.init_tm) cd
+JOIN			whms_server_info wsi on cd.server_id = wsi.server_id
+LEFT JOIN		whms_server_boot wsb on cd.server_id = wsb.server_id
+AND				LEFT(cd.init_tm, 8) = wsb.init_tm
+GROUP BY		cd.server_id
 </select>
 
 <select id="selectNetworkState" resultType="map" parameterType="String">
@@ -143,7 +103,7 @@
 	    z.server_id as server_id, 
 	    z.server_nm as server_nm, 
 	    LEFT(z.dt, 8) as date,
-	    COALESCE(SUM(CASE WHEN wsd.risk_check = 1 THEN 1 WHEN wsd.risk_check = 0 THEN 0 END), null) AS risk_checkCount
+	    COALESCE(SUM(CASE WHEN wsd.risk_check = 1 and wsd.msg != '0_0_0_0_1' THEN 1 WHEN wsd.risk_check = 0 THEN 0 END), null) AS risk_checkCount
 	FROM 
 	    (SELECT 
 	        x.server_id, 
@@ -188,9 +148,19 @@
 		wsd.disk_per as disk_per,
 		wsd.temp_val as temp_val,
 		wsd.net_per as net_per,
-		wsd.risk_check as risk_check,
-		wsd.risk_result as risk_result,
-		wsd.msg as msg,
+		wsd.risk_check AS risk_check,
+		wsd.risk_result AS risk_result,
+		CASE WHEN (
+			CASE WHEN RIGHT(wsd.msg, 2) = '_1' THEN CONCAT(SUBSTRING(wsd.msg, 1, CHAR_LENGTH(wsd.msg) - 1), '0') 
+            ELSE wsd.msg 
+        	END) = '0_0_0_0_0'
+        THEN NULL
+		ELSE (
+			CASE WHEN RIGHT(wsd.msg, 2) = '_1' 
+            THEN CONCAT(SUBSTRING(wsd.msg, 1, CHAR_LENGTH(wsd.msg) - 1), '0') 
+            ELSE wsd.msg 
+        	END)
+		END AS msg,
 		wsi.server_nm as server_nm,
 		wsi.server_ord as server_ord,
 		CAST(CONCAT(
@@ -200,8 +170,8 @@
 		    SUBSTRING(wsd.init_tm, 9, 2), ':',
 		    SUBSTRING(wsd.init_tm, 11, 2)
 	    ) AS DATETIME) AS date,
-	    (select count(*) from whms_server_data wsd where wsd.risk_check = 1) as risk_check_count,
-	    (select count(*) from whms_server_data wsd where wsd.risk_result = 1) as risk_result_count,
+	    (select count(*) from whms_server_data wsd where wsd.risk_check = 1 AND wsd.msg != '0_0_0_0_1') as risk_check_count,
+	    (select count(*) from whms_server_data wsd where wsd.risk_result = 1 AND wsd.msg != '0_0_0_0_1') as risk_result_count,
 	    wsi.server_nm as server_nm,
 		wsi.server_ord as server_ord,
 		wsi.st_cpu_per as st_cpu_per,
@@ -215,6 +185,8 @@
 		whms_server_info wsi on wsd.server_id = wsi.server_id
 	WHERE
 		risk_check =1
+	AND
+		msg != '0_0_0_0_1'
 	AND
 		STR_TO_DATE(wsd.init_tm, '%Y%m%d%H%i') &lt;= DATE_SUB(STR_TO_DATE(#{currentDateFormat}, '%Y%m%d%H%i'), INTERVAL 1 MINUTE)
 	ORDER BY
@@ -234,7 +206,8 @@
 		risk_result = '1'
 </update>
 
-<!-- 게시판 초기화 update
+<!--
+게시판 초기화 update
 <update id="resetRiskResult" parameterType="">
 	UPDATE 
 		whms_server_data
@@ -242,5 +215,6 @@
 		risk_result = null 
 	WHERE
 		 risk_result is not null;
-</update> -->
+</update>
+-->
 </mapper>
