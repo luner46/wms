@@ -797,6 +797,77 @@ function topBoardData(riskStateOrder){
     });
 }
 
+function selectWmsRemoteSessions(){
+    $.ajax({
+        url: '/whmsCont/selectWmsRemoteSessions.do',
+        success: function(data){
+            let userLabel, userName, startedAt, endedAt, status, hostName, createdAt, updatedAt;
+
+            data.forEach(item => {
+                userLabel = item.userLabel;
+                userName = item.userName;
+                startedAt = item.startedAt;
+                endedAt = item.endedAt;
+                status = item.status;
+                hostName = item.hostName;
+                createdAt = item.createdAt;
+                updatedAt = item.updatedAt;
+
+                const startedDt = new Date(startedAt);
+                const displayStartedDt = startedDt.getHours().toString().padStart(2, '0') + ':' + startedDt.getMinutes().toString().padStart(2, '0');
+
+                const usingTm = new Date() - startedDt;
+                const usingHour = usingTm / (1000 * 60 * 60);
+                const usingMin = usingTm / (1000 * 60);
+                let displayUsingTm;
+
+                if (usingHour > 1) {
+                    displayUsingTm = '<p>' + Math.floor(usingHour) + '</p><small> HOUR</small>';
+                } else if (usingMin > 0) {
+                    if (usingMin < 1) {
+                        displayUsingTm = '<p>0</p><small> MIN</small>';
+                    } else {
+                        displayUsingTm = '<p>' + Math.floor(usingMin) + '</p><small> MIN</small>';
+                    }
+                }
+                
+                let userIp;
+                
+                if (userName === '강태훈') {userIp = '192.168.0.60';}
+                if (userName === '길경혜') {userIp = '192.168.0.213';}
+                if (userName === '김민수') {userIp = '192.168.0.204';}
+                if (userName === '최준규') {userIp = '192.168.0.161';}
+                if (userName === '김지영') {userIp = '192.168.0.27';}
+
+                if (status.toLowerCase() === 'start') {
+                    $('.status-indicator').addClass('active');
+                    
+                    $('.con#device .c_device').addClass('c_gis');
+                    $('.con#device .status-badge').addClass('active');
+                    $('.con#device .status-badge .blink').text('');
+                    $('.con#device .status-badge').html('<span class="blink"></span> 사용 중');
+                    $('.con#device .user-name').addClass('active').html(userName + ' <small style="font-size: .7rem;">(' + userIp + ')</small>');
+                    $('.con#device .device-name').addClass('active').text(hostName);
+
+                    $('.con#device .server_con_wrap .server_temp .temp_wrap div').html('<p>' + displayStartedDt + '</p><small> ~</small>'); 
+                    $('.con#device .server_con_wrap .server_temp .last_wrap div').html(displayUsingTm);
+                } else {
+                    $('.status-indicator').removeClass('active');
+                    
+                    $('.con#device .c_device').removeClass('c_gis');
+                    $('.con#device .status-badge').removeClass('active');
+                    $('.con#device .status-badge').html('<span class="blink"></span> 미사용');
+                    $('.con#device .user-name').removeClass('active').text('No Session');
+                    $('.con#device .device-name').removeClass('active').text(' ');
+
+                    $('.con#device .server_con_wrap .server_temp .temp_wrap div').html('<p style="color: rgba(255, 255, 255, .5);">-</p>');
+                    $('.con#device .server_con_wrap .server_temp .last_wrap div').html('<p style="color: rgba(255, 255, 255, .5);">-</p>');
+                }
+            });
+        }
+    });
+}
+
 function currentHour(){
 	var currentTime = new Date();                
 	var formattedCurrentDate = currentTime.getFullYear().toString() + '년 ' +(currentTime.getMonth() + 1).toString().padStart(2, '0') + '월 ' + currentTime.getDate().toString().padStart(2, '0') + '일 ' + currentTime.getHours().toString().padStart(2, '0') + '시 ' + currentTime.getMinutes().toString().padStart(2, '0') + '분 ' + currentTime.getSeconds().toString().padStart(2, '0') + '초';
@@ -865,11 +936,13 @@ function scheduleHourlyTask() {
         updateCurrentDate();
         totalData();
         riskStateData('desc');
+        selectWmsRemoteSessions();
         
         setInterval(function() {
             updateCurrentDate();
             totalData();
             riskStateData('desc');
+            selectWmsRemoteSessions();
         }, 60 * 1000);
         
     }, nextTimeTarget);
@@ -886,9 +959,12 @@ $(function() {
     tenDaysRiskCheckData();
     thirtyDaysRiskCheckData();
     riskStateData('desc');
+    selectWmsRemoteSessions();
+    
     currentHour();
     scheduleDailyTask();
     scheduleHourlyTask();
+    
     // 1초 간격 실행 (현재 시간 표시)
     setInterval(function() {
         currentHour();
@@ -918,9 +994,8 @@ $(function() {
                     <li class="khnp">KHNP</li>
                     <li class="db">DB</li>
                     <li class="work">WORK</li>
-                    
                     <li class="his">HIS</li>
-                    <li class="gis">GIS</li>
+                    <!-- <li class="gis">GIS</li> -->
                 </ul>                    
             </div><!-- 
             <div class="notice_wrap">
@@ -1148,42 +1223,37 @@ $(function() {
                     </div>
                 </div>
                 <!-- GIS -->
-                <div class="con" id="GIS">
-                    <h3 class="c_gis">GIS</h3>
+                <div class="con" id="device">
+                    <h3 class="c_device c_gis">DEVICE</h3>
                     <div class="server_con_wrap">
                         <div class="server_range">
-                            <div class="range_wrap border_wrap">
-                                <div class="range_con">
-                                    <div class="range"><div class="range_h" id="cpu_per"></div></div>
-                                    <label>CPU</label>
-                                </div>
-                                <div class="range_con">
-                                    <div class="range"><div class="range_h" id="mem_per"></div></div>
-                                    <label>MEM</label>
-                                </div>
-                                <div class="range_con">
-                                    <div class="range"><div class="range_h" id="disk_per"></div></div>
-                                    <label>DISK</label>
-                                </div>
+                            <div class="range_wrap border_wrap" style="width: 100%;">
+                            	<p class="status-indicator">
+									<span class="status-badge">
+										<span class="blink"></span>
+									</span>
+								</p>
+								<span class="user-info">
+									<span class="user-text">
+										<span class="user-name"></span>
+										<span class="device-name"></span>
+									</span>
+								</span>
                             </div>
-                            <div class="network_wrap border_wrap">
+                            <!-- <div class="network_wrap border_wrap">
                                 <h4>Network</h4>
                                 <div class="network_con" id="networkChart_GIS"></div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="server_temp">
                             <div class="temp_wrap border_wrap">
-                                <h4>TEMP</h4>
+                                <h4>START</h4>
                                 <div>
-                                    <p></p>
-                                    <small>°C</small>
                                 </div>
                             </div>
                             <div class="last_wrap border_wrap">
-                                <h4>LAST</h4>
+                                <h4>ELAPSED</h4>
                                 <div>
-                                    <p></p>
-                                    <small>days</small>
                                 </div>
                             </div>
                         </div>

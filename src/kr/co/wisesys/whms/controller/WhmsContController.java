@@ -94,4 +94,12 @@ public class WhmsContController {
 
 		return resultMap;
     }
+	
+	@ResponseBody
+	@RequestMapping(value = "/selectWmsRemoteSessions.do")
+	public ArrayList<HashMap<String, Object>> selectWmsRemoteSessions() {
+		ArrayList<HashMap<String, Object>> dataList = service.selectWmsRemoteSessions();
+		
+		return dataList;
+	}
 }

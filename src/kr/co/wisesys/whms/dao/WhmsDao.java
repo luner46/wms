@@ -81,4 +81,14 @@ public class WhmsDao {
 	    }
 	    return updateRiskStateCnt;
 	}
+	
+	public ArrayList<HashMap<String, Object>> selectWmsRemoteSessions() {
+		ArrayList<HashMap<String, Object>> dataList = new ArrayList<>();
+		try {
+			dataList.addAll(sqlSessionMysql.selectList("whms.selectWmsRemoteSessions"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataList;
+	}
 }

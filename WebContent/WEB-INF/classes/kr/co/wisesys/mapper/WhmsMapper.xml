@@ -15,7 +15,8 @@ FROM 	(SELECT						wsi.server_id, wsd.init_tm, COALESCE(wsd.cpu_per, 'not_connec
 		ON							wsi.server_id = x.server_id
 		LEFT JOIN					wms.whms_server_data wsd
 		ON							wsd.server_id = x.server_id
-		AND							wsd.init_tm  = x.max_init_tm) a
+		AND							wsd.init_tm  = x.max_init_tm
+		WHERE						wsi.server_id != '6') a
 JOIN								wms.whms_server_info wsi
 ON									a.server_id = wsi.server_id
 LEFT JOIN							wms.whms_server_boot wsb
@@ -52,6 +53,8 @@ AND									LEFT(a.init_tm, 8) = wsb.init_tm
 	            whms_server_info wsi on wsd.server_id = wsi.server_id
 	        WHERE
 	            wsd.server_id = #{server_id}
+	        AND
+	        	wsd.server_id != '6'
 	        ORDER BY
 	            wsd.init_tm DESC
 	        LIMIT
@@ -90,6 +93,8 @@ AND									LEFT(a.init_tm, 8) = wsb.init_tm
 		z.server_id = wsr.server_id
 	AND
 		z.dt = wsr.init_tm
+	WHERE
+		z.server_id != '6'
 	GROUP BY
 		z.server_id
 	ORDER BY
@@ -140,6 +145,8 @@ AND									LEFT(a.init_tm, 8) = wsb.init_tm
 	ON 
 	    z.server_id = wsd.server_id 
 	    AND z.dt = wsd.init_tm
+	WHERE
+		z.server_id != '6'
 	GROUP BY 
 	    server_id, date
 </select>
@@ -191,6 +198,8 @@ AND									LEFT(a.init_tm, 8) = wsb.init_tm
 	WHERE
 		risk_check =1
 	AND
+		wsd.server_id != '6'
+	AND
 		msg != '0_0_0_0_1'
 	AND
 		STR_TO_DATE(wsd.init_tm, '%Y%m%d%H%i') &lt;= DATE_SUB(STR_TO_DATE(#{currentDateFormat}, '%Y%m%d%H%i'), INTERVAL 1 MINUTE)
@@ -205,11 +214,18 @@ AND									LEFT(a.init_tm, 8) = wsb.init_tm
 		risk_result = '0'
 	WHERE
 		server_id = #{server_id}
-		and
+	AND
 		init_tm = #{init_tm}
-		and
+	AND
 		risk_result = '1'
 </update>
+
+<select id="selectWmsRemoteSessions" resultType="map">
+SELECT					user_label AS "userLabel", user_name AS "userName", started_at AS "startedAt", ended_at AS "endedAt", status AS "status", host_name AS "hostName", created_at AS "createdAt", updated_at AS "updated_at"
+FROM					wms.wms_remote_sessions wrs
+ORDER BY				updated_at DESC
+LIMIT 1
+</select>
 
 <!--
 게시판 초기화 update
